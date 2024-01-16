@@ -20,5 +20,5 @@ cd "$cel_konyvtar" || exit
 git add --all
 commit_message="Automatikus commit - $(date +'%Y-%m-%d %H:%M:%S')"
 git commit -m "$commit_message"
-git push origin master
+git push origin main
 
