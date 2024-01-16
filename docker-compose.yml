@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  nodejs:
+    image: node:21-alpine
+    build:
+      context: ./server
+    working_dir: /backend
+    volumes:
+      - ./server:/backend
+    ports:
+      - "5000:5000"
+    command:
+      - sh
+      - -c
+      - "npx prisma generate && npx prisma db push && npm run dev"
+  react:
+    build:
+      context: ./client
+    working_dir: /frontend
+    volumes:
+      - ./client:/frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - nodejs

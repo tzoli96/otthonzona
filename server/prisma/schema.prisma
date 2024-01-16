@@ -1,0 +1,186 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                     String    @id @default(auto()) @map("_id") @db.ObjectId
+  firstName              String?   @default("")
+  lastName               String?   @default("")
+  email                  String?   @unique @default("")
+  phone                  String?   @default("")
+  isAgent                Boolean   @default(false)
+  isEmailVerified        Boolean   @default(false)
+  emailConfirmationToken String?
+  pwHash                 String?   @default("")
+  resetToken             String?   @default("")
+  resetTokenExpires      DateTime?
+  photo                  String?
+  savedProperties        Int[]
+
+  credit Int? @default(0)
+
+  adminOf Agency?
+
+  Member Member[]
+
+  creditPurchases CreditPurchaseHistory[]
+}
+
+model CreditPurchaseHistory {
+  id                   String    @id @default(auto()) @map("_id") @db.ObjectId
+  userId               String    @db.ObjectId
+  paymentStatus        String?   @default("")
+  paymentTransactionId String?   @default("")
+  purchasedCredit      String?
+  spentMoney           String? // HUF
+  purchasedAt          DateTime? @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Agency {
+  id            String  @id @default(auto()) @map("_id") @db.ObjectId
+  officeName    String? @default("")
+  officeAddress String? @default("")
+  officeEmail   String? @unique @default("")
+  officePhone   String? @default("")
+  photo         String?
+
+  adminID String   @unique @db.ObjectId
+  agents  String[] @db.ObjectId
+
+  // Relation field - points to the User model
+  admin User @relation(fields: [adminID], references: [id])
+
+  members     Member[]
+  invitations Invitation[]
+}
+
+model Member {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  userId   String @db.ObjectId
+  agencyId String @db.ObjectId
+  role     String // "Admin" or "Member"
+
+  user   User   @relation(fields: [userId], references: [id])
+  agency Agency @relation(fields: [agencyId], references: [id])
+}
+
+model Invitation {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  email    String
+  agencyId String @db.ObjectId
+  token    String @unique
+  userId   String @db.ObjectId
+  status   String // "Pending", "Accepted", "Declined"
+
+  agency Agency @relation(fields: [agencyId], references: [id])
+}
+
+model Property {
+  id                 String   @id @map("_id")
+  adType             String?
+  balcony            String?
+  builtYear          String?
+  ceilingHeight      String?
+  constructionMethod String?
+  description        String?
+  district           String?
+  disabled           String?
+  exactPosition      Boolean?
+  floor              String?
+  furdo              String?
+  garden             String?
+  tetoter            String?
+  heating            String?
+  houseNo            String?
+  houseFloors        String?
+  lift               String?
+  legkondicionalo    String?
+  komfort            String?
+  orientation        String?
+  parktype           String?
+  photos             String[]
+  price              Int
+  property_condition String?
+  propertyStatus     String?
+  propertyType       String?
+  settlement         String?
+  street             String?
+  view               String?
+
+  title String?
+  rooms Int?
+  halfRooms Int?
+  area  Int?
+  landArea Int?
+
+  atype String?
+  btype String?
+
+  views Int? @default(0)
+
+  credit               Int?      @default(0)
+  remainingImpressions Int?      @default(0)
+  bidExpirationTime    DateTime?
+
+  h_credit               Int?      @default(0)
+  h_remainingImpressions Int?      @default(0)
+  h_bidExpirationTime    DateTime?
+
+  submittedBy String
+  submittedOn DateTime? @default(now())
+
+  isArchived    Boolean @default(false)
+  referenceLink String?
+}
+
+model DraftProperty {
+  id                  String    @id @map("_id")
+  adType              String?
+  balcony             String?
+  builtYear           String?
+  ceilingHeight       String?
+  constructionMethod  String?
+  description         String?
+  district            String?
+  disabled            String?
+  exactPosition       Boolean?
+  floor               String?
+  furdo               String?
+  garden              String?
+  tetoter             String?
+  heating             String?
+  houseNo             String?
+  houseFloors         String?
+  lift                String?
+  legkondicionalo     String?
+  komfort             String?
+  orientation         String?
+  parktype            String?
+  photos              String[]
+  price               Int?
+  property_condition  String?
+  propertyStatus      String?
+  propertyType        String?
+  settlement          String?
+  street              String?
+  view                String?
+
+  title               String?
+  rooms               Int?
+  halfRooms           Int?
+  area                Int?
+  landArea            Int?
+
+  atype               String?
+  btype               String?
+
+  submittedBy         String
+  submittedOn         DateTime?  @default(now())
+}

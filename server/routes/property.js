@@ -1,0 +1,446 @@
+const auth = require("../middleware/auth");
+const prisma = require("../prisma/prisma");
+const settlements = require("../res/settlements");
+const { generate8DigitNumericId } = require("../utils/getId");
+
+const router = require("express").Router();
+
+const getValidId = async () => {
+  try {
+    const id = generate8DigitNumericId() + "";
+    const property = await prisma.property.findFirst({
+      where: { id, isArchived: false },
+      select: { id: true },
+    });
+    if (property) {
+      throw new Error("Already exist");
+    }
+    return id;
+  } catch (err) {
+    return getValidId();
+  }
+};
+
+router.get("/settlements", async (req, res) => {
+  const { q } = req.query;
+  if (q) {
+    const settlemensOptions = settlements.filter(f => f.value.toLocaleLowerCase().indexOf(q.toLowerCase()) === 0).slice(0, 20);
+    res.send(settlemensOptions);
+  }
+  else {
+    res.send(settlements.slice(0, 20));
+  }
+});
+
+router.post("/", auth, async (req, res) => {
+  const id = await getValidId();
+  if (req.body.draft_id) {
+    try {
+      await prisma.DraftProperty.delete({
+        where: { id: req.body.draft_id},
+      });
+    } catch (error) {
+      console.error("Hiba a DraftProperty törlése közben:", error);
+    } finally {
+      delete req.body.draft_id;
+    }
+  }
+
+  const ad = await prisma.property.create({
+    data: {
+      id,
+      ...req.body,
+      submittedBy: req.user.id,
+    },
+  });
+  return res.send({
+    status: "SUCCESS",
+    data: ad,
+  });
+});
+
+router.put("/:id", auth, async (req, res) => {
+  const { id } = req.params;
+  const ad = await prisma.property.findFirst({ where: { id } });
+  if (ad.submittedBy !== req.user.id) {
+    return res.status(401).send({
+      error: true,
+      message: "Ezt az ingatlant nincs jogosultságod szerkeszteni.",
+    });
+  }
+  const updatedAd = await prisma.property.update({
+    where: { id },
+    data: req.body,
+  });
+  return res.send({
+    data: updatedAd,
+  });
+});
+
+router.get("/", async (req, res) => {
+  const { offset = 0, limit: inputLimit } = req.query;
+  const limit = Math.min(inputLimit || 20, 20);
+
+  const {
+    adType,
+    propertyType,
+    propertyStatus,
+    builtYear,
+    settlement,
+    district,
+    ceilingHeight,
+    constructionMethod,
+    view,
+    orientation,
+    balcony,
+    floor,
+    heating,
+    minPrice,
+    maxPrice,
+    minArea,
+    maxArea,
+  } = req.query;
+
+  const promotedWithFilter = (
+    await prisma.property.findMany({
+      take: 4,
+      where: {
+        district,
+        isArchived: false,
+        bidExpirationTime: { gt: new Date() },
+        ...(minPrice && {
+          price: {
+            gte:
+              (minPrice *
+                (100 - Number(process.env.PRICE_TOLERANCE_PERCENTAGE))) /
+              100,
+          },
+        }),
+        ...(maxPrice && {
+          price: {
+            lte:
+              (maxPrice *
+                (100 + Number(process.env.PRICE_TOLERANCE_PERCENTAGE))) /
+              100,
+          },
+        }),
+      },
+      orderBy: { credit: "desc" },
+    })
+  ).map((p) => ({ ...p, isPromoted: true }));
+  //const promotedWithoutPriceFilter = (promotedWithFilter.length < 4 && (minPrice || maxPrice)) ? await (prisma.property.findMany({
+  //  take: 4 - promotedWithFilter.length,
+  //  where: {
+  //    id: { notIn: promotedWithFilter.map(p => p.id) },
+  //    district,
+  //    isArchived: false,
+  //    bidExpirationTime: { gt: new Date() },
+  //  },
+  //  orderBy: { credit: "desc" },
+  //})).map((p) => ({ ...p, isPromoted: true })) : [];
+  const promoted = promotedWithFilter; //.concat(promotedWithoutPriceFilter);
+
+  const where = {
+    id: {
+      not: { in: promoted.map((p) => p.id) },
+    },
+    isArchived: false,
+    propertyType,
+    adType,
+    propertyStatus,
+    builtYear,
+    settlement,
+    district,
+    ceilingHeight,
+    constructionMethod,
+    view,
+    orientation,
+    balcony,
+    floor,
+    heating,
+    ...((minPrice || maxPrice) && {
+      price: {
+        ...(minPrice && { gte: parseInt(minPrice) }),
+        ...(maxPrice && { lte: parseInt(maxPrice) }),
+      },
+    }),
+    ...((minArea || maxArea) && {
+      area: {
+        ...(minArea && { gte: parseInt(minArea) }),
+        ...(maxArea && { lte: parseInt(maxArea) }),
+      },
+    }),
+  };
+
+  const ads = await prisma.property.findMany({
+    take: parseInt(limit || 10),
+    skip: parseInt(offset || 0),
+    where,
+  });
+
+  const count = await prisma.property.count({ where });
+
+  const data = promoted.concat(ads);
+
+  return res.send({
+    data,
+    count,
+  });
+});
+
+router.get("/homepage-ads", async (req, res) => {
+  const totalRequired = 3;
+
+  let promoted = (
+    await prisma.property.findMany({
+      take: 4,
+      where: {
+        isArchived: false,
+        h_bidExpirationTime: { gt: new Date() },
+      },
+      orderBy: { credit: "desc" },
+      take: totalRequired,
+    })
+  ).map((p) => ({ ...p, isPromoted: true }));
+  if (promoted.length < totalRequired) {
+    const remainingProperties = await prisma.property.findMany({
+      where: {
+        id: { notIn: promoted.map((p) => p.id) },
+      },
+      take: totalRequired - promoted.length,
+    });
+    promoted = promoted.concat(remainingProperties);
+    return res.send({
+      data: promoted,
+    });
+  } else {
+    return res.send({
+      data: promoted,
+    });
+  }
+});
+
+router.get("/bid-prices", async (req, res) => {
+  const { district } = req.query;
+  const promoted = await prisma.property.findMany({
+    where: {
+      district,
+      bidExpirationTime: { gt: new Date() },
+      isArchived: false,
+    },
+    orderBy: { credit: "desc" },
+  });
+  if (promoted.length > 0) {
+    res.send({
+      data: promoted.map((ad) => ({ price: ad.credit, id: ad.id })),
+    });
+  } else {
+    res.send({
+      data: [{ price: process.env.MIN_BID_PRICE }],
+    });
+  }
+});
+
+router.get("/homepage-bid-prices", async (req, res) => {
+  const promoted = await prisma.property.findMany({
+    where: {
+      h_bidExpirationTime: { gt: new Date() },
+      isArchived: false,
+    },
+    orderBy: { h_credit: "desc" },
+  });
+  if (promoted.length > 0) {
+    res.send({
+      data: promoted.map((ad) => ({ price: ad.h_credit, id: ad.id })),
+      total: 1,
+    });
+  } else {
+    res.send({
+      data: [{ price: process.env.MIN_HOMEPAGE_BID_PRICE }],
+      total: 1,
+    });
+  }
+});
+
+router.post("/upgrade-home/:id", auth, async (req, res) => {
+  const { id } = req.params;
+  const { id: userId } = req.user || {};
+  const user = await prisma.user.findFirst({ where: { id: userId } });
+
+  const credit = user?.credit || 0;
+  const { bidCredits } = req.body;
+  if (bidCredits <= 0) {
+    return res.send({
+      error: true,
+      message: "A minimális kredit mennyiség nem lehet kisebb mint 1.",
+    });
+  }
+  if (credit >= bidCredits) {
+    const currentProperty = await prisma.property.findFirst({
+      where: { id, isArchived: false },
+      select: {
+        h_bidExpirationTime: true,
+      },
+    });
+
+    const isPromotionActive =
+      currentProperty?.h_bidExpirationTime &&
+      new Date(currentProperty?.h_bidExpirationTime).getTime() > Date.now();
+
+    const property = await prisma.property.update({
+      where: { id },
+      data: isPromotionActive
+        ? {
+            h_credit: {
+              increment: bidCredits,
+            },
+          }
+        : {
+            h_credit: bidCredits,
+            h_bidExpirationTime: new Date(Date.now() + 86400 * 1000),
+          },
+    });
+    const user = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        credit: { decrement: bidCredits },
+      },
+    });
+    res.status(200).send({
+      message: "Hirdetés kiemelve",
+      user,
+      property,
+    });
+  } else {
+    res.status(400).send({ message: "Nincs elegendő kredit" });
+  }
+});
+
+router.get("/:id", async (req, res) => {
+  const { id } = req.params;
+  const data = await prisma.property.findUnique({
+    where: { id, isArchived: false },
+  });
+  if (data) {
+    data.agent = await prisma.user.findFirst({
+      where: { id: data?.submittedBy },
+    });
+  }
+  try {
+  await prisma.property.update({
+    where: { id },
+    data: {
+      views: (data?.views || 0) + 1,
+    },
+  });
+  }catch(err){}
+  return res.send({
+    data,
+  });
+});
+
+router.post("/upgrade/:id", auth, async (req, res) => {
+  const { id } = req.params;
+  const { id: userId } = req.user || {};
+  const user = await prisma.user.findFirst({ where: { id: userId } });
+
+  const credit = user?.credit || 0;
+  const { bidCredits } = req.body;
+  if (bidCredits <= 0) {
+    return res.send({
+      error: true,
+      message: "A minimális kredit mennyiség nem lehet kisebb mint 1.",
+    });
+  }
+  if (credit >= bidCredits) {
+    const currentProperty = await prisma.property.findFirst({
+      where: { id, isArchived: false },
+      select: {
+        bidExpirationTime: true,
+      },
+    });
+
+    const isPromotionActive =
+      currentProperty?.bidExpirationTime &&
+      new Date(currentProperty?.bidExpirationTime).getTime() > Date.now();
+
+    const property = await prisma.property.update({
+      where: { id },
+      data: isPromotionActive
+        ? {
+            credit: {
+              increment: bidCredits,
+            },
+          }
+        : {
+            credit: bidCredits,
+            bidExpirationTime: new Date(Date.now() + 86400 * 1000),
+          },
+    });
+    const user = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        credit: { decrement: bidCredits },
+      },
+    });
+    res.status(200).send({
+      message: "Hirdetés kiemelve",
+      user,
+      property,
+    });
+  } else {
+    res.status(400).send({ message: "Nincs elegendő kredit" });
+  }
+});
+
+router.get("/bid-place", auth, async (req, res) => {
+  if (!req.query.id) {
+    res.status(400).send({ message: "Missing Id" });
+  }
+  const property = await prisma.property.findMany({
+    where: {
+      id: req.query.id,
+      isArchived: false,
+      bidExpirationTime: { not: null },
+      submittedBy: req.user?.id,
+    },
+  });
+
+  if (property) {
+    const { district } = property;
+    const promotedAds = await prisma.property.findMany({
+      where: {
+        district,
+        bidExpirationTime: { gt: new Date() },
+        isArchived: false,
+      },
+    });
+    const total = promotedAds.length;
+    let position = 1;
+    let top = 0;
+    let bottom = 0;
+    if (total > 0) {
+      promotedAds.forEach((p) => {
+        if (p.credit > property.credit) {
+          position++;
+        }
+      });
+      top = position - 1;
+      bottom = total - position;
+    }
+  } else {
+    return null;
+  }
+});
+
+router.delete("/:id", async (req, res) => {
+  const property = await prisma.property.update({
+    where: { id: req.params.id },
+    data: {
+      isArchived: true,
+    },
+  });
+  return res.send({ data: property });
+});
+
+module.exports = router;
