@@ -11,7 +11,7 @@ import Loading from "../Elements/Loading";
 import { request } from "../../utils/request";
 import useIsMobile from "../../utils/useIsMobile";
 
-function MyPropertyCard({ property, properties, setProperties }) {
+function MyPropertyCard({ property, properties, setProperties, setDapIsVisible, setDeletingProperty }) {
   const [showBidding, setShowBidding] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const isMobile = useIsMobile();
@@ -23,21 +23,10 @@ function MyPropertyCard({ property, properties, setProperties }) {
     (option) => option.value === property.settlement
   );
 
-  const handleDelete = async () => {
-    try {
-      if (window.confirm("Are you sure you want to delete this property")) {
-        setDeleting(true);
-        const response = await request(`/api/property/${property.id}`, {
-          method: "DELETE",
-        });
-        if (response?.data?.isArchived) {
-          setProperties(properties.filter((p) => p.id !== property.id));
-        }
-      }
-    } catch (err) {
-    } finally {
-      setDeleting(false);
-    }
+  const showDeletePopup = (property) => {
+    console.log(property.id);
+      setDeletingProperty(property);
+      setDapIsVisible(true);
   };
 
   return (
@@ -57,7 +46,8 @@ function MyPropertyCard({ property, properties, setProperties }) {
               {property.street} {property?.houseNo}
             </span>
           </Link>
-          <span onClick={handleDelete}>
+          <span onClick={() => showDeletePopup(property)}>
+          {/*<span onClick={handleDelete}>*/}
             {deleting ? (
               <Loading />
             ) : (
