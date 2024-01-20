@@ -2,7 +2,7 @@ const auth = require("../middleware/auth");
 const prisma = require("../prisma/prisma");
 const settlements = require("../res/settlements");
 const { generate8DigitNumericId } = require("../utils/getId");
-
+const { deleteReason } = require("deletereasons");
 const router = require("express").Router();
 
 const getValidId = async () => {
@@ -433,14 +433,83 @@ router.get("/bid-place", auth, async (req, res) => {
   }
 });
 
-router.delete("/:id", async (req, res) => {
-  const property = await prisma.property.update({
-    where: { id: req.params.id },
-    data: {
-      isArchived: true,
-    },
-  });
-  return res.send({ data: property });
+
+router.get("/archive-list", auth, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const properties = await prisma.property.findMany({
+      where: {
+        isArchived: true,
+        submittedBy: userId,
+      },
+    });
+
+    return res.status(200).json(properties);
+  } catch (error) {
+    console.error("Error fetching archived properties:", error);
+    return res.status(500).json({ message: "Error fetching archived properties" });
+  }
 });
+
+
+router.delete("archive/:id/:reason_id", auth, async (req, res) => {
+  try {
+    const { id, reason_id } = req.params;
+
+    if (!id || !reason_id) {
+      return res.status(400).json({ message: "Both 'id' and 'reason_id' are required." });
+    }
+
+    await prisma.$transaction(async (prisma) => {
+      await prisma.property.update({
+        where: { id },
+        data: {
+          isArchived: true,
+        },
+      });
+
+      await deleteReason.CreateReasonEntity(reason_id, req.user.id);
+    });
+
+    return res.status(200).json({ message: "Successful" });
+  } catch (error) {
+    console.error("Error archiving property:", error);
+    return res.status(500).json({ message: "Error archiving property" });
+  }
+});
+router.delete("/:id", auth, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return handleErrorResponse(res, 400, "'Property id is required.");
+    }
+
+    const property = await prisma.property.findFirst({
+      where: { id, user_id: req.user?.id },
+    });
+
+    if (!property) {
+      return handleErrorResponse(res, 400, "This property is not yours.");
+    }
+
+    await prisma.$transaction(async (prisma) => {
+      await prisma.property.delete({
+        where: { id },
+      });
+
+      await deleteReason.deleteReasonEntityById(id);
+    });
+
+    return res.status(200).json({ message: "Successful" });
+  } catch (error) {
+    return handleErrorResponse(res, 500, "Error deleting property");
+  }
+});
+
+const handleErrorResponse = (res, status, message) => {
+  console.error(message);
+  return res.status(status).json({ message });
+};
 
 module.exports = router;
