@@ -1,113 +1,99 @@
 import React, { useState } from "react";
 import { BasePopup } from "../Elements/Base/BasePopup";
-import { Loader } from "./Loader";
-
-export function DeleteAdPopup({ setIsVisible, property, setProperties }) {
+import { DeleteLoader } from "../Loader";
+import { archiveDelete } from "../../utils/request/archiveRequest"
+export function DeleteAdPopup({ setIsVisible, property,setProperties,properties,ReasonOptions }) {
   const [isCommentVisible, setIsCommentVisible] = useState(false);
   const [comment, setComment] = useState("");
 
-  const [choice, setChoice] = useState(false);
+  const [reasonId, setReasonId] = useState(false);
   const [deleting, setDeleting] = useState(false);
-
-  const options = [
-    { name: "Test", value: 1, openComment: false },
-    { name: "Test2", value: 2, openComment: false },
-    { name: "Tes3", value: 3, openComment: false },
-    { name: "Egyéb", value: 4, openComment: true },
-  ];
+  const options = ReasonOptions;
 
   const openComment = () => {
     setIsCommentVisible(true);
   };
-
-  const _setChoice = (key) => {
-    setChoice(key);
-    console.log("choice: " + key);
+  const hideComment = () => {
+    setIsCommentVisible(false);
+  };
+  const _setReasonId = (key) => {
+    setReasonId(key);
   };
 
   const submit = async () => {
-    if (choice) {
-      // console.log("submit");
-      // console.log("choice: " + choice);
-      // console.log("comment: " + comment);
+    if (reasonId) {
       await handleDelete();
     }
   };
 
   const handleDelete = async () => {
-    // try {
-    //     setDeleting(true);
-    //     const response = await request(`/api/property/${property.id}`, {
-    //       method: "DELETE",
-    //     });
-    //     if (response?.data?.isArchived) {
-    //       setProperties(properties.filter((p) => p.id !== property.id));
-    //     }
-    // } catch (err) {
-    // } finally {
-    //     setDeleting(false);
-    // }
+     try {
+         setDeleting(true);
+         const response = await archiveDelete(property.id,reasonId);
+         if (response.isSuccess) {
+           setProperties(properties.filter((p) => p.id !== property.id));
+         }
+     } catch (err) {
+     } finally {
+         setDeleting(false);
+         setIsVisible(false);
+     }
     setDeleting(true);
-    console.log(property);
-
-    setTimeout(function () {
-      console.log("deleted");
-      setIsVisible(false);
-      setDeleting(false);
-    }, 2000);
   };
   const buttonClass = "-button block w-full mb-4";
 
   return (
-    <BasePopup title="Hirdetés törlése" setIsvisible={setIsVisible}>
-      <div className="delete-ad-popup">
-        <div>
-          {options.map((option) => (
+      <BasePopup title="Hirdetés törlése" setIsvisible={setIsVisible}>
+        <div className="delete-ad-popup">
+          <div>
+            {options.map((option) => (
+                <button
+                    className={
+                        (reasonId === option.value ? "blue" : "orange") + buttonClass
+                    }
+                    onClick={() => {
+                      _setReasonId(option.value);
+                      if (option.openComment) {
+                        openComment();
+                      } else {
+                        hideComment();
+                      }
+                    }}
+                    key={option.value}
+                >
+                  {option.name}
+                </button>
+            ))}
+            {isCommentVisible && (
+                <>
+                  <label htmlFor="comment">Megjegyzés:</label>
+                  <textarea
+                      id="comment"
+                      className="bg-gray-200 rounded-md p-4 py-3 w-full outline-none"
+                      type="text"
+                      autoFocus={true}
+                      onChange={(event) => {
+                        setComment(event.target.value);
+                      }}
+                      value={comment}
+                  />
+                </>
+            )}
             <button
-              className={
-                (choice === option.value ? "blue" : "orange") + buttonClass
-              }
-              onClick={() => {
-                _setChoice(option.value);
-                if (option.openComment) {
-                  openComment();
+                type="submit"
+                value="Törlés"
+                className={
+                    (reasonId ? "" : "disabled ") +
+                    "delete-button uppercase font-bold mt-8 orange" +
+                    buttonClass
                 }
-              }}
-              key={option.value}
+                onClick={submit}
             >
-              {option.name}
+              Törlés
             </button>
-          ))}
-          {isCommentVisible && choice === options[3].value && (
-            <>
-              <label htmlFor="comment">Megjegyzés:</label>
-              <textarea
-                id="comment"
-                className="bg-gray-200 rounded-md p-4 py-3 w-full outline-none"
-                type="text"
-                autoFocus={true}
-                onChange={(event) => {
-                  setComment(event.target.value);
-                }}
-                value={comment}
-              />
-            </>
-          )}
-          <button
-            type="submit"
-            value="Törlés"
-            className={
-              (choice ? "" : "disabled ") +
-              "delete-button uppercase font-bold mt-8 orange" +
-              buttonClass
-            }
-            onClick={submit}
-          >
-            Törlés
-          </button>
+          </div>
+          {deleting && <DeleteLoader/>}
         </div>
-        {deleting && <Loader />}
-      </div>
-    </BasePopup>
+      </BasePopup>
   );
 }

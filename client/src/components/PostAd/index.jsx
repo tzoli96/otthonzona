@@ -12,7 +12,7 @@ import Navbar from "../Navbar";
 import Footer from "../Footer";
 import { Link } from "react-router-dom";
 import { validateForm } from "../../utils/validation/post-validation";
-import { submitProperty } from "../../utils/request/propertySubmit";
+import { submitProperty } from "../../utils/request/propertyRequests";
 
 const transformProperty = (property) => ({
   ...property,

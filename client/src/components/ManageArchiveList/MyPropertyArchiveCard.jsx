@@ -5,13 +5,11 @@ import moment from "moment";
 import viewsIcon from "../../pictures/app/view.svg";
 import timeIcon from "../../pictures/app/time.svg";
 import { Link } from "react-router-dom";
-import { BiddingPropertyCard } from "../BiddingDashboard";
 import trashIcon from "../../pictures/app/trash.svg";
 import Loading from "../Elements/Loading";
 import useIsMobile from "../../utils/useIsMobile";
 
-function MyPropertyCard({ property, properties, setProperties, setDapIsVisible, setDeletingProperty }) {
-  const [showBidding, setShowBidding] = useState(false);
+function MyPropertyArchiveCard({ property, properties, setProperties, setDapIsVisible, setDeletingProperty }) {
   const [deleting, setDeleting] = useState(false);
   const isMobile = useIsMobile();
 
@@ -23,7 +21,6 @@ function MyPropertyCard({ property, properties, setProperties, setDapIsVisible, 
   );
 
   const showDeletePopup = (property) => {
-    console.log(property.id);
       setDeletingProperty(property);
       setDapIsVisible(true);
   };
@@ -75,72 +72,19 @@ function MyPropertyCard({ property, properties, setProperties, setDapIsVisible, 
               {moment(property.submittedOn).format("YYYY-MM-DD")}
             </span>
           </p>
-          <p className="my-1">
-            {property.bidExpirationTime ? (
-              new Date(property.bidExpirationTime).getTime() > Date.now() ? (
-                <p>
-                  Kiemelésed lejárata:{" "}
-                  <span className="text-blue">
-                    {moment(new Date(property.bidExpirationTime)).format(
-                      "YYYY-MM-DD HH:MM"
-                    )}{" "}
-                  </span>
-                  <b>(aktív)</b>
-                  <br />
-                  Elköltöttél {property.credit} kreditet
-                </p>
-              ) : (
-                <p>
-                  Kiemelésed lejárt:{" "}
-                  <span className="text-blue">
-                    {moment(new Date(property.bidExpirationTime)).format(
-                      "YYYY-MM-DD HH:MM"
-                    )}
-                  </span>
-                  <br />
-                  Elköltöttél {property.credit} kreditet
-                </p>
-              )
-            ) : null}
-          </p>
         </div>
         <div className="grid grid-cols-2 md:flex gap-2">
-          <div className="my-4 w-full md:w-auto">
-            <Link to={`/edit-property/${property?.id}`}>
-              <button className="orange-button">Szerkesztés</button>
-            </Link>
-          </div>
           {!isMobile && (
             <div className="my-4">
               <Link to={`/${property?.id}`}>
-                <button className="blue-button">Megtekintés</button>
+                <button className="blue-button">Aktiválás</button>
               </Link>
             </div>
           )}
-          <div className="my-4 w-full md:w-auto">
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setShowBidding(!showBidding);
-              }}
-              className="orange-button"
-            >
-              {showBidding ? "Kiemelés" : "Kiemelés"}
-            </button>
-          </div>
         </div>
-      </div>
-      <div className="col-span-3">
-        {showBidding && (
-          <BiddingPropertyCard
-            property={property}
-            properties={properties}
-            setProperties={setProperties}
-          />
-        )}
       </div>
     </div>
   );
 }
 
-export default MyPropertyCard;
+export default MyPropertyArchiveCard;

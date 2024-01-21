@@ -31,6 +31,7 @@ import ConfirmInvite from "./components/Agency/InvitationConfirm";
 import { createContext, useEffect, useState } from "react";
 import { request } from "./utils/request";
 import ManageAds from "./components/ManageAds";
+import ManageArchiveList from "./components/ManageArchiveList";
 import EditAd from "./pages/EditAd";
 import CreditPurchaseHistory from "./components/CreditPurchaseHistory";
 import BiddingDashboard from "./components/BiddingDashboard";
@@ -131,7 +132,7 @@ function App() {
         <Route path="*" element={<ErrorPage />} />
         <Route
           path="/manage-archives"
-          element={<ManageAds isArchive={true} key="archives" />}
+          element={<ManageArchiveList key="archives" />}
         />
       </Routes>
       <Toaster />

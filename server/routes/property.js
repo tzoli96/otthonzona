@@ -2,7 +2,6 @@ const auth = require("../middleware/auth");
 const prisma = require("../prisma/prisma");
 const settlements = require("../res/settlements");
 const { generate8DigitNumericId } = require("../utils/getId");
-const { deleteReason } = require("./deletereasons");
 const router = require("express").Router();
 
 const getValidId = async () => {
@@ -18,6 +17,22 @@ const getValidId = async () => {
     return id;
   } catch (err) {
     return getValidId();
+  }
+};
+
+const getValidReasonEntityId = async () => {
+  try {
+    const id = generate8DigitNumericId() + "";
+    const reasonEntityId = await prisma.PropertyDeleteReasonEntity.findFirst({
+      where: { id },
+      select: { id: true },
+    });
+    if (reasonEntityId) {
+      throw new Error("Already exist");
+    }
+    return id;
+  } catch (err) {
+    return getValidReasonEntityId();
   }
 };
 
@@ -316,29 +331,6 @@ router.post("/upgrade-home/:id", auth, async (req, res) => {
   }
 });
 
-router.get("/:id", async (req, res) => {
-  const { id } = req.params;
-  const data = await prisma.property.findUnique({
-    where: { id, isArchived: false },
-  });
-  if (data) {
-    data.agent = await prisma.user.findFirst({
-      where: { id: data?.submittedBy },
-    });
-  }
-  try {
-  await prisma.property.update({
-    where: { id },
-    data: {
-      views: (data?.views || 0) + 1,
-    },
-  });
-  }catch(err){}
-  return res.send({
-    data,
-  });
-});
-
 router.post("/upgrade/:id", auth, async (req, res) => {
   const { id } = req.params;
   const { id: userId } = req.user || {};
@@ -437,13 +429,12 @@ router.get("/bid-place", auth, async (req, res) => {
 router.get("/archive-list", auth, async (req, res) => {
   try {
     const userId = req.user.id;
-    const properties = await prisma.property.findMany({
+    const properties = await prisma.Property.findMany({
       where: {
         isArchived: true,
         submittedBy: userId,
-      },
+      }
     });
-
     return res.status(200).json(properties);
   } catch (error) {
     console.error("Error fetching archived properties:", error);
@@ -452,41 +443,45 @@ router.get("/archive-list", auth, async (req, res) => {
 });
 
 
-router.delete("archive/:id/:reason_id", auth, async (req, res) => {
+router.delete("/archive", auth, async (req, res) => {
   try {
-    const { id, reason_id } = req.params;
+    const requestData = {
+      propertyId: req.body.propertyId,
+      reasonId: req.body.reasonId
+    };
 
-    if (!id || !reason_id) {
+    if (!requestData.propertyId || !requestData.reasonId) {
       return res.status(400).json({ message: "Both 'id' and 'reason_id' are required." });
     }
 
     await prisma.$transaction(async (prisma) => {
       await prisma.property.update({
-        where: { id },
+        where: { id:requestData.propertyId },
         data: {
           isArchived: true,
         },
       });
 
-      await deleteReason.CreateReasonEntity(reason_id, req.user.id);
+      await createReasonEntity(requestData.reasonId, req.user.id,requestData.propertyId);
     });
 
-    return res.status(200).json({ message: "Successful" });
+    return res.status(200).json({ isSuccess: true });
   } catch (error) {
     console.error("Error archiving property:", error);
     return res.status(500).json({ message: "Error archiving property" });
   }
 });
-router.delete("/:id", auth, async (req, res) => {
-  try {
-    const { id } = req.params;
 
-    if (!id) {
+router.delete("/", auth, async (req, res) => {
+  try {
+    const { propertyId } = req.body;
+
+    if (!propertyId) {
       return handleErrorResponse(res, 400, "'Property id is required.");
     }
 
     const property = await prisma.property.findFirst({
-      where: { id, user_id: req.user?.id },
+      where: { id:propertyId, submittedBy: req.user.id },
     });
 
     if (!property) {
@@ -494,22 +489,93 @@ router.delete("/:id", auth, async (req, res) => {
     }
 
     await prisma.$transaction(async (prisma) => {
-      await prisma.property.delete({
-        where: { id },
-      });
+      await deleteReasonEntityById(propertyId,req.user.id);
 
-      await deleteReason.deleteReasonEntityById(id);
+      await prisma.property.delete({
+        where: { id:propertyId },
+      });
     });
 
-    return res.status(200).json({ message: "Successful" });
+    return res.status(200).json({ isSuccess: true  });
   } catch (error) {
+    console.log(error);
     return handleErrorResponse(res, 500, "Error deleting property");
   }
 });
+
+
+const deleteReasonEntityById = async (id,userId) => {
+  if (!id) {
+    throw new Error("'id' is required.");
+  }
+
+  try {
+    await prisma.PropertyDeleteReasonEntity.deleteMany({
+      where: { property_id:id, user_id:userId }
+    });
+
+  } catch (error) {
+    console.error("Error deleting reason entity:", error);
+    throw new Error("Error deleting reason entity");
+  }
+};
+
+
+const createReasonEntity = async (reasonId, userId , propertyId) => {
+  if (!reasonId || !userId || !propertyId) {
+    throw new Error("Both 'reasonId' and 'userId' and 'propertyId' are required.");
+  }
+
+  try {
+    const id = await getValidReasonEntityId();
+    return await prisma.propertyDeleteReasonEntity.create({
+      data: {
+        id,
+        reason_id: reasonId,
+        property_id: propertyId,
+        user_id: userId,
+      },
+    });
+  } catch (error) {
+    console.error("Error creating reason entity:", error);
+    throw new Error("Error creating reason entity");
+  }
+};
 
 const handleErrorResponse = (res, status, message) => {
   console.error(message);
   return res.status(status).json({ message });
 };
+
+
+/**
+ * Note: This route must be the last in the sorting order to avoid conflicts with other routes.
+ *
+ * @param {string} id - The unique identifier of the property.
+ *
+ * @returns {Object} - The JSON response containing the property information.
+ */
+router.get("/:id", async (req, res) => {
+  const { id } = req.params;
+  const data = await prisma.property.findUnique({
+    where: { id, isArchived: false },
+  });
+  if (data) {
+    data.agent = await prisma.user.findFirst({
+      where: { id: data?.submittedBy },
+    });
+  }
+  try {
+    await prisma.property.update({
+      where: { id },
+      data: {
+        views: (data?.views || 0) + 1,
+      },
+    });
+  }catch(err){}
+  return res.send({
+    data,
+  });
+});
 
 module.exports = router;

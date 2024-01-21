@@ -138,6 +138,7 @@ model Property {
 
   isArchived    Boolean @default(false)
   referenceLink String?
+  propertyDeleteReasonEntities PropertyDeleteReasonEntity[]
 }
 
 model DraftProperty {
@@ -193,8 +194,10 @@ model PropertyDeleteReasons {
 }
 
 model PropertyDeleteReasonEntity {
-  id        String    @id @map("_id")
-  reason_id String
-  user_id   String
-  reason    PropertyDeleteReasons @relation(fields: [reason_id], references: [id])
+  id            String    @id @map("_id")
+  reason_id     String
+  property_id   String
+  user_id       String
+  reason        PropertyDeleteReasons @relation(fields: [reason_id], references: [id])
+  property      Property @relation(fields: [property_id], references: [id])
 }

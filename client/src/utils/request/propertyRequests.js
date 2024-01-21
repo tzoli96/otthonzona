@@ -12,3 +12,15 @@ export const submitProperty = async (url, body, method) => {
         throw error;
     }
 };
+
+
+export const finalPropertyDelete = async (propertyId) => {
+    try {
+        return await request(`/api/property/`, {
+            method: 'DELETE',
+            body: JSON.stringify({propertyId:propertyId}),
+        });
+    } catch (error) {
+        throw error;
+    }
+};

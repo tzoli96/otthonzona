@@ -1,31 +1,24 @@
 import React, { useState } from "react";
 import { BasePopup } from "../Elements/Base/BasePopup";
-import { Loader } from "./Loader.jsx";
+import { DeleteLoader } from "../Loader";
+import { finalPropertyDelete } from "../../utils/request/propertyRequests";
 
-export function DeleteArchivePopup({ setIsVisible, property, setProperties }) {
+export function DeleteArchivePopup({ setIsVisible, property, setProperties,properties}) {
   const [deleting, setDeleting] = useState(false);
 
   const handleDelete = async () => {
-    // try {
-    //     setDeleting(true);
-    //     const response = await request(`/api/property/${property.id}`, {
-    //       method: "DELETE",
-    //     });
-    //     if (response?.data?.isArchived) {
-    //       setProperties(properties.filter((p) => p.id !== property.id));
-    //     }
-    // } catch (err) {
-    // } finally {
-    //     setDeleting(false);
-    // }
-    setDeleting(true);
-    console.log(property);
-
-    setTimeout(function () {
-      console.log("deleted");
-      setIsVisible(false);
+    try {
+      setDeleting(true);
+      const response = await finalPropertyDelete(property.id);
+      if (response.isSuccess) {
+        setProperties(properties.filter((p) => p.id !== property.id));
+      }
+    } catch (err) {
+    } finally {
       setDeleting(false);
-    }, 2000);
+      setIsVisible(false);
+    }
+    setDeleting(true);
   };
   const buttonClass = "-button mb-4";
 
@@ -50,7 +43,7 @@ export function DeleteArchivePopup({ setIsVisible, property, setProperties }) {
               Mégse
             </button>
           </div>
-          {deleting && <Loader />}
+          {deleting && <DeleteLoader />}
         </div>
       </div>
     </BasePopup>

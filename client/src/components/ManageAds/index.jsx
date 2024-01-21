@@ -6,27 +6,38 @@ import MyPropertyCard from "./MyPropertyCard";
 import { BuyCreditModal } from "../BiddingDashboard/BuyCredit";
 import { AppContext } from "../../App";
 import { DeleteAdPopup } from "./DeleteAdPopup";
-import { DeleteArchivePopup } from "./DeleteArchivePopup";
-
-function ManageAds({ isArchive }) {
+import { getDeleteReasons } from "../../utils/request/archiveRequest";
+function ManageAds() {
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
   const { user } = useContext(AppContext);
   const [showBuyCredit, setShowBuyCredit] = useState(false);
+  const [reasonOptions, setReasonOptions] = useState([]);
 
   //delete ad popup is visible
   const [dapIsVisible, setDapIsVisible] = useState(false);
   const [deletingProperty, setDeletingProperty] = useState(null);
 
-  ManageAds.defaultProps = {
-    isArchive: false,
+  const ReasonOptionsMapping = (data) => {
+    return data.data.map(item => ({
+      value: item.id,
+      name: item.name,
+      openComment: false
+    }));
   };
-
-  const closeDap = () => {
-    console.log("close");
-  };
-
   useEffect(() => {
+    getDeleteReasons()
+        .then((data) => {
+          setLoading(false);
+          const mappedOptions = ReasonOptionsMapping(data).concat([
+            { value:"3", name: "Egyéb", openComment: true },
+          ]);
+          setReasonOptions(mappedOptions);
+        })
+        .catch((err) => {
+          setLoading(false);
+        });
+
     request("/api/user/my-properties")
       .then((data) => {
         setLoading(false);
@@ -42,7 +53,7 @@ function ManageAds({ isArchive }) {
       <Layout selected={0}>
         <div className="p-4 md:p-8">
           <p className="text-xl font-semibold">
-            {isArchive ? "Archívált hirdetések" : "Hirdetések kezelése"}
+           Hirdetések kezelése
             <span
               className="float-right !text-lg font-bold text-gray-600"
               onClick={() => setShowBuyCredit(true)}
@@ -76,19 +87,14 @@ function ManageAds({ isArchive }) {
       {showBuyCredit && (
         <BuyCreditModal close={() => setShowBuyCredit(false)} />
       )}
-      {dapIsVisible && !isArchive && (
+      {dapIsVisible && (
         <DeleteAdPopup
           setIsVisible={setDapIsVisible}
           property={deletingProperty}
           setProperties={setProperties}
+          properties={properties}
+          ReasonOptions={reasonOptions}
         ></DeleteAdPopup>
-      )}
-      {dapIsVisible && isArchive && (
-        <DeleteArchivePopup
-          setIsVisible={setDapIsVisible}
-          property={deletingProperty}
-          setProperties={setProperties}
-        ></DeleteArchivePopup>
       )}
     </>
   );
