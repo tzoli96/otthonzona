@@ -184,3 +184,17 @@ model DraftProperty {
   submittedBy         String
   submittedOn         DateTime?  @default(now())
 }
+
+
+model PropertyDeleteReasons {
+  id   String    @id @map("_id")
+  name String
+  propertyDeleteReasonEntities PropertyDeleteReasonEntity[]
+}
+
+model PropertyDeleteReasonEntity {
+  id        String    @id @map("_id")
+  reason_id String
+  user_id   String
+  reason    PropertyDeleteReasons @relation(fields: [reason_id], references: [id])
+}
