@@ -1,8 +1,8 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import { BasePopup } from "../Elements/Base/BasePopup";
-import { disabled } from "../../res/options";
+import { Loader } from "./Loader";
 
-export function DeleteAdPopup({ setIsVisible, property }) {
+export function DeleteAdPopup({ setIsVisible, property, setProperties }) {
   const [isCommentVisible, setIsCommentVisible] = useState(false);
   const [comment, setComment] = useState("");
 
@@ -25,16 +25,11 @@ export function DeleteAdPopup({ setIsVisible, property }) {
     console.log("choice: " + key);
   };
 
-  const handleSubmit = (event) => {
-    console.log("handleSubmit ran");
-    event.preventDefault();
-  };
-
   const submit = async () => {
     if (choice) {
-      console.log("submit");
-      console.log("choice: " + choice);
-      console.log("comment: " + comment);
+      // console.log("submit");
+      // console.log("choice: " + choice);
+      // console.log("comment: " + comment);
       await handleDelete();
     }
   };
@@ -52,12 +47,14 @@ export function DeleteAdPopup({ setIsVisible, property }) {
     // } finally {
     //     setDeleting(false);
     // }
-    setDeleting(true)
-    setTimeout(function (){
-      console.log('deleted');
+    setDeleting(true);
+    console.log(property);
+
+    setTimeout(function () {
+      console.log("deleted");
       setIsVisible(false);
       setDeleting(false);
-    },2000);
+    }, 2000);
   };
   const buttonClass = "-button block w-full mb-4";
 
@@ -109,7 +106,7 @@ export function DeleteAdPopup({ setIsVisible, property }) {
             Törlés
           </button>
         </div>
-        {deleting && <div className="loader"></div>}
+        {deleting && <Loader />}
       </div>
     </BasePopup>
   );

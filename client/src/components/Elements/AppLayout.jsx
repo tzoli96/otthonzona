@@ -46,6 +46,11 @@ function Layout({ children, selected }) {
         href: "/credit-purchase-history",
         icon: bankIcon,
       },
+      {
+        label: "Archivált hirdetések",
+        href: "/manage-archives",
+        icon: manageAdsIcon,
+      },
     ],
     []
   );

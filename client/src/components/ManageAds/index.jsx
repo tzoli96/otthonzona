@@ -1,14 +1,14 @@
-import React, {useEffect, useState, useContext, createContext} from "react";
+import React, { useEffect, useState, useContext, createContext } from "react";
 import Layout from "../Elements/AppLayout";
 import Loading from "../Elements/Loading";
 import { request } from "../../utils/request";
 import MyPropertyCard from "./MyPropertyCard";
 import { BuyCreditModal } from "../BiddingDashboard/BuyCredit";
 import { AppContext } from "../../App";
-import { BasePopup } from "../Elements/Base/BasePopup";
-import {DeleteAdPopup} from "./DeleteAdPopup";
+import { DeleteAdPopup } from "./DeleteAdPopup";
+import { DeleteArchivePopup } from "./DeleteArchivePopup";
 
-function ManageAds({}) {
+function ManageAds({ isArchive }) {
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
   const { user } = useContext(AppContext);
@@ -18,10 +18,13 @@ function ManageAds({}) {
   const [dapIsVisible, setDapIsVisible] = useState(false);
   const [deletingProperty, setDeletingProperty] = useState(null);
 
+  ManageAds.defaultProps = {
+    isArchive: false,
+  };
+
   const closeDap = () => {
-    console.log('close');
-    // setDapIsVisible(false);
-  }
+    console.log("close");
+  };
 
   useEffect(() => {
     request("/api/user/my-properties")
@@ -39,7 +42,7 @@ function ManageAds({}) {
       <Layout selected={0}>
         <div className="p-4 md:p-8">
           <p className="text-xl font-semibold">
-            Hirdetések kezelése
+            {isArchive ? "Archívált hirdetések" : "Hirdetések kezelése"}
             <span
               className="float-right !text-lg font-bold text-gray-600"
               onClick={() => setShowBuyCredit(true)}
@@ -73,7 +76,20 @@ function ManageAds({}) {
       {showBuyCredit && (
         <BuyCreditModal close={() => setShowBuyCredit(false)} />
       )}
-      {dapIsVisible && <DeleteAdPopup setIsVisible={setDapIsVisible} property={deletingProperty}></DeleteAdPopup>}
+      {dapIsVisible && !isArchive && (
+        <DeleteAdPopup
+          setIsVisible={setDapIsVisible}
+          property={deletingProperty}
+          setProperties={setProperties}
+        ></DeleteAdPopup>
+      )}
+      {dapIsVisible && isArchive && (
+        <DeleteArchivePopup
+          setIsVisible={setDapIsVisible}
+          property={deletingProperty}
+          setProperties={setProperties}
+        ></DeleteArchivePopup>
+      )}
     </>
   );
 }
