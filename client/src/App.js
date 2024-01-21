@@ -105,7 +105,7 @@ function App() {
         <Route path="/post-ad" element={<PostAd />} />
         <Route path="/drafts" element={<Drafts />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/manage-ads" element={<ManageAds />} />
+        <Route path="/manage-ads" element={<ManageAds key="ads" />} />
         <Route path="/edit-property/:id" element={<EditAd />} />
         <Route
           path="/credit-purchase-history"
@@ -129,6 +129,10 @@ function App() {
         />
         <Route path="/:id" element={<Property />} />
         <Route path="*" element={<ErrorPage />} />
+        <Route
+          path="/manage-archives"
+          element={<ManageAds isArchive={true} key="archives" />}
+        />
       </Routes>
       <Toaster />
     </AppContext.Provider>

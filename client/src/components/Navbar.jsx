@@ -73,6 +73,11 @@ function NavbarProfile({ setShow, show, user, logout, isLoggedIn }) {
       { label: "Hirdetésfeladás", href: "/post-ad", icon: createAdIcon },
       { label: "Hirdetéskiemelés", href: "/bidding", icon: bankIcon },
       { label: "Mentett hirdetéseim", href: "/post-ad", icon: eyeIcon },
+      // {
+      //   label: "Archivált hirdetések",
+      //   href: "/manage-archives",
+      //   icon: manageAdsIcon,
+      // },
       //{ label: "Megtekintett ingatlanok", href: "/post-ad", icon: heartIcon },
       //{ label: "Értesítések", href: "/post-ad", icon: notificationIcon },
       { label: "Profil adatok", href: "/profile", icon: profileIcon },
