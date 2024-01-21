@@ -2,7 +2,7 @@ const auth = require("../middleware/auth");
 const prisma = require("../prisma/prisma");
 const settlements = require("../res/settlements");
 const { generate8DigitNumericId } = require("../utils/getId");
-const { deleteReason } = require("deletereasons");
+const { deleteReason } = require("./deletereasons");
 const router = require("express").Router();
 
 const getValidId = async () => {

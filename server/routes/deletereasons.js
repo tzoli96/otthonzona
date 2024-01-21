@@ -39,25 +39,6 @@ const createReasonEntity = async (reasonId, userId) => {
   }
 
   try {
-    return await prisma.PropertyDeleteReasonEntity.create({
-      data: {
-        reason_id: reasonId,
-        user_id: userId,
-      },
-    });
-  } catch (error) {
-    console.error("Error creating reason entity:", error);
-    throw new Error("Error creating reason entity");
-  }
-};
-
-
-const createReasonEntity = async (reasonId, userId) => {
-  if (!reasonId || !userId) {
-    throw new Error("Both 'reasonId' and 'userId' are required.");
-  }
-
-  try {
     return await prisma.PropertyDeleteReasonEntity.delete({
       where: {
         reason_id: reasonId,
