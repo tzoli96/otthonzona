@@ -54,32 +54,39 @@ function Agent({ agent }) {
         </div>
         <div className="orange-gradient p-8 rounded-t-[60px] mt-6 justify-center flex-col flex items-center text-white">
           <img src={whiteLogo} className="w-2/5" />
+
           <a href={`mailto:${agent?.email}`} className="block w-full">
             <button
               className="relative blue-button w-full mt-8 flex gap-12 items-center text-blue"
               style={{ width: "100%", background: "white" }}
             >
-              <img src={envl} className="ml-4 env-fix" />
+              <img src={envl} className="env-fix" />
               <span className="text-blue">Üzenetet küldök</span>
             </button>
           </a>
+
           <div className="flex w-full justify-between items-center">
             <button
-              className="relative blue-button flex-1 mt-3 flex gap-12 items-center"
+              className={`relative blue-button flex-1 mt-3 gap-12 items-center ${!showPhone ? 'max-sm:!hidden lg:max-2xl:!hidden' : ''}`}
               style={{ maxWidth: "100%" }}
             >
-              <img src={phone} className="ml-4" />
-              <span className="phone-number-fix">
+              <img src={phone} className="env-fix" />
+
+              <span>
                 {showPhone
                   ? formatPhoneNumber(agent?.phone)
-                  : formatHiddenPhoneNumber(agent?.phone)}
+                  : formatHiddenPhoneNumber(agent?.phone)
+                }
               </span>
             </button>
+
             {!showPhone && (
               <button
-                className="relative blue-button small-blue-button ml-4 p-2 mt-3"
+                className="relative blue-button ml-4 max-sm:ml-0 lg:max-2xl:ml-0 p-2 mt-3 max-sm:!w-full lg:max-2xl:!w-full gap-12"
                 onClick={handleShowPhone}
               >
+                <img src={phone} className="sm:max-lg:hidden 2xl:hidden env-fix" />
+
                 <span>Mutatás</span>
               </button>
             )}

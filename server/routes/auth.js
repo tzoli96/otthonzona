@@ -36,7 +36,7 @@ passport.use(
       const { displayName, emails } = profile;
       const email = emails?.[0]?.value;
       const [firstName, lastName] = displayName.split(" ");
-      await createUser({ firstName, lastName, email });
+      await createUser({ firstName, lastName, email, isEmailVerified: true });
       return done(null, profile);
     }
   )
@@ -55,7 +55,13 @@ passport.use(
       const email = emails?.[0]?.value;
       const photo = photos?.[0]?.value;
 
-      await createUser({ firstName, lastName, email, photo });
+      await createUser({
+        firstName,
+        lastName,
+        email,
+        photo,
+        isEmailVerified: true,
+      });
 
       return done(null, profile);
     }

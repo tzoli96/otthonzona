@@ -1,9 +1,10 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useRef, useEffect } from "react";
 import roomIcon from "../../icons/room.svg";
 import arrows from "../../icons/two-head-arrow.svg";
 import heart from "../../icons/heart.svg";
 import orangeHeart from "../../icons/orange-heart.svg";
 import share from "../../icons/share.svg";
+import { toast } from "react-hot-toast";
 import { districtOptions, settlementOptions } from "../../res/options";
 import thousandSeparator from "../../utils/thousandSeparator";
 import { request } from "../../utils/request";
@@ -22,6 +23,64 @@ function Info({ property }) {
     user?.savedProperties?.map((p) => p + "").indexOf(property.id) > -1
   );
 
+  const [showShareOptions, setShowShareOptions] = useState(false);
+  const popupRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (popupRef.current && !popupRef.current.contains(event.target)) {
+        setShowShareOptions(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleShare = (option) => {
+    const propertyUrl = `https://otthonzona.com/${property.id}`;
+    const appId = "259498910212627";
+    const redirectUri = encodeURIComponent(window.location.href);
+
+    if (option === "facebook") {
+      const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+        propertyUrl
+      )}`;
+      window.open(facebookUrl, "_blank");
+    } else if (option === "messenger") {
+      const messengerUrl = `https://www.facebook.com/dialog/send?app_id=${appId}&link=${encodeURIComponent(
+        propertyUrl
+      )}&redirect_uri=${redirectUri}&display=popup`;
+      window.open(messengerUrl, "_blank");
+    } else if (option === "copyLink") {
+      navigator.clipboard.writeText(propertyUrl).then(
+        () => {
+          toast.success("Link másolva a vágólapra!");
+        },
+        (err) => {
+          console.error("Másolás sikertelen ", err);
+        }
+      );
+    } else if (option === "iosShare") {
+      if (navigator.share) {
+        navigator
+          .share({
+            title: "Nézd meg ezt az ingatlans",
+            url: propertyUrl,
+          })
+          .then(() => {
+            console.log("Köszönjük!");
+          })
+          .catch(console.error);
+      } else {
+        toast.error("A megosztás nem támogatott ebben a böngészőben");
+      }
+    }
+
+    setShowShareOptions(false);
+  };
+
   const district = districtOptions.find(
     (option) => option.value === property.district
   );
@@ -29,7 +88,7 @@ function Info({ property }) {
     (option) => option.value === property.settlement
   );
 
-  const isLoggedIn = true; // Replace with actual logic to check login status
+  const isLoggedIn = true;
 
   const handleAddToFavorites = async () => {
     if (!isLoggedIn) {
@@ -59,35 +118,46 @@ function Info({ property }) {
         {settlement?.label} {district?.label} {property.street}{" "}
         {property?.exactPosition && property?.houseNo && ` ${property.houseNo}`}
       </p>
+
       <p className="text-orange my-2 font-bold">
         {getLabel(property?.adType, adType)} {getLabel(property?.btype, btype)}
         {(property?.propertyType === "lakas" ||
           property?.propertyType === "telek") &&
           ` ${getLabel(property?.propertyType, propertyType)}`}
       </p>
-      <div className="mt-6">
-        <div className="border-b pb-1">
-          <span className="inline-flex gap-3">
-            <img src={roomIcon} />
-            <span className="text-lightgrey text-md font-bold">Szoba</span>
-          </span>
-          <span className="float-right font-bold">
-            {property.rooms}{" "}
-            {property.halfRooms && ` + ${property.halfRooms} fél`}
-          </span>
-        </div>
 
-        <div className="border-b mt-3 pb-1">
-          <span className="inline-flex gap-3">
-            <img src={arrows} />
-            <span className="text-lightgrey text-md font-bold">
-              Alapterület
+      <div className="mt-6">
+        {(property.rooms || property.halfRooms) && (
+          <div className="border-b pb-1">
+            <span className="inline-flex gap-3">
+              <img src={roomIcon} />
+
+              <span className="text-lightgrey text-md font-bold">Szoba</span>
             </span>
-          </span>
-          <span className="float-right font-bold">
-            {property.area}m<sup>2</sup>
-          </span>
-        </div>
+
+            <span className="float-right font-bold">
+              {property.rooms}
+              {property.halfRooms ? ` + ${property.halfRooms} fél` : ""}
+            </span>
+          </div>
+        )}
+
+        {property.area && (
+          <div className="border-b mt-3 pb-1">
+            <span className="inline-flex gap-3">
+              <img src={arrows} />
+
+              <span className="text-lightgrey text-md font-bold">
+                Alapterület
+              </span>
+            </span>
+
+            <span className="float-right font-bold">
+              {property.area}m<sup>2</sup>
+            </span>
+          </div>
+        )}
+
         {property?.landArea && (
           <div className="border-b mt-3 pb-1">
             <span className="inline-flex gap-3">
@@ -117,11 +187,49 @@ function Info({ property }) {
             <span>{isSaved ? "Mentve" : "Ingatlan mentése"}</span>
           </button>
         </div>
-        <div>
-          <span className="inline-flex gap-2 float-right">
+        <div className="share-wrapper">
+          <span
+            className="inline-flex gap-2 share-button"
+            onClick={() => setShowShareOptions(!showShareOptions)}
+          >
             <img src={share} />
-            <span className="mt-1">Megosztás</span>
+            <span>Megosztás</span>
           </span>
+
+          {showShareOptions && (
+            <div className="share-popup" ref={popupRef}>
+              <button
+                className="popup-close-button"
+                onClick={() => setShowShareOptions(false)}
+              >
+                &times;
+              </button>
+              <button
+                className="share-popup-button"
+                onClick={() => handleShare("facebook")}
+              >
+                Megosztás Facebookon
+              </button>
+              <button
+                className="share-popup-button"
+                onClick={() => handleShare("messenger")}
+              >
+                Küldés Messengerben
+              </button>
+              <button
+                className="share-popup-button"
+                onClick={() => handleShare("copyLink")}
+              >
+                Link másolása
+              </button>
+              <button
+                className="share-popup-button"
+                onClick={() => handleShare("iosShare")}
+              >
+                Megosztás (iOS)
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

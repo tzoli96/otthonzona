@@ -6,17 +6,17 @@ import buildingOfficeIcon from "../icons/building-office-20-solid.png";
 import ExtendedSearch from "./Elements/ExtendedSearch";
 import SearchBar from "./Elements/SearchBar";
 import { useNavigate } from "react-router-dom";
-import useIsMobile from "../utils/useIsMobile";
+import {useIsSmallerScreen} from "../utils/useIsMobile";
 
 const HeroSchedule1 = () => {
   const [showExtended, setShowExtended] = useState(false);
 
   return (
     <div
-      className="bg-white rounded-2xl min-w-[1000px] w-3/4 block md:grid md:grid-cols-5 gap-8 p-4 z-40 absolute"
+      className="bg-white rounded-2xl min-w-[1000px] w-3/4 block lg:grid lg:grid-cols-5 gap-8 p-4 z-40 absolute"
       style={{ zIndex: 999 }}
     >
-      <div className="md:flex flex-col gap-2">
+      <div className="lg:flex flex-col gap-2">
         <h3 className="font-bold">Típus</h3>
         <div className="flex p-1 py-1.5 rounded-2xl bg-[#006FB9]">
           <img src={buildingOfficeIcon} alt="icon" className="mx-1 h-4 mt-1" />
@@ -75,27 +75,25 @@ const HeroSchedule = () => {
 };
 
 const Hero = () => {
-
-  const isMobile = useIsMobile();
+  const isSmallerScreen = useIsSmallerScreen(1023);
 
   return (
     <>
-    <div className="md:hidden relative">
-      <img 
+    <div className="lg:hidden relative">
+      <img
         src={heroBg}
         className="w-full h-auto"
       />
       <img src={heroLogo} alt="Logo" className="absolute bottom-4 right-6 h-1/2" />
     </div>
     <section
-      className="relative"
-      style={isMobile ? { backgroundColor: "#34384A" } : { backgroundImage: `url(${heroBg})`, backgroundSize: "cover" }}
+        style={isSmallerScreen ? { backgroundColor: "#34384A" } : { backgroundImage: `url(${heroBg})`, backgroundSize: "cover" }}
     >
-      <img src={heroLogo} alt="Logo" className="absolute bottom-4 right-6 hidden md:block" />
+      <img src={heroLogo} alt="Logo" className="absolute bottom-4 right-6 hidden lg:block" />
 
-      <div className="w-10/12 mx-auto py-6 md:py-40">
+      <div className="w-10/12 mx-auto py-6 lg:py-40">
         <div className="flex flex-col gap-6">
-          <h1 className="hidden md:block text-[2.5rem] font-bold text-white w-[30%]">
+          <h1 className="hidden lg:block text-[2.5rem] font-bold text-white w-full max-w-[400px]">
             Találd meg nálunk <span className="text-[#006FB9]">álmaid</span>{" "}
             otthonát
           </h1>

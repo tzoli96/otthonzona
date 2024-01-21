@@ -29,7 +29,7 @@ function BasicDetails({ prefill }) {
 
         return (
           <div className="w-full my-8 p-6" key="1">
-            <div className="w-full md:grid grid-cols-2">
+            <div className="w-full lg:grid grid-cols-2">
               <div className="flex gap-4 items-center">
                 <img src={icon} className="h-6 w-6" />
                 <span className="text-xl font-bold mt-0">
@@ -61,50 +61,35 @@ function BasicDetails({ prefill }) {
               className="py-6"
               style={{ display: isExpanded ? "block" : "none" }}
             >
-              <div className="my-4 md:grid grid-cols-3 gap-4">
-                <div style={{ display: "flex" }}>
-                  <div className="mr-2">
+              <div className="lg:grid grid-cols-3 gap-4">
+                <div className="lg:flex">
+                  <div className="my-4 lg:my-2 w-full mr-2">
                     <p className="font-bold">Szobák</p>
                     <Input
-                      name="rooms"
-                      variant="white"
-                      type="number"
-                      prefill={prefill}
-                      onWheel={(e) => e.target.blur()}
+                        name="rooms"
+                        variant="white"
+                        type="number"
+                        prefill={prefill}
+                        onWheel={(e) => e.target.blur()}
                     />
                   </div>
-                  <div>
+
+                  <div className="my-4 lg:my-2 w-full">
                     <p className="font-bold">Félszobák</p>
                     <Input
-                      name="halfRooms"
-                      variant="white"
-                      type="number"
-                      prefill={prefill}
-                      onWheel={(e) => e.target.blur()}
+                        name="halfRooms"
+                        variant="white"
+                        type="number"
+                        prefill={prefill}
+                        onWheel={(e) => e.target.blur()}
                     />
                   </div>
                 </div>
 
-                <div>
+                <div className="my-4 lg:my-2">
                   <p className="font-bold">Alapterület</p>
                   <Input
-                    name="area"
-                    variant="white"
-                    type="number"
-                    addon={
-                      <>
-                        m<sup>2</sup>
-                      </>
-                    }
-                    prefill={prefill}
-                    onWheel={(e) => e.target.blur()}
-                  />
-                </div>
-                {selectedPropertyType === "haz" && (
-                  <div>
-                    <p className="font-bold">Telekterület</p>
-                    <Input
-                      name="landArea"
+                      name="area"
                       variant="white"
                       type="number"
                       addon={
@@ -114,71 +99,92 @@ function BasicDetails({ prefill }) {
                       }
                       prefill={prefill}
                       onWheel={(e) => e.target.blur()}
-                    />
-                  </div>
+                  />
+                </div>
+
+                {selectedPropertyType === "haz" && (
+                    <div className="my-4 lg:my-2">
+                      <p className="font-bold">Telekterület</p>
+                      <Input
+                          name="landArea"
+                          variant="white"
+                          type="number"
+                          addon={
+                            <>
+                              m<sup>2</sup>
+                            </>
+                          }
+                          prefill={prefill}
+                          onWheel={(e) => e.target.blur()}
+                      />
+                    </div>
                 )}
-                <div>
+
+                <div className="my-4 lg:my-2">
                   <p className="font-bold">Ár</p>
-                  <div className="mt-2">
-                    <Input
+                  <Input
                       name="price"
                       variant="white"
                       addon={"Ft"}
                       type="number"
                       prefill={prefill}
                       onWheel={(e) => e.target.blur()}
-                    />
-                  </div>
+                  />
                 </div>
               </div>
-              <div className="md:grid grid-cols-3 gap-4">
-                <div>
+
+              <div className="lg:grid grid-cols-3 gap-4">
+                <div className="my-4 lg:my-2">
                   <p className="font-bold">Hirdetés Típusa</p>
-                  <AppSelect options={adType} name="adType" prefill={prefill} />
+                  <AppSelect options={adType} name="adType" prefill={prefill}/>
                 </div>
-                <div>
+
+                <div className="my-4 lg:my-2">
                   <p className="font-bold">Ingatlan Típusa</p>
                   <AppSelect
-                    options={propertyType}
-                    name="propertyType"
-                    prefill={prefill}
-                    onChange={(selectedOption) => {
-                      setSelectedPropertyType(selectedOption.value);
-                    }}
+                      options={propertyType}
+                      name="propertyType"
+                      prefill={prefill}
+                      onChange={(selectedOption) => {
+                        setSelectedPropertyType(selectedOption.value);
+                      }}
                   />
                 </div>
-                <div key={selectedPropertyType}>
+
+                <div className="my-4 lg:my-2" key={selectedPropertyType}>
                   <p className="font-bold">Ingatlan altípusa</p>
                   <AppSelect
-                    options={bTypeOptions}
-                    name="btype"
-                    prefill={prefill}
+                      options={bTypeOptions}
+                      name="btype"
+                      prefill={prefill}
                   />
                 </div>
               </div>
-              <div className="my-2">
+
+              <div className="my-4 lg:my-2">
                 <p className="font-bold">Leírás</p>
-                <input type="hidden" name="description" value={description} />
-                <div className="my-2 mb-20 md:mb-16">
+                <input type="hidden" name="description" value={description}/>
+                <div className="mb-20 md:mb-16">
                   <ReactQuill
-                    theme="snow"
-                    value={description}
-                    onChange={setDescription}
-                    style={{
-                      height: 200,
-                    }}
+                      theme="snow"
+                      value={description}
+                      onChange={setDescription}
+                      style={{
+                        height: 200,
+                      }}
                   />
                 </div>
               </div>
-              <div className="my-12 md:my-8 h-1">
+
+              <div className="my-12 h-1">
                 <span className="float-right">
                   <button
-                    type="button"
-                    className="blue-button"
-                    onClick={() => {
-                      setIsExpanded(!isExpanded);
-                      setHasBeenExpanded(true);
-                    }}
+                      type="button"
+                      className="blue-button !w-[150px]"
+                      onClick={() => {
+                        setIsExpanded(!isExpanded);
+                        setHasBeenExpanded(true);
+                      }}
                   >
                     Mentés
                   </button>

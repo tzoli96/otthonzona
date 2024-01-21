@@ -5,7 +5,7 @@ import p2 from "../pictures/p2.png";
 import p3 from "../pictures/p3.png";
 import PropertyCard from "./Elements/PropertyCard";
 import illus from "../pictures/blue-illus.svg";
-import useIsMobile from "../utils/useIsMobile";
+import useIsMobile, {useIsSmallerScreen} from "../utils/useIsMobile";
 import { request } from "../utils/request";
 
 const properties = [
@@ -16,9 +16,9 @@ const properties = [
 
 function PopularProperties() {
 
-  const isMobile = useIsMobile();
   const [loading, setLoading] = useState(true);
   const [properties, setProperties] = useState([]);
+  const isSmallerScreen = useIsSmallerScreen(1023);
 
   useEffect(() => {
     request(`/api/property/homepage-ads`)
@@ -33,10 +33,10 @@ function PopularProperties() {
 
   return (
     <div className="max-w-[100vw] overflow-x-hidden">
-      <div className="w-full px-8 md:px-0 md:w-10/12 mx-auto py-8 my-4 relative mb-40">
+      <div className="w-10/12 mx-auto py-8 my-4 relative mb-40">
         <div className="section-heading flex gap-3">
           <img src={orangeStar} />
-          <span>
+          <span className="max-sm:text-[32px]">
             <span className="text-blue">Kiemelt</span> ingatlanok
           </span>
         </div>
@@ -45,9 +45,9 @@ function PopularProperties() {
             Nézzen körül kiemelt ingatlan ajánlataink között!
           </p>
         </div>
-        <div className="w-full overflow-auto md:overflow-visible">
-        <div className="py-10 inline-block w-[300%] md:w-full md:grid grid-cols-3 gap-6 mt-8 justify-items-stretch z-40 relative">
-          {properties.map((property) => isMobile ? (
+        <div className="w-full overflow-auto lg:overflow-visible">
+        <div className="py-10 inline-block w-[300%] lg:w-full lg:grid grid-cols-3 gap-6 mt-8 justify-items-stretch z-40 relative">
+          {properties.map((property) => isSmallerScreen ? (
             <div className="w-[30%] inline-block mx-[1%]">
               <PropertyCard property={property} />
             </div>

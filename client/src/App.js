@@ -13,7 +13,7 @@ import WhyUs2 from "./components/WhyUs2";
 import Property from "./pages/Property";
 import Search from "./pages/Search";
 import { Toaster } from "react-hot-toast";
-
+import ManageArchiveList from "./components/ManageArchiveList";
 import Login from "./components/Auth/Login";
 import SignUp from "./components/Auth/Signup";
 import AgencyRegister from "./components/Auth/Agency";
@@ -31,7 +31,6 @@ import ConfirmInvite from "./components/Agency/InvitationConfirm";
 import { createContext, useEffect, useState } from "react";
 import { request } from "./utils/request";
 import ManageAds from "./components/ManageAds";
-import ManageArchiveList from "./components/ManageArchiveList";
 import EditAd from "./pages/EditAd";
 import CreditPurchaseHistory from "./components/CreditPurchaseHistory";
 import BiddingDashboard from "./components/BiddingDashboard";
@@ -131,8 +130,8 @@ function App() {
         <Route path="/:id" element={<Property />} />
         <Route path="*" element={<ErrorPage />} />
         <Route
-          path="/manage-archives"
-          element={<ManageArchiveList key="archives" />}
+              path="/manage-archives"
+              element={<ManageArchiveList isArchive={true} key="archives" />}
         />
       </Routes>
       <Toaster />

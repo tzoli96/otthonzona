@@ -86,9 +86,6 @@ function Footer({}) {
                 </a>
               ))}
             </div>
-            <div className="mt-12">
-              <img src={barion} className="w-full" />
-            </div>
           </div>
         </div>
       </div>

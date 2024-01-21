@@ -27,7 +27,7 @@ function UploadImages({ prefill }) {
         return (
           <div className="w-full my-8 p-6">
             <input type="hidden" name="photos" value={urls} />
-            <div className="w-full md:grid grid-cols-2">
+            <div className="w-full lg:grid grid-cols-2">
               <div className="flex gap-4 items-center">
                 <img src={icon} className="h-6 w-6" />
                 <span className="text-xl font-bold mt-0">
@@ -59,7 +59,7 @@ function UploadImages({ prefill }) {
               className="py-6"
               style={{ display: isExpanded ? "block" : "none" }}
             >
-              <div className="md:grid grid-cols-2 gap-2">
+              <div className="lg:grid grid-cols-2 gap-2">
                 <div className="w-full h-96 flex justify-center items-center flex-col gap-8">
                   <img src={uploadIcon} className="h-20 w-20" />
                   <p className="font-bold">Töltsd fel a fényképeid</p>
@@ -79,7 +79,7 @@ function UploadImages({ prefill }) {
                       style={{ gridTemplateColumns: "150px 1fr" }}
                     >
                       <div>
-                        <img src={image.url} className="h-32 w-32 rounded-lg" />
+                        <img src={image.url} className="h-32 w-32 object-contain object-left rounded-lg" />
                       </div>
                       <div>
                         <p className="font-bold text-lg">
@@ -104,11 +104,11 @@ function UploadImages({ prefill }) {
                 </div>
               </div>
 
-              <div className="my-4 h-1">
+              <div className="my-12 h-1">
                 <span className="float-right">
                   <button
                     type="button"
-                    className="blue-button"
+                    className="blue-button !w-[150px]"
                     onClick={() => {
                       setIsExpanded(!isExpanded);
                       setHasBeenExpanded(true);

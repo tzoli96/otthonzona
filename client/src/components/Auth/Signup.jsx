@@ -33,9 +33,9 @@ function SignUp() {
   return (
     <div>
       <Navbar />
-      <div className="md:grid grid-cols-2 bg-gray-50">
-        <div>
-          <img className="min-w-full min-h-full" src={signupImage} />
+      <div className="lg:grid grid-cols-2 bg-gray-50">
+        <div className="max-lg:hidden bg-[rgb(247,247,247)]">
+          <img className="min-w-full min-h-full object-contain" src={signupImage} />
         </div>
         <div className="p-6 md:p-16 flex justify-center items-center bg-[rgb(247,247,247)]">
           <div>
@@ -51,13 +51,13 @@ function SignUp() {
                   <br />
                   Profil létrehozása
                 </h1>
-                <p className="text-lightgrey text-lg w-full md:w-2/3">
+                <p className="text-lightgrey text-lg w-full 2xl:w-2/3">
                   Kérjük, add meg az adataidat, hogy létrehozhassuk a
                   profilodat. A regisztráció után az email címedre küldünk egy
                   linket, amivel aktiválni tudod a profilodat.
                 </p>
                 <form onSubmit={handleSubmit}>
-                  <div className="grid grid-cols-2 gap-2 w-full md:w-2/3">
+                  <div className="grid grid-cols-2 gap-2 w-full 2xl:w-2/3">
                     <div className="mt-8">
                       <p className="font-bold my-2">Vezetéknév</p>
                       <Input
@@ -77,7 +77,7 @@ function SignUp() {
                       />
                     </div>
                   </div>
-                  <div className="my-2 mt-4 w-full md:w-2/3">
+                  <div className="my-2 mt-4 w-full 2xl:w-2/3">
                     <p className="font-bold my-2">E-mail cím</p>
                     <Input
                       placeholder="Írd be az e-mail címed"
@@ -86,7 +86,7 @@ function SignUp() {
                       required
                     />
                   </div>
-                  <div className="mb-4 mt-4 w-full md:w-2/3">
+                  <div className="mb-4 mt-4 w-full 2xl:w-2/3">
                     <p className="font-bold my-2">Telefon</p>
                     <div
                       className="grid gap-2"
@@ -105,7 +105,7 @@ function SignUp() {
                       />
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-2 w-full md:w-2/3">
+                  <div className="grid grid-cols-2 gap-2 w-full 2xl:w-2/3">
                     <div className="mb-4">
                       <p className="font-bold my-2">Jelszó</p>
                       <Input
@@ -126,7 +126,7 @@ function SignUp() {
                     </div>
                   </div>
 
-                  <div className="w-full md:w-2/3 mt-8">
+                  <div className="w-full 2xl:w-2/3 mt-8">
                     <label className="flex items-center">
                       <input
                         type="checkbox"
@@ -158,7 +158,7 @@ function SignUp() {
                       </span>
                     </label>
                   </div>
-                  <div className="w-full md:w-2/3 mt-8">
+                  <div className="w-full 2xl:w-2/3 mt-8">
                     <button type="submit" className="orange-button !w-full">
                       Regisztráció
                     </button>

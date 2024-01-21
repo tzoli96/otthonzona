@@ -48,7 +48,7 @@ function Photos({ property }) {
   return (
     <div>
       <div
-        className="md:w-full rounded-lg overflow-hidden h-[40vh] md:h-[70vh] bg-slate-900 bg-opacity-20 flex justify-center items-center relative"
+        className="md:w-full rounded-lg overflow-hidden h-[40vh] md:h-[50vh] bg-slate-900 bg-opacity-20 flex justify-center items-center relative"
         onClick={() => setShowModal(true)}
       >
         <div className="absolute h-full w-10 left-0 top-0 flex justify-center items-center">

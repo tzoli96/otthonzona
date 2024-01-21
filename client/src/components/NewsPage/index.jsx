@@ -50,8 +50,8 @@ function NewsPage() {
                       </div>*/}
         </div>
         <div className="col-span-1 md:col-span-2">
-          <p className="text-2xl font-bold ml-6">Hírek</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-12 pt-6 pl-6">
+          <p className="text-2xl font-bold px-4">Hírek</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:p-12 pt-6 px-4">
             {newsData.map((news) => (
               <NewsCard news={news} />
             ))}

@@ -27,7 +27,7 @@ function ManageArchiveList() {
 
   return (
     <>
-      <Layout selected={7}>
+      <Layout selected={8}>
         <div className="p-4 md:p-8">
           <p className="text-xl font-semibold">
               Archívált hirdetések

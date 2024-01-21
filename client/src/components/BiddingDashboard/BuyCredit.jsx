@@ -10,11 +10,11 @@ function BuyCredit({ close }) {
 
   const makePayment = async () => {
     const stripe = await loadStripe(
-      "pk_test_51ORwQUFi7ANkKRs4yAe0ZyAS2MkZ7bqgFYKdFAPOx91CegdFtH2ujlDOkIwZA3c5g5Vhf5e1L2H8QKusFC8oSCbC00hKN0hppk"
+      "pk_live_51ORwQUFi7ANkKRs437ygwDzeFZpkogOjKJmaygcWGtIXDjuIqKC3BcUgggx0yMUDdFQRCGtzBNqV0buBt2Z6m3Re007Qa0d3o9"
     );
 
     // todo: 5000?
-    if (currency < 1000) {
+    if (currency < 5000) {
       return alert("Minimum 2500 kreditet kell vásárolni!");
     }
 

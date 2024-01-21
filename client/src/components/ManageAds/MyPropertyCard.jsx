@@ -8,7 +8,11 @@ import { Link } from "react-router-dom";
 import { BiddingPropertyCard } from "../BiddingDashboard";
 import trashIcon from "../../pictures/app/trash.svg";
 import Loading from "../Elements/Loading";
+import { request } from "../../utils/request";
 import useIsMobile from "../../utils/useIsMobile";
+import manageAdsIcon from "../../pictures/app/manage-ads.png";
+import eyeIcon from "../../pictures/app/eye.svg";
+import bankIcon from "../../pictures/app/bank.svg";
 
 function MyPropertyCard({ property, properties, setProperties, setDapIsVisible, setDeletingProperty }) {
   const [showBidding, setShowBidding] = useState(false);
@@ -23,9 +27,25 @@ function MyPropertyCard({ property, properties, setProperties, setDapIsVisible, 
   );
 
   const showDeletePopup = (property) => {
-    console.log(property.id);
-      setDeletingProperty(property);
-      setDapIsVisible(true);
+    setDeletingProperty(property);
+    setDapIsVisible(true);
+  };
+
+  const handleDelete = async () => {
+    try {
+      if (window.confirm("Are you sure you want to delete this property")) {
+        setDeleting(true);
+        const response = await request(`/api/property/${property.id}`, {
+          method: "DELETE",
+        });
+        if (response?.data?.isArchived) {
+          setProperties(properties.filter((p) => p.id !== property.id));
+        }
+      }
+    } catch (err) {
+    } finally {
+      setDeleting(false);
+    }
   };
 
   return (
@@ -37,8 +57,8 @@ function MyPropertyCard({ property, properties, setProperties, setDapIsVisible, 
       </Link>
       <div className="p-4 md:p-8 md:px-16 col-span-2">
         <p
-          className="font-bold grid"
-          style={{ gridTemplateColumns: "calc(100% - 20px) 20px" }}
+            className="font-bold grid"
+            style={{gridTemplateColumns: "calc(100% - 20px) 20px"}}
         >
           <Link to={`/${property?.id}`}>
             <span>
@@ -46,14 +66,13 @@ function MyPropertyCard({ property, properties, setProperties, setDapIsVisible, 
             </span>
           </Link>
           <span onClick={() => showDeletePopup(property)}>
-          {/*<span onClick={handleDelete}>*/}
             {deleting ? (
-              <Loading />
+                <Loading/>
             ) : (
-              <img
-                src={trashIcon}
-                className="float-right cursor-pointer h-6 w-6"
-              />
+                <img
+                    src={trashIcon}
+                    className="float-right cursor-pointer h-6 w-6"
+                />
             )}
           </span>
         </p>
@@ -104,28 +123,41 @@ function MyPropertyCard({ property, properties, setProperties, setDapIsVisible, 
             ) : null}
           </p>
         </div>
-        <div className="grid grid-cols-2 md:flex gap-2">
-          <div className="my-4 w-full md:w-auto">
+        <div className="flex gap-5">
+          <div className="my-4 w-auto">
             <Link to={`/edit-property/${property?.id}`}>
-              <button className="orange-button">Szerkesztés</button>
+              <button className="orange-button flex items-center justify-center md:max-xl:!w-[75px] md:max-xl:p-3" title="Szerkesztés">
+                <img src={manageAdsIcon} className="w-[24px] h-[24px] mr-2 md:max-xl:mr-0" />
+
+                <span className="md:max-xl:hidden">Szerkesztés</span>
+              </button>
             </Link>
           </div>
+
           {!isMobile && (
             <div className="my-4">
               <Link to={`/${property?.id}`}>
-                <button className="blue-button">Megtekintés</button>
+                <button className="blue-button flex items-center justify-center md:max-xl:!w-[75px]" title="Megtekintés">
+                  <img src={eyeIcon} className="w-[24px] h-[24px] mr-2 md:max-xl:mr-0" />
+
+                  <span className="md:max-xl:hidden">Megtekintés</span>
+                </button>
               </Link>
             </div>
           )}
-          <div className="my-4 w-full md:w-auto">
+
+          <div className="my-4 w-auto">
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 setShowBidding(!showBidding);
               }}
-              className="orange-button"
+              className="orange-button flex items-center justify-center md:max-xl:!w-[75px]"
+              title="Kiemelés"
             >
-              {showBidding ? "Kiemelés" : "Kiemelés"}
+              <img src={bankIcon} className="w-[24px] h-[24px] mr-2 md:max-xl:mr-0" />
+
+              <span className="md:max-xl:hidden">Kiemelés</span>
             </button>
           </div>
         </div>

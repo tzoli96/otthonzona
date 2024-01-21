@@ -34,7 +34,7 @@ function MoreDetails({ prefill }) {
 
         return (
           <div className="w-full my-8 p-6">
-            <div className="w-full md:grid grid-cols-2">
+            <div className="w-full lg:grid grid-cols-2">
               <div className="flex gap-4 items-center">
                 <img src={icon} className="h-6 w-6" />
                 <span className="text-xl font-bold mt-0">Egyéb adatok</span>
@@ -60,12 +60,13 @@ function MoreDetails({ prefill }) {
                 )}
               </div>
             </div>
+
             <div
               className="py-6"
               style={{ display: isExpanded ? "block" : "none" }}
             >
-              <div className="md:grid grid-cols-3 gap-4">
-                <div>
+              <div className="lg:grid grid-cols-3 gap-4">
+                <div className="my-4 lg:my-2">
                   <p className="font-bold">Ingatlan állapota:</p>
                   <AppSelect
                     options={property_condition}
@@ -73,7 +74,8 @@ function MoreDetails({ prefill }) {
                     prefill={prefill}
                   />
                 </div>
-                <div>
+
+                <div className="my-4 lg:my-2">
                   <p className="font-bold">Építés éve</p>
                   <AppSelect
                     options={builtYear}
@@ -81,7 +83,8 @@ function MoreDetails({ prefill }) {
                     prefill={prefill}
                   />
                 </div>
-                <div>
+
+                <div className="my-4 lg:my-2">
                   <p className="font-bold">Komfort</p>
                   <AppSelect
                     options={komfort}
@@ -90,8 +93,9 @@ function MoreDetails({ prefill }) {
                   />
                 </div>
               </div>
-              <div className="md:grid grid-cols-3 gap-4 my-4">
-                <div>
+
+              <div className="lg:grid grid-cols-3 gap-4">
+                <div className="my-4 lg:my-2">
                   <p className="font-bold">Kilátás</p>
                   <AppSelect
                     options={viewOptions}
@@ -99,7 +103,8 @@ function MoreDetails({ prefill }) {
                     prefill={prefill}
                   />
                 </div>
-                <div>
+
+                <div className="my-4 lg:my-2">
                   <p className="font-bold">Tájolás</p>
                   <AppSelect
                     options={orientationOptions}
@@ -107,7 +112,8 @@ function MoreDetails({ prefill }) {
                     prefill={prefill}
                   />
                 </div>
-                <div>
+
+                <div className="my-4 lg:my-2">
                   <p className="font-bold">Belmagasság</p>
                   <AppSelect
                     options={ceilingHeightOptions}
@@ -116,8 +122,9 @@ function MoreDetails({ prefill }) {
                   />
                 </div>
               </div>
-              <div className="md:grid grid-cols-3 gap-4 my-4">
-                <div>
+
+              <div className="lg:grid grid-cols-3 gap-4">
+                <div className="my-4 lg:my-2">
                   <p className="font-bold">Emelet</p>
                   <AppSelect
                     options={floorOptions}
@@ -125,7 +132,8 @@ function MoreDetails({ prefill }) {
                     prefill={prefill}
                   />
                 </div>
-                <div>
+
+                <div className="my-4 lg:my-2">
                   <p className="font-bold">Épület szintjei</p>
                   <AppSelect
                     options={houseFloors}
@@ -133,13 +141,15 @@ function MoreDetails({ prefill }) {
                     prefill={prefill}
                   />
                 </div>
-                <div>
+
+                <div className="my-4 lg:my-2">
                   <p className="font-bold">Lift</p>
                   <AppSelect options={lift} name="lift" prefill={prefill} />
                 </div>
               </div>
-              <div className="md:grid grid-cols-3 gap-4 my-4">
-                <div>
+
+              <div className="lg:grid grid-cols-3 gap-4">
+                <div className="my-4 lg:my-2">
                   <p className="font-bold">Erkély</p>
                   <AppSelect
                     options={balconyOptions}
@@ -147,7 +157,8 @@ function MoreDetails({ prefill }) {
                     prefill={prefill}
                   />
                 </div>
-                <div>
+
+                <div className="my-4 lg:my-2">
                   <p className="font-bold">Fűtés</p>
                   <AppSelect
                     options={heatingOptions}
@@ -155,7 +166,8 @@ function MoreDetails({ prefill }) {
                     prefill={prefill}
                   />
                 </div>
-                <div>
+
+                <div className="my-4 lg:my-2">
                   <p className="font-bold">Légkondícionáló</p>
                   <AppSelect
                     options={legkondicionalo}
@@ -164,16 +176,19 @@ function MoreDetails({ prefill }) {
                   />
                 </div>
               </div>
-              <div className="md:grid grid-cols-3 gap-4 my-4">
-                <div>
+
+              <div className="lg:grid grid-cols-3 gap-4">
+                <div className="my-4 lg:my-2">
                   <p className="font-bold">Fürdő és wc</p>
                   <AppSelect options={furdo} name="furdo" prefill={prefill} />
                 </div>
-                <div>
+
+                <div className="my-4 lg:my-2">
                   <p className="font-bold">Kertkapcsolatos</p>
                   <AppSelect options={garden} name="garden" prefill={prefill} />
                 </div>
-                <div>
+
+                <div className="my-4 lg:my-2">
                   <p className="font-bold">Tetőtér</p>
                   <AppSelect
                     options={tetoter}
@@ -182,8 +197,9 @@ function MoreDetails({ prefill }) {
                   />
                 </div>
               </div>
-              <div className="md:grid grid-cols-3 gap-4 my-4">
-                <div>
+
+              <div className="lg:grid grid-cols-3 gap-4">
+                <div className="my-4 lg:my-2">
                   <p className="font-bold">Parkolás</p>
                   <AppSelect
                     options={parktype}
@@ -191,7 +207,8 @@ function MoreDetails({ prefill }) {
                     prefill={prefill}
                   />
                 </div>
-                <div>
+
+                <div className="my-4 lg:my-2">
                   <p className="font-bold">Akadálymentesített</p>
                   <AppSelect
                     options={disabled}
@@ -200,11 +217,11 @@ function MoreDetails({ prefill }) {
                   />
                 </div>
               </div>
-              <div className="my-8 h-1">
+              <div className="my-12 h-1">
                 <span className="float-right">
                   <button
                     type="button"
-                    className="blue-button"
+                    className="blue-button !w-[150px]"
                     onClick={() => {
                       setIsExpanded(!isExpanded);
                       setHasBeenExpanded(true);

@@ -5,7 +5,7 @@ function Input ({ placeholder, required, name, type, variant, addon, prefill, ad
     const className = variant === "white" ? "border-2 rounded-full p-1.5 w-full px-4" : "bg-gray-200 rounded-md p-4 py-3 w-full"
 
     return (
-        <div className="w-full flex">
+        <div className="w-full flex !flex-row">
             <input 
                 defaultValue={prefill?.[name]}
                 {...props}
@@ -17,7 +17,7 @@ function Input ({ placeholder, required, name, type, variant, addon, prefill, ad
             />
             {
                 addon &&
-                <span className={"-ml-12 w-10 h-full flex justify-center items-center text-gray-600 bg-white font-medium text-sm p-1.5 rounded-full mt-1 " + (addonClass ? addonClass : "")}>
+                <span className={"-ml-12 w-10 h-full lg:flex justify-center items-center text-gray-600 bg-white font-medium text-sm p-1.5 rounded-full mt-1 " + (addonClass ? addonClass : "")}>
                     {addon}
                 </span>
             }

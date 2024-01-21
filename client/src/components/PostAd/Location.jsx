@@ -20,11 +20,12 @@ function Location({ prefill }) {
 
         return (
           <div className="w-full my-8 p-6">
-            <div className="w-full md:grid grid-cols-2">
+            <div className="w-full lg:grid grid-cols-2">
               <div className="flex gap-4 items-center">
                 <img src={icon} className="h-6 w-6" />
                 <span className="text-xl font-bold mt-0">Elhelyezkedés</span>
               </div>
+
               <div>
                 {!isExpanded && (
                   <div className="flex items-center justify-end mt-3">
@@ -46,13 +47,14 @@ function Location({ prefill }) {
                 )}
               </div>
             </div>
+
             {
               <div
                 className="py-6"
                 style={{ display: isExpanded ? "block" : "none" }}
               >
-                <div className="md:grid grid-cols-3 gap-4">
-                  <div>
+                <div className="lg:grid grid-cols-2 2xl:grid-cols-3 gap-4">
+                  <div className="my-4 lg:my-2">
                     <p className="font-bold">Település</p>
                     <AppSelect
                       options={settlementOptions}
@@ -70,8 +72,9 @@ function Location({ prefill }) {
                       isAsync
                     />
                   </div>
+
                   {selectedSettlement === "Budapest" && (
-                    <div>
+                    <div className="my-4 lg:my-2">
                       <p className="font-bold">Kerület</p>
                       <AppSelect
                         options={districtOptions}
@@ -80,15 +83,15 @@ function Location({ prefill }) {
                       />
                     </div>
                   )}
-                  <div>
+
+                  <div className="my-4 lg:my-2">
                     <p className="font-bold">Utca</p>
-                    <div className="mt-2">
-                      <Input variant="white" name="street" prefill={prefill} />
-                    </div>
+                    <Input variant="white" name="street" prefill={prefill} />
                   </div>
                 </div>
-                <div className="md:grid grid-cols-3 gap-4 my-4">
-                  <div>
+
+                <div className="lg:grid grid-cols-2 2xl:grid-cols-3 gap-4">
+                  <div className="my-4 lg:my-2">
                     <p className="font-bold">Házszám</p>
                     <Input
                       variant="white"
@@ -97,27 +100,30 @@ function Location({ prefill }) {
                       onWheel={(e) => e.target.blur()}
                     />
                   </div>
-                  <div className="flex">
-                    <div>
-                      <p className="font-bold">Cím pontossága</p>
-                      <p className="text-gray-500 text-sm font-medium">
-                        Szeretnéd, hogy az ingatlan a találati listában pontos
-                        címmel jelenjen meg?
+
+                  <div className="my-4 lg:my-2">
+                    <p className="font-bold">Cím pontossága</p>
+
+                    <div className="grid !grid-cols-10 gap-4 h-[auto] xl:h-[40px]">
+                      <p className="text-gray-500 text-sm font-medium col-span-8 items-center flex !flex-row">
+                        Szeretnéd, hogy az ingatlan a találati listában pontos címmel jelenjen meg?
                       </p>
-                    </div>
-                    <div className="flex justify-center items-center">
-                      <Switch
-                        name="exactPosition"
-                        defaultValue={prefill?.["exactPosition"]}
-                      />
+
+                      <div className="flex !flex-row justify-end items-center col-span-2">
+                        <Switch
+                            name="exactPosition"
+                            defaultValue={prefill?.["exactPosition"]}
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
-                <div className="my-4 h-1">
+
+                <div className="my-12 h-1">
                   <span className="float-right">
                     <button
                       type="button"
-                      className="blue-button"
+                      className="blue-button !w-[150px]"
                       onClick={() => {
                         setIsExpanded(!isExpanded);
                         setHasBeenExpanded(true);

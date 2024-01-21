@@ -12,6 +12,7 @@ function AppSelect({
   isDisabled,
   isAsync,
   loadOptions,
+  isClearable,
 }) {
   const [value, setValue] = useState(
     options.find((option) => option.value === prefill?.[name])
@@ -28,7 +29,7 @@ function AppSelect({
   }, [prefill]);
 
   return (
-    <div className="mt-2 border-2 rounded-full p-0.5">
+    <div className="border-2 rounded-full p-0.5">
       <input name={name} value={value?.value} type="hidden" />
       {isAsync ? (
         <AsyncSelect
@@ -38,8 +39,9 @@ function AppSelect({
             onChange?.(value);
           }}
           value={value}
+          isClearable={true}
           isDisabled={isDisabled}
-          noOptionsMessage={() => "Kezdj el gépelni a kereséshez"}
+          noOptionsMessage={() => <div className='truncate'>Kezdj el gépelni a kereséshez</div>}
           styles={{
             control: (provided) => ({
               ...provided,
@@ -51,14 +53,14 @@ function AppSelect({
               boxShadow: "none",
             }),
           }}
-          placeholder={placeholder || "Kezdj el gépelni a kereséshez"}
+          placeholder={placeholder || <div className='truncate'>Kezdj el gépelni a kereséshez</div>}
           components={{
             IndicatorSeparator: () => null,
             DropdownIndicator: () => (
               <div style={{ marginTop: 0 }}>
                 <span
                   className={
-                    "box-border h-full py-2.5 h-full inline-block w-[50px] orange-gradient rounded-full flex justify-center items-center "
+                    "box-border h-full py-2.5 h-full inline-block w-[50px] orange-gradient rounded-full flex justify-center items-center"
                   }
                 >
                   <img src={chevrondown} className="h-4 w-4" />
@@ -76,7 +78,8 @@ function AppSelect({
           }}
           value={value}
           isDisabled={isDisabled}
-          noOptionsMessage={() => "Kezdj el gépelni a kereséshez"}
+          isClearable={true}
+          noOptionsMessage={() => <div className='truncate'>Kezdj el gépelni a kereséshez</div>}
           styles={{
             control: (provided) => ({
               ...provided,
@@ -88,14 +91,14 @@ function AppSelect({
               boxShadow: "none",
             }),
           }}
-          placeholder={placeholder || "Kezdj el gépelni a kereséshez"}
+          placeholder={placeholder || <div className='truncate'>Kezdj el gépelni a kereséshez</div>}
           components={{
             IndicatorSeparator: () => null,
             DropdownIndicator: () => (
               <div style={{ marginTop: 0 }}>
                 <span
                   className={
-                    "box-border h-full py-2.5 h-full inline-block w-[50px] orange-gradient rounded-full flex justify-center items-center "
+                    "box-border h-full py-2.5 h-full inline-block w-[50px] orange-gradient rounded-full flex justify-center items-center"
                   }
                 >
                   <img src={chevrondown} className="h-4 w-4" />

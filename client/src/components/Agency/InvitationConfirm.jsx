@@ -14,7 +14,7 @@ const InvitationConfirm = () => {
           alert(data.error);
         } else {
           setTimeout(() => {
-            window.location = "/ageny";
+            window.location = "/agency";
           }, 1500);
         }
       });

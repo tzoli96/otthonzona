@@ -89,28 +89,36 @@ function SearchBar({ onChangeFilters, onSubmit }) {
           Kiadó
         </button>
       </div>
-      <div className="bg-white rounded-2xl md:grid grid-cols-5 gap-4 p-4 relative z-33 mt-4 card-shadow ">
-        <div className="flex flex-col gap-2">
+      <div className="bg-white rounded-2xl lg:grid grid-cols-5 gap-4 p-4 relative z-33 mt-4 card-shadow ">
+        <div className="flex flex-col lg:gap-2 max-lg:my-4">
           <h3 className="font-bold">Típus</h3>
           <div className="rounded-2xl w-full">
             <AppSelect
               options={propertyType}
               placeholder="Típus"
-              onChange={({ value }) => {
-                onChange("propertyType", value);
+              onChange={(option) => {
+                if (option) {
+                  onChange("propertyType", option.value);
+                } else {
+                  onChange("propertyType", null);
+                }
               }}
               name="propertyType"
               prefill={filters}
             />
           </div>
         </div>
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col lg:gap-2 max-lg:my-4">
           <h3 className="font-bold">Hol keresel?</h3>
           <AppSelect
             options={settlementOptions}
             placeholder={"Hol keresel"}
-            onChange={({ value }) => {
-              onChange("settlement", value);
+            onChange={(option) => {
+              if (option) {
+                onChange("settlement", option.value);
+              } else {
+                onChange("settlement", null);
+              }
             }}
             loadOptions={async (inputValue, callback) => {
               const response = await request(
@@ -126,17 +134,21 @@ function SearchBar({ onChangeFilters, onSubmit }) {
             <AppSelect
               options={districtOptions}
               placeholder="Kerület"
-              onChange={({ value }) => {
-                onChange("district", value);
+              onChange={(option) => {
+                if (option) {
+                  onChange("district", option.value);
+                } else {
+                  onChange("district", null);
+                }
               }}
               name="district"
               prefill={filters}
             />
           )}
         </div>
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col lg:gap-2 max-lg:my-4">
           <h3 className="font-bold">Alapterület</h3>
-          <div className="mt-2 grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-2">
             <Input
               variant={"white"}
               addon={
@@ -171,9 +183,9 @@ function SearchBar({ onChangeFilters, onSubmit }) {
             />
           </div>
         </div>
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col lg:gap-2 max-lg:my-4">
           <h3 className="font-bold">Ár ({forSale ? "millió" : "ezer"})</h3>
-          <div className="mt-2 grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-2">
             <Input
               variant={"white"}
               addon={
@@ -206,7 +218,7 @@ function SearchBar({ onChangeFilters, onSubmit }) {
             />
           </div>
         </div>
-        <div className="mt-9 flex flex-col gap-3">
+        <div className="mt-7 flex flex-col gap-3">
           <button className="orange-button" onClick={onSubmit}>
             Keresés
           </button>

@@ -27,13 +27,13 @@ const newsData = [
 
 function News() {
   return (
-    <div className="w-auto md:w-10/12 mx-auto py-8 my-4">
+    <div className="w-10/12 mx-auto py-8 my-4">
       <p className="section-heading">
         <span className="section-heading-blue ml-2 md:ml-0">Hírek</span>,
         elemzések
       </p>
       <div className="w-full overflow-auto md:overflow-hidden">
-        <div className="md:w-full inline-block md:flex gap-4 mt-8 justify-items-stretch">
+        <div className="md:w-full flex flex-col md:flex-row gap-4 mt-8 justify-items-stretch">
           {newsData.map((news) => (
             <NewsCard news={news} />
           ))}

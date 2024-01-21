@@ -37,7 +37,7 @@ function Layout({ children, selected }) {
       //{ label: "Megtekintett ingatlanok", href: "/post-ad", icon: heartIcon },
       //{ label: "Értesítések", href: "/post-ad", icon: notificationIcon },
       { label: "Profil adatok", href: "/profile", icon: profileIcon },
-      { label: "Piszkozatok", href: "/drafts", icon: starIcon },
+      { label: "Piszkozatok", href: "/drafts", icon: createAdIcon },
       //{ label: "Értékelések", href: "/post-ad", icon: starIcon },
       //{ label: "Iroda létrehozása", href: "/agency", icon: starIcon },
       //{ label: "Megkeresések", href: "/post-ad", icon: messageIcon },
@@ -46,11 +46,12 @@ function Layout({ children, selected }) {
         href: "/credit-purchase-history",
         icon: bankIcon,
       },
-      {
-        label: "Archivált hirdetések",
-        href: "/manage-archives",
-        icon: manageAdsIcon,
-      },
+      { label: "Ingatlan irodám", href: "/agency", icon: starIcon },
+        {
+            label: "Archivált hirdetések",
+            href: "/manage-archives",
+            icon: manageAdsIcon,
+        },
     ],
     []
   );
@@ -59,7 +60,7 @@ function Layout({ children, selected }) {
     <div className="w-full">
       <Navbar />
       <div className="grid grid-cols-4">
-        <div className="bg-blue min-h-screen p-8 hidden md:block">
+        <div className="bg-blue min-h-screen max-xl:p-4 p-8 hidden lg:block">
           <div className="flex w-48 h-48 rounded-full overflow-hidden rounded-image-container">
             <img
               src={user?.photo || profilePhotoPlaceholder}
@@ -76,21 +77,22 @@ function Layout({ children, selected }) {
               <Link to={m.href}>
                 <button
                   className={
-                    "my-2 p-2 px-4 pt-2.5 grid gap-4 rounded-full !text-left !w-full !bg-opacity-0 " +
+                    "my-2 p-2 px-4 pt-2.5 grid items-center gap-4 rounded-full !text-left !w-full !bg-opacity-0 lg:max-xl:!text-[15px] " +
                     (i === selected ? "orange-button" : "transparent-button")
                   }
                   style={{
                     gridTemplateColumns: "30px 1fr",
                   }}
                 >
-                  <img src={m.icon} className="mt-0" />
+                  <img src={m.icon} className="lg:max-xl:w-[20px] lg:max-xl:h-[20px] mt-0" />
+
                   <span className="mt-0.5 align-top">{m.label}</span>
                 </button>
               </Link>
             ))}
           </div>
         </div>
-        <div className="col-span-4 md:col-span-3">{children}</div>
+        <div className="col-span-4 lg:col-span-3">{children}</div>
       </div>
       <Footer />
     </div>

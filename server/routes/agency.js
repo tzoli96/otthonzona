@@ -14,7 +14,14 @@ const { getToken, createUser } = require("../utils/auth");
 // POST route to create a new agency
 router.post("/", auth, async (req, res) => {
   try {
-    const { officeName, officeAddress, officeEmail, officePhone } = req.body;
+    const {
+      officeName,
+      officeAddress,
+      officeEmail,
+      officePhone,
+      officeCompany,
+      network,
+    } = req.body;
     const userId = req.user.id; // Assuming the current user is the agency admin
 
     const newAgency = await prisma.agency.create({
@@ -23,6 +30,8 @@ router.post("/", auth, async (req, res) => {
         officeAddress,
         officeEmail,
         officePhone,
+        officeCompany,
+        network,
         adminID: userId,
       },
     });
@@ -38,11 +47,27 @@ router.post("/", auth, async (req, res) => {
 router.get("/myAgency", auth, async (req, res) => {
   try {
     const userId = req.user.id;
-    const agency = await prisma.agency.findFirst({
-      where: {
-        adminID: userId,
-      },
+
+    // First, try to find an agency where the user is an admin
+    let agency = await prisma.agency.findFirst({
+      where: { adminID: userId },
+      include: { admin: true, members: { include: { user: true } } },
     });
+
+    // If not found as an admin, check if the user is a member of any agency
+    if (!agency) {
+      const member = await prisma.member.findFirst({
+        where: { userId },
+        include: {
+          agency: {
+            include: { admin: true, members: { include: { user: true } } },
+          },
+        },
+      });
+      if (member && member.agency) {
+        agency = member.agency;
+      }
+    }
 
     if (!agency) {
       return res.status(404).json({ message: "Agency not found" });
@@ -59,7 +84,21 @@ router.get("/myAgency", auth, async (req, res) => {
 router.put("/:agencyId", auth, async (req, res) => {
   try {
     const { agencyId } = req.params;
-    const { officeName, officeAddress, officeEmail, officePhone } = req.body;
+    const userId = req.user.id;
+
+    const agency = await prisma.agency.findUnique({ where: { id: agencyId } });
+    if (!agency || agency.adminID !== userId) {
+      return res.status(403).json({ message: "Unauthorized" });
+    }
+
+    const {
+      officeName,
+      officeAddress,
+      officeEmail,
+      officePhone,
+      officeCompany,
+      network,
+    } = req.body;
 
     const updatedAgency = await prisma.agency.update({
       where: {
@@ -70,6 +109,8 @@ router.put("/:agencyId", auth, async (req, res) => {
         officeAddress,
         officeEmail,
         officePhone,
+        officeCompany,
+        network,
       },
     });
 
@@ -84,22 +125,59 @@ router.get("/:agencyId/members", auth, async (req, res) => {
   const { agencyId } = req.params;
 
   try {
+    // Fetch the agency including the admin details
+    const agency = await prisma.agency.findUnique({
+      where: { id: agencyId },
+      include: { admin: true },
+    });
+
+    if (!agency) {
+      return res.status(404).json({ message: "Agency not found" });
+    }
+
+    // Fetch the members associated with the agency
     const members = await prisma.member.findMany({
       where: { agencyId },
       include: { user: true },
     });
 
-    const memberData = members.map((m) => ({
-      id: m.id,
-      name: m.user.name, // Adjust according to your User model
-      email: m.user.email,
-      role: m.role,
-    }));
+    // Fetch property count and credit for each member
+    const memberDetails = await Promise.all(
+      members.map(async (member) => {
+        const propertyCount = await prisma.property.count({
+          where: { submittedBy: member.userId },
+        });
 
-    res.status(200).json({ members: memberData });
+        return {
+          id: member.id,
+          name: `${member.user.lastName} ${member.user.firstName}`,
+          email: member.user.email,
+          role: "Ügynök",
+          propertyCount: propertyCount, // Number of properties submitted by the member
+          credit: member.user.credit || 0, // Member's credit
+        };
+      })
+    );
+
+    // Construct the combined members list with the admin included
+    const combinedMembers = [
+      {
+        id: agency.adminID,
+        name: `${agency.admin.lastName} ${agency.admin.firstName}`,
+        email: agency.admin.email,
+        role: "Admin",
+        propertyCount: 0,
+        credit: agency.admin.credit || 0,
+      },
+      ...memberDetails,
+    ];
+
+    res.status(200).json({ members: combinedMembers });
   } catch (error) {
-    console.error("Error fetching agency members:", error);
-    res.status(500).json({ message: "Error fetching agency members" });
+    console.error("Error fetching agency members and admin:", error);
+    res
+      .status(500)
+      .json({ message: "Error fetching agency members and admin" });
   }
 });
 
@@ -206,6 +284,105 @@ router.get("/confirm-invite/:token", async (req, res) => {
   });
 
   res.json({ success: "Joined the agency successfully" });
+});
+
+// DELETE route to remove a member from an agency
+router.delete("/:agencyId/members/:memberId", auth, async (req, res) => {
+  const { agencyId, memberId } = req.params;
+  const userId = req.user.id; // ID of the user making the request
+
+  try {
+    // Check if the user is the admin of the agency
+    const agency = await prisma.agency.findUnique({ where: { id: agencyId } });
+    if (!agency || agency.adminID !== userId) {
+      return res.status(403).json({ message: "Unauthorized" });
+    }
+
+    // Delete the member
+    await prisma.member.delete({
+      where: {
+        id: memberId,
+      },
+    });
+
+    res.status(200).json({ message: "Member removed successfully" });
+  } catch (error) {
+    console.error("Error removing member:", error);
+    res.status(500).json({ message: "Error removing member" });
+  }
+});
+
+// POST route to send credits from admin to a member
+router.post("/credit-sending", auth, async (req, res) => {
+  const { agencyId, memberId, amount } = req.body;
+  const userId = req.user.id; // ID of the user making the request
+
+  console.log("Credit Sending Request:", {
+    memberId,
+    amount,
+    userId,
+  });
+
+  try {
+    // Validate the amount
+    const creditAmount = parseInt(amount, 10);
+    console.log("Validating amount...");
+    if (amount <= 0) {
+      console.log("Invalid amount:", amount);
+      return res.status(400).json({ message: "Invalid amount" });
+    }
+
+    // Check if the admin has enough credits
+    console.log("Checking admin's credits...");
+    const admin = await prisma.user.findUnique({ where: { id: userId } });
+    console.log("Admin's current credits:", admin.credit);
+
+    if (admin.credit < amount) {
+      console.log(
+        "Insufficient credits. Required:",
+        amount,
+        "Available:",
+        admin.credit
+      );
+      return res.status(400).json({ message: "Insufficient credits" });
+    }
+
+    // Update the credits of the admin and the member
+    console.log("Updating member's credits...");
+    const member = await prisma.member.findUnique({
+      where: { id: memberId },
+      include: { user: true }, // Include the associated user
+    });
+
+    // Check if the member exists
+    if (!member) {
+      return res.status(404).json({ message: "Member not found" });
+    }
+
+    // Update the credits for the user associated with the member
+    const updatedMember = await prisma.user.update({
+      where: { id: member.user.id },
+      data: { credit: { increment: creditAmount } },
+    });
+
+    console.log("Member's new credit:", member.credit);
+
+    console.log("Decrementing admin's credits...");
+    await prisma.user.update({
+      where: { id: userId },
+      data: { credit: { decrement: creditAmount } },
+    });
+
+    console.log("Credits sent successfully");
+    res
+      .status(200)
+      .json({ message: "Credits sent successfully", member: updatedMember });
+  } catch (error) {
+    console.error("Error sending credits:", error);
+    res
+      .status(500)
+      .json({ message: "Error sending credits", errorDetails: error.message });
+  }
 });
 
 module.exports = router;

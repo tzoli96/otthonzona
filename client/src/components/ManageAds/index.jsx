@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext, createContext } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import Layout from "../Elements/AppLayout";
 import Loading from "../Elements/Loading";
 import { request } from "../../utils/request";
@@ -7,24 +7,17 @@ import { BuyCreditModal } from "../BiddingDashboard/BuyCredit";
 import { AppContext } from "../../App";
 import { DeleteAdPopup } from "./DeleteAdPopup";
 import { getDeleteReasons } from "../../utils/request/archiveRequest";
-function ManageAds() {
+
+function ManageAds({}) {
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
   const { user } = useContext(AppContext);
   const [showBuyCredit, setShowBuyCredit] = useState(false);
   const [reasonOptions, setReasonOptions] = useState([]);
-
-  //delete ad popup is visible
   const [dapIsVisible, setDapIsVisible] = useState(false);
   const [deletingProperty, setDeletingProperty] = useState(null);
 
-  const ReasonOptionsMapping = (data) => {
-    return data.data.map(item => ({
-      value: item.id,
-      name: item.name,
-      openComment: false
-    }));
-  };
+
   useEffect(() => {
     getDeleteReasons()
         .then((data) => {
@@ -39,21 +32,30 @@ function ManageAds() {
         });
 
     request("/api/user/my-properties")
-      .then((data) => {
-        setLoading(false);
-        setProperties(data.data);
-      })
-      .catch((err) => {
-        setLoading(false);
-      });
+        .then((data) => {
+          setLoading(false);
+          setProperties(data.data);
+        })
+        .catch((err) => {
+          setLoading(false);
+        });
   }, []);
+
+
+  const ReasonOptionsMapping = (data) => {
+    return data.data.map(item => ({
+      value: item.id,
+      name: item.name,
+      openComment: false
+    }));
+  };
 
   return (
     <>
       <Layout selected={0}>
         <div className="p-4 md:p-8">
           <p className="text-xl font-semibold">
-           Hirdetések kezelése
+            Hirdetéseim
             <span
               className="float-right !text-lg font-bold text-gray-600"
               onClick={() => setShowBuyCredit(true)}
@@ -88,13 +90,13 @@ function ManageAds() {
         <BuyCreditModal close={() => setShowBuyCredit(false)} />
       )}
       {dapIsVisible && (
-        <DeleteAdPopup
-          setIsVisible={setDapIsVisible}
-          property={deletingProperty}
-          setProperties={setProperties}
-          properties={properties}
-          ReasonOptions={reasonOptions}
-        ></DeleteAdPopup>
+          <DeleteAdPopup
+              setIsVisible={setDapIsVisible}
+              property={deletingProperty}
+              setProperties={setProperties}
+              properties={properties}
+              ReasonOptions={reasonOptions}
+          ></DeleteAdPopup>
       )}
     </>
   );

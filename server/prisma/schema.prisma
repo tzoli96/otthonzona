@@ -49,6 +49,8 @@ model Agency {
   officeAddress String? @default("")
   officeEmail   String? @unique @default("")
   officePhone   String? @default("")
+  officeCompany String? @default("")
+  network       String? @default("")
   photo         String?
 
   adminID String   @unique @db.ObjectId
@@ -185,7 +187,6 @@ model DraftProperty {
   submittedBy         String
   submittedOn         DateTime?  @default(now())
 }
-
 
 model PropertyDeleteReasons {
   id   String    @id @map("_id")

@@ -8,7 +8,7 @@ import About from "../components/Property/About";
 import Map from "../components/Property/Map";
 import { useParams, useNavigate } from "react-router-dom";
 import { request } from "../utils/request";
-import useIsMobile from "../utils/useIsMobile";
+import useIsMobile, {useIsSmallerScreen} from "../utils/useIsMobile";
 import ErrorPage from "../components/ErrorPage";
 
 function Property() {
@@ -37,13 +37,13 @@ function Property() {
     }
   }, [id]);
 
-  const isMobile = useIsMobile();
+  const isSmallerScreen = useIsSmallerScreen(1023);
 
   if (!isValidId) {
     return <ErrorPage />;
   }
 
-  if (property && isMobile) {
+  if (property && isSmallerScreen) {
     return (
       <>
         <Navbar />

@@ -117,31 +117,31 @@ router.get("/", async (req, res) => {
   } = req.query;
 
   const promotedWithFilter = (
-    await prisma.property.findMany({
-      take: 4,
-      where: {
-        district,
-        isArchived: false,
-        bidExpirationTime: { gt: new Date() },
-        ...(minPrice && {
-          price: {
-            gte:
-              (minPrice *
-                (100 - Number(process.env.PRICE_TOLERANCE_PERCENTAGE))) /
-              100,
-          },
-        }),
-        ...(maxPrice && {
-          price: {
-            lte:
-              (maxPrice *
-                (100 + Number(process.env.PRICE_TOLERANCE_PERCENTAGE))) /
-              100,
-          },
-        }),
-      },
-      orderBy: { credit: "desc" },
-    })
+      await prisma.property.findMany({
+        take: 4,
+        where: {
+          district,
+          isArchived: false,
+          bidExpirationTime: { gt: new Date() },
+          ...(minPrice && {
+            price: {
+              gte:
+                  (minPrice *
+                      (100 - Number(process.env.PRICE_TOLERANCE_PERCENTAGE))) /
+                  100,
+            },
+          }),
+          ...(maxPrice && {
+            price: {
+              lte:
+                  (maxPrice *
+                      (100 + Number(process.env.PRICE_TOLERANCE_PERCENTAGE))) /
+                  100,
+            },
+          }),
+        },
+        orderBy: { credit: "desc" },
+      })
   ).map((p) => ({ ...p, isPromoted: true }));
   //const promotedWithoutPriceFilter = (promotedWithFilter.length < 4 && (minPrice || maxPrice)) ? await (prisma.property.findMany({
   //  take: 4 - promotedWithFilter.length,
@@ -207,15 +207,15 @@ router.get("/homepage-ads", async (req, res) => {
   const totalRequired = 3;
 
   let promoted = (
-    await prisma.property.findMany({
-      take: 4,
-      where: {
-        isArchived: false,
-        h_bidExpirationTime: { gt: new Date() },
-      },
-      orderBy: { credit: "desc" },
-      take: totalRequired,
-    })
+      await prisma.property.findMany({
+        take: 4,
+        where: {
+          isArchived: false,
+          h_bidExpirationTime: { gt: new Date() },
+        },
+        orderBy: { credit: "desc" },
+        take: totalRequired,
+      })
   ).map((p) => ({ ...p, isPromoted: true }));
   if (promoted.length < totalRequired) {
     const remainingProperties = await prisma.property.findMany({
@@ -299,18 +299,18 @@ router.post("/upgrade-home/:id", auth, async (req, res) => {
     });
 
     const isPromotionActive =
-      currentProperty?.h_bidExpirationTime &&
-      new Date(currentProperty?.h_bidExpirationTime).getTime() > Date.now();
+        currentProperty?.h_bidExpirationTime &&
+        new Date(currentProperty?.h_bidExpirationTime).getTime() > Date.now();
 
     const property = await prisma.property.update({
       where: { id },
       data: isPromotionActive
-        ? {
+          ? {
             h_credit: {
               increment: bidCredits,
             },
           }
-        : {
+          : {
             h_credit: bidCredits,
             h_bidExpirationTime: new Date(Date.now() + 86400 * 1000),
           },
@@ -353,18 +353,18 @@ router.post("/upgrade/:id", auth, async (req, res) => {
     });
 
     const isPromotionActive =
-      currentProperty?.bidExpirationTime &&
-      new Date(currentProperty?.bidExpirationTime).getTime() > Date.now();
+        currentProperty?.bidExpirationTime &&
+        new Date(currentProperty?.bidExpirationTime).getTime() > Date.now();
 
     const property = await prisma.property.update({
       where: { id },
       data: isPromotionActive
-        ? {
+          ? {
             credit: {
               increment: bidCredits,
             },
           }
-        : {
+          : {
             credit: bidCredits,
             bidExpirationTime: new Date(Date.now() + 86400 * 1000),
           },

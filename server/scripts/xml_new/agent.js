@@ -97,45 +97,15 @@ exports.handleAgent = async (agents) => {
       where: { email: { in: agentsToFill.map((a) => a.email) } },
     });
 
-    // Process properties for all agents and get reference links
-    for (const agent of agentsToFill) {
-      const { properties: agentProperties, propertyReferenceLinks } =
-        await getProperties(agent, allAgents);
+    // Process properties for all agents
 
-      // Fetch existing property reference links from the database for this agent
-      const existingUser = allAgents.find((u) => u.email === agent.email);
-      const existingPropertyLinks = (
-        await prisma.property.findMany({
-          where: { submittedBy: existingUser.id },
-          select: { referenceLink: true },
-        })
-      ).map((p) => p.referenceLink);
-
-      // Determine which properties are missing in the XML
-      const propertiesToDelete = existingPropertyLinks.filter(
-        (link) => !propertyReferenceLinks.includes(link)
-      );
-
-      // Delete these properties from the database
-      await Promise.all(
-        propertiesToDelete.map((link) =>
-          prisma.property.deleteMany({ where: { referenceLink: link } })
-        )
-      );
-    }
-
-    // Process new or updated properties for all agents
-    const newOrUpdatedProperties = (
+    const properties = (
       await Promise.all(
         agentsToFill.map(async (agent) => {
           return getProperties(agent, allAgents); // Pass allAgents here
         })
       )
     ).flat();
-
-    const properties = newOrUpdatedProperties.filter(
-      (p) => p && p.referenceLink
-    );
 
     const previousProperties = await prisma.property.findMany({
       where: { referenceLink: { in: properties.map((p) => p.referenceLink) } },

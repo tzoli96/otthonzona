@@ -52,9 +52,12 @@ function Login() {
   return (
     <div>
       <Navbar />
-      <div className="md:grid grid-cols-2 bg-gray-50">
-        <div>
-          <img className="min-w-full min-h-full" src={loginImage} />
+      <div className="lg:grid grid-cols-2 bg-gray-50">
+        <div className="max-lg:hidden bg-[rgb(247,247,247)]">
+          <img
+            className="min-w-full min-h-full object-contain"
+            src={loginImage}
+          />
         </div>
         <div className="p-6 md:p-16 flex justify-center items-center bg-[rgb(247,247,247)]">
           <div>
@@ -63,12 +66,12 @@ function Login() {
               <br />
               Jelentkezz be a fiókodba
             </h1>
-            <p className="text-lightgrey text-lg w-full md:w-2/3">
+            <p className="text-lightgrey text-lg w-full 2xl:w-2/3">
               Szolgáltatásunk igénybevételéhez be kell jelentkezned. Ha még
               nincs fiókod, akkor kérjük regisztrálj.
             </p>
             <form onSubmit={handleSubmit}>
-              <div className="my-8 w-full md:w-2/3">
+              <div className="my-8 w-full 2xl:w-2/3">
                 <p className="font-bold my-2">E-mail cím</p>
                 {emailNotVerified && (
                   <div className="alert-box">Email cím nincs megerősítve!</div>
@@ -89,7 +92,7 @@ function Login() {
                 />
               </div>
               {!forgotPassword && (
-                <div className="mb-4 w-full md:w-2/3">
+                <div className="mb-4 w-full 2xl:w-2/3">
                   <p className="font-bold my-2">Jelszó</p>
                   <Input
                     placeholder="Írd be a jelszavad"
@@ -99,7 +102,7 @@ function Login() {
                   />
                 </div>
               )}
-              <div className="w-full md:w-2/3">
+              <div className="w-full 2xl:w-2/3">
                 <span
                   className="float-right text-sm font-medium text-gray-600 cursor-pointer"
                   onClick={() => setForgotPassword(!forgotPassword)}
@@ -110,7 +113,7 @@ function Login() {
                     : "Elfelejtettem a jelszavam"}
                 </span>
               </div>
-              <div className="w-full md:w-2/3 mt-16">
+              <div className="w-full 2xl:w-2/3 mt-16">
                 <button type="submit" className="orange-button !w-full">
                   {forgotPassword ? "Jelszó helyreállítása" : "Bejelentkezés"}
                 </button>
@@ -140,18 +143,18 @@ function Login() {
                     </p>
                   </div>
                 </Link>
-              </div>*/}
+                  </div>*/}
             </form>
-            <div className="bg-gray-300 w-full h-[1px] w-2/3 my-8" />
+            <div className="bg-gray-300 w-full h-[1px] xl:w-2/3 my-8" />
             <Link to="/register">
-              <div className="w-full md:w-2/3">
+              <div className="w-full 2xl:w-2/3">
                 <button className="blue-button !w-full">
                   Még nincs fiókod? Hozz létre egyet!
                 </button>
               </div>
             </Link>
             <Link to="/agency-register">
-              <div className="w-full md:w-2/3 mt-5">
+              <div className="w-full 2xl:w-2/3 mt-5">
                 <button className="blue-button !w-full">
                   Ingatlan irodát szeretnék regisztrálni!
                 </button>

@@ -3,7 +3,7 @@ FROM node:21-alpine as builder
 
 WORKDIR /backend
 
-COPY package*.json ./
+COPY package*.json ./backend
 
 RUN apk add --update nodejs npm yarn
 

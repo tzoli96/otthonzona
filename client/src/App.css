@@ -245,18 +245,8 @@ input:focus {
   }
 }
 
-.phone-number-fix {
-  margin-left: -3em;
-}
-
 .env-fix {
   margin-right: -2em;
-}
-
-@media (max-width: 1600px) {
-  .small-blue-button {
-    width: 100px !important;
-  }
 }
 
 .service-card {
@@ -320,7 +310,11 @@ input[type="number"] {
   appearance: textfield;
 }
 
-@media screen and (max-width: 1000px) {
+.text-tooltip {
+  transform: translateY(-150%);
+}
+
+@media screen and (max-width: 1023px) {
   .card p.card-heading {
     font-size: 18px;
   }
@@ -349,4 +343,56 @@ input[type="number"] {
   display: block;
   margin-left: auto;
   margin-right: auto;
+}
+
+.share-wrapper {
+  position: relative;
+  float: right;
+}
+
+.share-button {
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.share-button:hover {
+  color: #000;
+}
+
+.share-popup {
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  padding: 25px;
+  margin: 5px;
+  z-index: 1000;
+  top: 100%;
+  left: 0;
+  transform: translateX(-50%);
+}
+
+.share-popup-button {
+  display: block;
+  width: 100%;
+  margin-bottom: 15px;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #fff;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-size: 16px;
+}
+
+.popup-close-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 10px;
+}
+
+.share-popup button:hover {
+  background-color: #f0f0f0;
 }

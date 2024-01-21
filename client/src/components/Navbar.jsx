@@ -15,7 +15,7 @@ import messageIcon from "../pictures/app/message.svg";
 import notificationIcon from "../pictures/app/notification.svg";
 import eyeIcon from "../pictures/app/eye.svg";
 import heartIcon from "../pictures/app/heart.png";
-import useIsMobile from "../utils/useIsMobile";
+import {useIsSmallerScreen} from "../utils/useIsMobile";
 
 function MobileLinks({ hide, isActive }) {
   return (
@@ -72,27 +72,29 @@ function NavbarProfile({ setShow, show, user, logout, isLoggedIn }) {
       },
       { label: "Hirdetésfeladás", href: "/post-ad", icon: createAdIcon },
       { label: "Hirdetéskiemelés", href: "/bidding", icon: bankIcon },
-      { label: "Mentett hirdetéseim", href: "/post-ad", icon: eyeIcon },
-      // {
-      //   label: "Archivált hirdetések",
-      //   href: "/manage-archives",
-      //   icon: manageAdsIcon,
-      // },
+      {
+        label: "Mentett hirdetéseim",
+        href: "/saved-properties",
+        icon: eyeIcon,
+      },
       //{ label: "Megtekintett ingatlanok", href: "/post-ad", icon: heartIcon },
       //{ label: "Értesítések", href: "/post-ad", icon: notificationIcon },
       { label: "Profil adatok", href: "/profile", icon: profileIcon },
+      { label: "Piszkozatok", href: "/drafts", icon: createAdIcon },
+      //{ label: "Értékelések", href: "/post-ad", icon: starIcon },
+      //{ label: "Iroda létrehozása", href: "/agency", icon: starIcon },
+      //{ label: "Megkeresések", href: "/post-ad", icon: messageIcon },
       {
         label: "Korábbi vásárlásaim",
         href: "/credit-purchase-history",
         icon: bankIcon,
       },
-      //{ label: "Értékelések", href: "/post-ad", icon: starIcon },
-      //{ label: "Megkeresések", href: "/post-ad", icon: messageIcon },
+      { label: "Ingatlan irodám", href: "/agency", icon: starIcon },
     ],
     []
   );
 
-  const isMobile = useIsMobile();
+  const isSmallerScreen = useIsSmallerScreen(1023);
 
   return (
     <>
@@ -109,17 +111,17 @@ function NavbarProfile({ setShow, show, user, logout, isLoggedIn }) {
       >
         <div>
           <div className="flex gap-2 mt-1">
-            <div className="rounded-full h-10 w-10 rounded-image-container">
-              <img src={user?.photo || profilePhotoPlaceholder} />
+            <div className="flex h-10 w-10">
+              <img className="rounded-full w-full" src={user?.photo || profilePhotoPlaceholder} />
             </div>
-            <div className="hidden md:flex justify-center items-center text-blue select-none">
+            <div className="hidden lg:flex justify-center items-center text-blue select-none">
               {user?.lastName}
             </div>
             <div>
               <img
                 src={dropdownIcon}
                 className={
-                  "mt-3 h-4 w-4 hidden md:flex justify-center items-center " +
+                  "mt-3 h-4 w-4 hidden lg:flex justify-center items-center " +
                   (show ? "" : "rotate-180")
                 }
               />
@@ -127,16 +129,16 @@ function NavbarProfile({ setShow, show, user, logout, isLoggedIn }) {
           </div>
           <div
             style={
-              isMobile
+              isSmallerScreen
                 ? { zIndex: 999, background: "#006fb9" }
                 : { zIndex: 999 }
             }
             className={
-              `fixed top-0 left-0 w-full h-full md:w-auto md:h-auto md:top-auto md:left-auto text-white md:text-black md:bg-white md:w-36 shadow mt-0 md:mt-2 md:rounded-lg overflow-hidden z-40 ` +
+              `fixed top-0 left-0 w-full h-full lg:w-auto lg:h-auto lg:top-auto lg:left-auto text-white lg:text-black lg:bg-white lg:w-36 shadow mt-0 lg:mt-2 lg:rounded-lg overflow-hidden z-40 ` +
               (show ? "" : "hidden")
             }
           >
-            <div className="h-16 md:hidden">
+            <div className="h-16 lg:hidden">
               <span
                 className="float-right text-2xl p-6"
                 onClick={() => setShow(false)}
@@ -165,7 +167,7 @@ function NavbarProfile({ setShow, show, user, logout, isLoggedIn }) {
             >
               Kijelentkezés
             </button>
-            <div className="md:hidden">
+            <div className="lg:hidden">
               {menus.map((profileText, profileIndex) => (
                 <Link to={profileText.href}>
                   <button className="flex items-center justify-start w-full active:bg-orange-600 gap-3 self-start p-2 pl-5 text-left hover:text-black">
@@ -177,7 +179,7 @@ function NavbarProfile({ setShow, show, user, logout, isLoggedIn }) {
             </div>
           </div>
         </div>
-        <Link to="/post-ad" className="hidden md:flex">
+        <Link to="/post-ad" className="hidden lg:flex">
           <button className="orange-button">Hirdetésfeladás</button>
         </Link>
       </div>
@@ -203,14 +205,14 @@ const Navbar = () => {
 
   const logout = () => {
     Cookies.remove("token");
-    window.location.reload();
+    window.location.assign("/");
   };
 
   const isActive = (path) => location.pathname === path;
 
   return (
-    <nav className="flex justify-between w-full md:w-10/12 p-6 mx-auto items-center gap-10 relative z-35 bg-[rgb(247,247,247)] overflow-hidden">
-      <div className="md:hidden">
+    <nav className="flex justify-between w-full lg:w-10/12 p-6 mx-auto items-center gap-10 relative z-35 bg-[rgb(247,247,247)] overflow-hidden">
+      <div className="lg:hidden">
         <NavbarProfile
           user={user}
           show={show}
@@ -219,13 +221,13 @@ const Navbar = () => {
           isLoggedIn={isLoggedIn}
         />
       </div>
-      <div className="w-[120px] md:w-[35%]">
+      <div className="w-[120px] xl:max-2xl:max-w-[150px] lg:w-[35%] lg:hidden xl:block">
         <a href="/">
           <img src={logo} alt="logo" className="h-14" />
         </a>
       </div>
 
-      <div className="hidden md:flex justify-between w-[80%] gap-6 text-lightgrey font-bold">
+      <div className="hidden lg:flex justify-between w-[80%] gap-6 text-lightgrey font-bold lg:max-xl:w-full">
         <ul className="flex items-center gap-6">
           <li className={isActive("/") ? "text-[#EC6608]" : ""}>
             <Link to="/">Főoldal</Link>
@@ -271,7 +273,7 @@ const Navbar = () => {
         )}
       </div>
 
-      <div className="flex md:hidden" onClick={() => setShowMenu(true)}>
+      <div className="flex lg:hidden" onClick={() => setShowMenu(true)}>
         <img src={menuIcon} className="h-6 w-6" />
       </div>
       {showMenu && (

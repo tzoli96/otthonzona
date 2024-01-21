@@ -23,10 +23,11 @@ const HomeServices = () => {
 
   return (
     <>
-      <p className="section-heading w-auto md:w-10/12 mx-auto services-title">
+      <p className="section-heading w-10/12 mx-auto services-title">
         Szolgáltatásaink
       </p>
-      <div className="mt-20 mb-10">
+
+      <div className="my-10">
         <section className="relative">
           <HomeServiceCard />
         </section>

@@ -16,6 +16,21 @@ export const useIsBiggerScreen = () => {
   return isBiggerScreen;
 }
 
+export const useIsSmallerScreen = (width) => {
+  const [isSmallerScreen, setIsSmallerScreen] = useState(false);
+
+  useLayoutEffect(() => {
+    const updateSize = () => {
+      setIsSmallerScreen(window.innerWidth <= Number(width));
+    };
+    updateSize();
+    window.addEventListener('resize', debounce(updateSize, 50));
+    return () => window.removeEventListener('resize', updateSize);
+  }, []);
+
+  return isSmallerScreen;
+}
+
 const useIsMobile = () => {
   const [isMobile, setIsMobile] = useState(false);
 

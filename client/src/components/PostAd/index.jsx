@@ -124,32 +124,34 @@ const PostAd = ({ prefill, isDraft }) => {
           <MoreDetails prefill={prefill} />
           <UploadImages prefill={prefill} />
 
-          <div>
-            <span className="float-right mb-8">
-              <button className="blue-button" id="upload" disabled={isLoading}>
-                {isLoading ? "Feltöltés..." : "Feltöltés"}
-              </button>
-            </span>
+          <div className="flex flex-col items-end lg:flex-row lg:justify-end">
             {!prefill && (
-              <span className="float-right mb-8 mr-4">
+              <span className="mb-8 order-2 lg:order-1 lg:mr-4">
                 <button
-                  className="blue-button"
-                  id="showDraftButton"
-                  disabled={isLoading}
+                    className="blue-button !w-auto px-[40px]"
+                    id="showDraftButton"
+                    disabled={isLoading}
                 >
                   {isLoading
-                    ? "Mentés Piszkozatként..."
-                    : "Mentés Piszkozatként"}
+                      ? "Mentés piszkozatként..."
+                      : "Mentés piszkozatként"}
                 </button>
               </span>
             )}
+
             {isDraft && (
-              <span className="float-right mb-8">
+              <span className="mb-8 order-2 lg:order-1 lg:mr-4">
                 <button className="blue-button" id="draft" disabled={isLoading}>
                   {isLoading ? "Piszkozat mentés..." : "Piszkozat mentés"}
                 </button>
               </span>
             )}
+
+            <span className="float-right mb-8 order-1 lg:order-2">
+              <button className="blue-button" id="upload" disabled={isLoading}>
+                {isLoading ? "Feltöltés..." : "Feltöltés"}
+              </button>
+            </span>
           </div>
         </form>
       </div>
