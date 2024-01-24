@@ -25,7 +25,7 @@ function AboutUs() {
         <div className="absolute bottom-0 left-0">
           <img src={aboutUsMark} alt="About Us Mark" />
         </div>
-        <div className="card w-[1000px] p-12 absolute bottom-[10%] left-[10%]">
+        <div className="card md:w-[80%] xl:w-[1000px] p-12 absolute md:bottom-[5%] xl:bottom-[10%] left-[10%]">
           <p className="card-heading text-lg md:!text-2xl">
             Miért jött létre az <span className="text-blue">OtthonZóna?</span>
           </p>
@@ -51,8 +51,8 @@ function AboutUs() {
           </p>
         </div>
       </div>
-      <div className="flex flex-col md:grid md:grid-cols-2 p-4 md:p-20">
-        <div>
+      <div className="flex flex-col xl:grid xl:grid-cols-2 p-4 xl:p-20">
+        <div className="justify-center grid">
           <img src={aboutUs1} className="max-w-full h-auto" alt="About Us 1" />
         </div>
         <div className="p-4 md:p-20 flex justify-center items-center">
@@ -102,7 +102,10 @@ function AboutUs() {
           </div>
         </div>
       </div>
-      <div className="flex flex-col md:grid md:grid-cols-2 p-4 md:p-20">
+      <div className="flex flex-col xl:grid xl:grid-cols-2 p-4 xl:p-20">
+      <div className="xl:hidden justify-center grid">
+        <img src={aboutUs2} className="max-w-full h-auto" alt="About Us 2" />
+      </div>
         <div className="p-4 md:p-20 flex justify-center items-center order-last md:order-none">
           <div className="w-full">
             <p className="card-heading text-lg md:!text-2xl">
@@ -146,7 +149,7 @@ function AboutUs() {
             </p>
           </div>
         </div>
-        <div>
+        <div className="hidden xl:block">
           <img src={aboutUs2} className="max-w-full h-auto" alt="About Us 2" />
         </div>
       </div>

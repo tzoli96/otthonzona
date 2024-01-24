@@ -82,7 +82,7 @@ const PostAd = ({ prefill, isDraft }) => {
         "success"
       );
     } catch (error) {
-      console.error("Hiba a hirdetés beküldése során:", error);
+      //console.error("Hiba a hirdetés beküldése során:", error);
       notify("Hiba történt a hirdetés beküldése közben");
     } finally {
       setIsLoading(false);
@@ -128,13 +128,13 @@ const PostAd = ({ prefill, isDraft }) => {
             {!prefill && (
               <span className="mb-8 order-2 lg:order-1 lg:mr-4">
                 <button
-                    className="blue-button !w-auto px-[40px]"
-                    id="showDraftButton"
-                    disabled={isLoading}
+                  className="blue-button !w-auto px-[40px]"
+                  id="showDraftButton"
+                  disabled={isLoading}
                 >
                   {isLoading
-                      ? "Mentés piszkozatként..."
-                      : "Mentés piszkozatként"}
+                    ? "Mentés piszkozatként..."
+                    : "Mentés piszkozatként"}
                 </button>
               </span>
             )}

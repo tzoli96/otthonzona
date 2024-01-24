@@ -15,7 +15,7 @@ function SignUp() {
     const formData = new FormData(e.target);
     const json = convertFormDataToJson(e.target);
     if (isNaN(json.phone) || json.phone[0] === "+") {
-      return toast.error("Invalid phone number");
+      return toast.error("Nem megfelelő telefonszám");
     }
     json.phone = "36" + json.phone;
     request("/api/auth/register", {
@@ -23,7 +23,7 @@ function SignUp() {
       method: "POST",
     }).then((data) => {
       if (data.error) {
-        return alert(data.error);
+        return toast.error(data.error);
       }
       setEmailSent(true); // Set state
       // window.location = "/login"; // Don't redirect yet
@@ -35,7 +35,10 @@ function SignUp() {
       <Navbar />
       <div className="lg:grid grid-cols-2 bg-gray-50">
         <div className="max-lg:hidden bg-[rgb(247,247,247)]">
-          <img className="min-w-full min-h-full object-contain" src={signupImage} />
+          <img
+            className="min-w-full min-h-full object-contain"
+            src={signupImage}
+          />
         </div>
         <div className="p-6 md:p-16 flex justify-center items-center bg-[rgb(247,247,247)]">
           <div>

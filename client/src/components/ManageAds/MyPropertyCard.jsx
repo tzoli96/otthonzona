@@ -14,7 +14,13 @@ import manageAdsIcon from "../../pictures/app/manage-ads.png";
 import eyeIcon from "../../pictures/app/eye.svg";
 import bankIcon from "../../pictures/app/bank.svg";
 
-function MyPropertyCard({ property, properties, setProperties, setDapIsVisible, setDeletingProperty }) {
+function MyPropertyCard({
+  property,
+  properties,
+  setProperties,
+  setDapIsVisible,
+  setDeletingProperty,
+}) {
   const [showBidding, setShowBidding] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const isMobile = useIsMobile();
@@ -33,7 +39,7 @@ function MyPropertyCard({ property, properties, setProperties, setDapIsVisible, 
 
   const handleDelete = async () => {
     try {
-      if (window.confirm("Are you sure you want to delete this property")) {
+      if (window.confirm("Biztos, hogy törölni akarod ezt a ingatlant?")) {
         setDeleting(true);
         const response = await request(`/api/property/${property.id}`, {
           method: "DELETE",
@@ -50,29 +56,33 @@ function MyPropertyCard({ property, properties, setProperties, setDapIsVisible, 
 
   return (
     <div className="rounded-2xl shadow-lg md:grid grid-cols-3 bg-white my-4 overflow-hidden w-full">
-      <Link to={`/${property?.id}`}>
+      <a href={`/${property?.id}`} target="_blank" rel="noopener noreferrer">
         <div className="overflow-hidden max-h-[400px]">
           <img src={property.photos[0]} className="min-h-full min-w-full" />
         </div>
-      </Link>
+      </a>
       <div className="p-4 md:p-8 md:px-16 col-span-2">
         <p
-            className="font-bold grid"
-            style={{gridTemplateColumns: "calc(100% - 20px) 20px"}}
+          className="font-bold grid"
+          style={{ gridTemplateColumns: "calc(100% - 20px) 20px" }}
         >
-          <Link to={`/${property?.id}`}>
+          <a
+            href={`/${property?.id}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <span>
               {property.street} {property?.houseNo}
             </span>
-          </Link>
+          </a>
           <span onClick={() => showDeletePopup(property)}>
             {deleting ? (
-                <Loading/>
+              <Loading />
             ) : (
-                <img
-                    src={trashIcon}
-                    className="float-right cursor-pointer h-6 w-6"
-                />
+              <img
+                src={trashIcon}
+                className="float-right cursor-pointer h-6 w-6"
+              />
             )}
           </span>
         </p>
@@ -126,8 +136,14 @@ function MyPropertyCard({ property, properties, setProperties, setDapIsVisible, 
         <div className="flex gap-5">
           <div className="my-4 w-auto">
             <Link to={`/edit-property/${property?.id}`}>
-              <button className="orange-button flex items-center justify-center md:max-xl:!w-[75px] md:max-xl:p-3" title="Szerkesztés">
-                <img src={manageAdsIcon} className="w-[24px] h-[24px] mr-2 md:max-xl:mr-0" />
+              <button
+                className="orange-button flex items-center justify-center md:max-xl:!w-[75px] md:max-xl:p-3"
+                title="Szerkesztés"
+              >
+                <img
+                  src={manageAdsIcon}
+                  className="w-[24px] h-[24px] mr-2 md:max-xl:mr-0"
+                />
 
                 <span className="md:max-xl:hidden">Szerkesztés</span>
               </button>
@@ -136,13 +152,23 @@ function MyPropertyCard({ property, properties, setProperties, setDapIsVisible, 
 
           {!isMobile && (
             <div className="my-4">
-              <Link to={`/${property?.id}`}>
-                <button className="blue-button flex items-center justify-center md:max-xl:!w-[75px]" title="Megtekintés">
-                  <img src={eyeIcon} className="w-[24px] h-[24px] mr-2 md:max-xl:mr-0" />
+              <a
+                href={`/${property?.id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <button
+                  className="blue-button flex items-center justify-center md:max-xl:!w-[75px]"
+                  title="Megtekintés"
+                >
+                  <img
+                    src={eyeIcon}
+                    className="w-[24px] h-[24px] mr-2 md:max-xl:mr-0"
+                  />
 
                   <span className="md:max-xl:hidden">Megtekintés</span>
                 </button>
-              </Link>
+              </a>
             </div>
           )}
 
@@ -155,7 +181,10 @@ function MyPropertyCard({ property, properties, setProperties, setDapIsVisible, 
               className="orange-button flex items-center justify-center md:max-xl:!w-[75px]"
               title="Kiemelés"
             >
-              <img src={bankIcon} className="w-[24px] h-[24px] mr-2 md:max-xl:mr-0" />
+              <img
+                src={bankIcon}
+                className="w-[24px] h-[24px] mr-2 md:max-xl:mr-0"
+              />
 
               <span className="md:max-xl:hidden">Kiemelés</span>
             </button>

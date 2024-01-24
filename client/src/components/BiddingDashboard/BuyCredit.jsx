@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Input from "../Elements/Input";
 import { loadStripe } from "@stripe/stripe-js";
 import { request } from "../../utils/request";
+import { toast } from "react-hot-toast";
 
 function BuyCredit({ close }) {
   const [currency, setCurrency] = useState(5000);
@@ -15,7 +16,7 @@ function BuyCredit({ close }) {
 
     // todo: 5000?
     if (currency < 5000) {
-      return alert("Minimum 2500 kreditet kell vásárolni!");
+      return toast.error("Minimum 2500 kreditet kell vásárolni!");
     }
 
     const body = {
@@ -39,7 +40,7 @@ function BuyCredit({ close }) {
     });
 
     if (result.error) {
-      console.log(result.error);
+      toast.error("Jelenleg a fizetés nem működik");
     }
   };
 

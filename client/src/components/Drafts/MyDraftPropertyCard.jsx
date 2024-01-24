@@ -7,6 +7,7 @@ import trashIcon from "../../pictures/app/trash.svg";
 import Loading from "../Elements/Loading";
 import useIsMobile from "../../utils/useIsMobile";
 import { deleteDraftProperty } from "../../utils/request/draftsRequest";
+import { toast } from "react-hot-toast";
 
 function MyDraftPropertyCard({ property, properties, setProperties }) {
   const [showBidding, setShowBidding] = useState(false);
@@ -22,7 +23,7 @@ function MyDraftPropertyCard({ property, properties, setProperties }) {
 
   const handleDelete = async () => {
     try {
-      if (window.confirm("Are you sure you want to delete this draft?")) {
+      if (window.confirm("Biztos, hogy törölni akarod ezt a piszkozatot?")) {
         setDeleting(true);
         const response = await deleteDraftProperty(property.id);
         if (response.success) {
@@ -30,7 +31,7 @@ function MyDraftPropertyCard({ property, properties, setProperties }) {
         }
       }
     } catch (err) {
-      console.log(err)
+      toast.error("Hiba történt");
     } finally {
       setDeleting(false);
     }
@@ -68,9 +69,9 @@ function MyDraftPropertyCard({ property, properties, setProperties }) {
           {settlement?.label} {district?.label}
         </p>
         {property.price && (
-            <p className="my-6 text-orange text-2xl font-bold">
-              {thousandSeparator(property.price.toFixed(0) + "", " ")} Ft
-            </p>
+          <p className="my-6 text-orange text-2xl font-bold">
+            {thousandSeparator(property.price.toFixed(0) + "", " ")} Ft
+          </p>
         )}
         <div className="grid grid-cols-2 md:flex gap-2">
           <div className="my-4 w-full md:w-auto">

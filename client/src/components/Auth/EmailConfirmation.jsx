@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { request } from "../../utils/request";
+import toast from "react-hot-toast";
 
 const EmailConfirmation = () => {
   const { token } = useParams();
@@ -11,7 +12,7 @@ const EmailConfirmation = () => {
         method: "GET",
       }).then((data) => {
         if (data.error) {
-          alert(data.error);
+          toast.error(data.error);
         } else {
           setTimeout(() => {
             window.location = "/login";

@@ -40,7 +40,7 @@ function CreateAgency() {
           fetchMembers(response.data.id);
         }
       } catch (error) {
-        console.error("Error fetching agency data:", error);
+        toast.error("Hiba az iroda adatainak lekérdezésében");
       }
     }
 
@@ -50,25 +50,25 @@ function CreateAgency() {
   }, [user]);
 
   useEffect(() => {
-    console.log("Updated members state:", members);
+    //console.log("Updated members state:", members);
   }, [members]);
 
   async function fetchMembers(agencyId) {
-    console.log("fetchMembers called with agencyId:", agencyId);
+    //console.log("fetchMembers called with agencyId:", agencyId);
     const url = `/api/agency/${agencyId}/members`;
-    console.log("API URL:", url);
+    //console.log("API URL:", url);
 
     try {
       const membersResponse = await request(`/api/agency/${agencyId}/members`, {
         method: "GET",
       });
-      console.log("API Response:", membersResponse);
+      //console.log("API Response:", membersResponse);
       if (membersResponse.members) {
-        console.log("Members data:", membersResponse.members);
+        //console.log("Members data:", membersResponse.members);
         setMembers(membersResponse.members); // Update members state
       }
     } catch (error) {
-      console.error("Error fetching agency members:", error);
+      toast.error("Hiba az iroda adatainak lekérdezésében");
     }
   }
 
@@ -105,7 +105,7 @@ function CreateAgency() {
         agency ? "Iroda sikeresen szerkesztve" : "Iroda sikeresen létrehozva"
       );
     } catch (error) {
-      toast.error("Error saving agency data");
+      toast.error("Iroda adatainak mentése sikertelen");
     }
   };
 
@@ -118,7 +118,7 @@ function CreateAgency() {
       });
 
       if (response.error) {
-        toast.error("Error sending invitation: " + response.error);
+        toast.error("Meghívó küldése sikertelen: " + response.error);
       } else {
         setPendingInvitations([
           ...pendingInvitations,
@@ -128,8 +128,8 @@ function CreateAgency() {
         toast.success("Meghívás elküldve");
       }
     } catch (error) {
-      console.error("Error sending invitation:", error);
-      toast.error("Error sending invitation");
+      //console.error("Error sending invitation:", error);
+      toast.error("Meghívó küldése sikertelen");
     }
   };
 
@@ -143,14 +143,14 @@ function CreateAgency() {
       );
 
       if (response.error) {
-        toast.error("Error removing member: " + response.error);
+        toast.error("Ügynök eltávolítása sikertelen: " + response.error);
       } else {
         setMembers(members.filter((member) => member.id !== memberId));
         toast.success("Ügynök eltávolítva");
       }
     } catch (error) {
-      console.error("Error removing member:", error);
-      toast.error("Error removing member");
+      //console.error("Error removing member:", error);
+      toast.error("Ügynök eltávolítása sikertelen");
     }
   };
 

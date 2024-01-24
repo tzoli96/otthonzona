@@ -1,5 +1,6 @@
 import React, { useRef, useState } from "react";
 import { api } from "../../utils/request";
+import toast from "react-hot-toast";
 
 const FileUpload = ({ children, onUpload }) => {
   const inputRef = useRef();
@@ -13,7 +14,7 @@ const FileUpload = ({ children, onUpload }) => {
 
   const handleUpload = async (file) => {
     if (!file) {
-      console.error("Please select a file");
+      toast.error("Kérjük válassz egy fájlt");
       return;
     }
 
@@ -28,13 +29,13 @@ const FileUpload = ({ children, onUpload }) => {
 
       if (response.ok) {
         const data = await response.json();
-        console.log("File uploaded successfully", data);
+        toast.success("Sikeres feltöltés", data);
         onUpload?.(data);
       } else {
-        console.error("Error uploading file:", response.statusText);
+        toast.error("Sikertelen feltöltés:", response.statusText);
       }
     } catch (error) {
-      console.error("Error uploading file:", error);
+      toast.error("Sikertelen feltöltés:", error);
     }
   };
 

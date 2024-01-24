@@ -3,6 +3,7 @@ import Layout from "../Elements/AppLayout";
 import Loading from "../Elements/Loading";
 import { request } from "../../utils/request";
 import PropertyCard from "./PropertyCard";
+import toast from "react-hot-toast";
 
 function SavedProperties() {
   const [propertyIds, setPropertyIds] = useState([]);
@@ -11,16 +12,19 @@ function SavedProperties() {
   useEffect(() => {
     request("/api/user/saved-properties")
       .then((data) => {
-        console.log("API response data:", data);
+        //console.log("API response data:", data);
         if (data && Array.isArray(data.data)) {
           setPropertyIds(data.data);
         } else {
-          console.error("Unexpected response format:", data);
+          toast.error("Hibás válaszformátum:", data);
         }
         setLoading(false);
       })
       .catch((err) => {
-        console.error("Error fetching saved property IDs:", err);
+        toast.error(
+          "Hiba a mentett ingatlanok azonosítóinak lekérdezése során",
+          err
+        );
         setLoading(false);
       });
   }, []);

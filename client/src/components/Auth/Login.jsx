@@ -24,8 +24,8 @@ function Login() {
       ? "/api/auth/forgot-password"
       : "/api/auth/login";
 
-    console.log("API endpoint:", apiEndpoint);
-    console.log("Form data:", json);
+    //console.log("API endpoint:", apiEndpoint);
+    //console.log("Form data:", json);
 
     request(apiEndpoint, {
       body: JSON.stringify(json),
@@ -43,7 +43,7 @@ function Login() {
           window.location = "/post-ad";
         } else {
           setEmailSent(true);
-          console.log("Email sent state:", emailSent);
+          //console.log("Email sent state:", emailSent);
         }
       }
     });

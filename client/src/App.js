@@ -1,6 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 
-import "./scss/App.scss";
+import "./scss/app.scss";
 // import "./App.css";
 import AboutFooter from "./components/AboutFooter";
 import Footer from "./components/Footer";
@@ -130,8 +130,8 @@ function App() {
         <Route path="/:id" element={<Property />} />
         <Route path="*" element={<ErrorPage />} />
         <Route
-              path="/manage-archives"
-              element={<ManageArchiveList isArchive={true} key="archives" />}
+          path="/manage-archives"
+          element={<ManageArchiveList isArchive={true} key="archives" />}
         />
       </Routes>
       <Toaster />

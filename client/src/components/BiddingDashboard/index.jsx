@@ -77,7 +77,7 @@ export function BiddingPropertyCard({ property, properties, setProperties }) {
 
       setBidding(true);
       if (parseInt(credit) <= 0) {
-        return toast.error("Bid credit should be greater than 0");
+        return toast.error("Az érték nagyobb kell legyen, mint 0");
       }
       const response = await request(bidLink, {
         method: "POST",

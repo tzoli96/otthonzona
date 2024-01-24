@@ -442,6 +442,33 @@ router.get("/archive-list", auth, async (req, res) => {
   }
 });
 
+router.post("/archive/reactive/", auth, async (req, res) => {
+  try {
+    const requestData = {
+      propertyId: req.body.propertyId
+    };
+
+    if (!requestData.propertyId) {
+      return res.status(400).json({ message: "The 'propertyId' field is required." });
+    }
+
+    await prisma.$transaction(async (prisma) => {
+      await prisma.property.update({
+        where: { id:requestData.propertyId },
+        data: {
+          isArchived: false
+        },
+      });
+
+      await deleteReasonEntityById(requestData.propertyId, req.user.id);
+    });
+
+    return res.status(200).json({ success: true });
+  } catch (error) {
+    console.error("Error reactive property:", error);
+    return res.status(500).json({ message: "Error reactive property" });
+  }
+});
 
 router.delete("/archive", auth, async (req, res) => {
   try {
@@ -465,7 +492,7 @@ router.delete("/archive", auth, async (req, res) => {
       await createReasonEntity(requestData.reasonId, req.user.id,requestData.propertyId);
     });
 
-    return res.status(200).json({ isSuccess: true });
+    return res.status(200).json({ success: true });
   } catch (error) {
     console.error("Error archiving property:", error);
     return res.status(500).json({ message: "Error archiving property" });
@@ -496,7 +523,7 @@ router.delete("/", auth, async (req, res) => {
       });
     });
 
-    return res.status(200).json({ isSuccess: true  });
+    return res.status(200).json({ success: true  });
   } catch (error) {
     console.log(error);
     return handleErrorResponse(res, 500, "Error deleting property");
@@ -504,14 +531,14 @@ router.delete("/", auth, async (req, res) => {
 });
 
 
-const deleteReasonEntityById = async (id,userId) => {
-  if (!id) {
+const deleteReasonEntityById = async (propertyId,userId) => {
+  if (!propertyId) {
     throw new Error("'id' is required.");
   }
 
   try {
     await prisma.PropertyDeleteReasonEntity.deleteMany({
-      where: { property_id:id, user_id:userId }
+      where: { property_id:propertyId, user_id:userId }
     });
 
   } catch (error) {
@@ -521,9 +548,12 @@ const deleteReasonEntityById = async (id,userId) => {
 };
 
 
-const createReasonEntity = async (reasonId, userId , propertyId) => {
+const createReasonEntity = async (reasonId, userId , propertyId , comment = null) => {
   if (!reasonId || !userId || !propertyId) {
     throw new Error("Both 'reasonId' and 'userId' and 'propertyId' are required.");
+  }
+  if (reasonId === 3 && comment !== null) {
+    throw new Error("For reasonId 3, 'comment' must be null.");
   }
 
   try {

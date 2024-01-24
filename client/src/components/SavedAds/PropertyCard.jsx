@@ -8,6 +8,7 @@ import trashIcon from "../../pictures/app/trash.svg";
 import Loading from "../Elements/Loading";
 import { request } from "../../utils/request";
 import useIsMobile from "../../utils/useIsMobile";
+import { toast } from "react-hot-toast";
 
 function PropertyCard({ property }) {
   const [deleting, setDeleting] = useState(false);
@@ -31,7 +32,7 @@ function PropertyCard({ property }) {
           // Property removed successfully, you can update the UI here if needed.
         }
       } catch (err) {
-        console.error("Error removing property from favorites:", err);
+        toast.error("Ingatlan eltávolítása a kedvencekből sikertelen");
       } finally {
         setDeleting(false);
       }

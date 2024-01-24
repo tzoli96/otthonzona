@@ -6,6 +6,7 @@ import loginImage from "../../pictures/login.png";
 import { useParams } from "react-router-dom";
 import { request } from "../../utils/request";
 import convertFormDataToJson from "../../utils/fd";
+import toast from "react-hot-toast";
 
 function ResetPassword() {
   const { token } = useParams();
@@ -30,7 +31,7 @@ function ResetPassword() {
       method: "POST",
     }).then((data) => {
       if (data.error) {
-        alert(data.error);
+        toast.error(data.error);
       } else {
         setTimeout(() => {
           window.location = "/login";

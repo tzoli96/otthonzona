@@ -7,7 +7,7 @@ import serviceImg1 from "../../pictures/services/services-removal-img.png";
 import serviceRemovalIcon from "../../pictures/services/services-removal-icon.svg";
 import serviceImg2 from "../../pictures/services/services-realstate-img.png";
 import serviceRealstateIcon from "../../pictures/services/services-realstate-icon.svg";
-import serviceImg3 from "../../pictures/services/services-insurance-img.png";
+import serviceImg3 from "../../pictures/services/services-matterport.png";
 import serviceInsuranceIcon from "../../pictures/services/services-insurance-icon.svg";
 import serviceImg4 from "../../pictures/services/services-lawyer-img.png";
 import serviceLawyerIcon from "../../pictures/services/services-lawyer-icon.svg";
@@ -41,14 +41,14 @@ const Services = () => {
           teljes lebonyolításában
         </h1>
         <section>
-          <div className="flex lg:items-start items-center flex-col px-6 lg:px-0 lg:flex-row lg:w-11/12 lg:mx-auto lg:gap-20">
-            <img src={serviceImg1} alt="" className="hidden lg:block" />
-            <div className="flex flex-col lg:gap-4 gap-2 lg:mt-16 mb-5 lg:mb-0 ">
-              <img src={serviceRemovalIcon} alt="" className="lg:w-max w-10" />
-              <h1 className="text-[#006FB9] lg:text-2xl text-xl font-extrabold">
+          <div className="flex pt-10 xl:pt-0 xl:items-start items-center flex-col px-6 xl:px-0 xl:flex-row xl:w-11/12 xl:mx-auto xl:gap-20">
+            <img src={serviceImg1} alt="" className="hidden xl:block" />
+            <div className="flex flex-col xl:gap-4 gap-2 xl:mt-16 mb-5 xl:mb-0 ">
+              <img src={serviceRemovalIcon} alt="" className="xl:w-max w-10" />
+              <h1 className="text-[#006FB9] xl:text-2xl text-xl font-extrabold">
                 Költöztetés
               </h1>
-              <p className="lg:text-md text-md text-[#949494] lg:w-10/12 text-justify">
+              <p className="xl:text-md text-md text-[#949494] xl:w-10/12 text-justify">
                 Költöztetést vállalunk Budapesten és vidéken egyaránt. Kedvező
                 díjakkal, szakemberek által irányított és végrehajtott
                 költöztetés, szállítás, tehertaxi egy helyen. Egy-egy tételt is
@@ -65,21 +65,21 @@ const Services = () => {
                 +36 30 090 0000
               </a>
             </div>
-            <img src={serviceImg1} alt="" className="block lg:hidden" />
+            <img src={serviceImg1} alt="" className="block xl:hidden" />
           </div>
         </section>
         <section className="">
-          <div className="flex lg:items-start items-center flex-col px-6 lg:px-0 lg:flex-row lg:w-11/12 lg:mx-auto lg:gap-20">
-            <div className="flex flex-col lg:gap-4 gap-2 lg:mt-16 lg:pl-20">
+          <div className="flex pt-16 xl:pt-0 xl:items-start items-center flex-col px-6 xl:px-0 xl:flex-row xl:w-11/12 xl:mx-auto xl:gap-20">
+            <div className="flex flex-col xl:gap-4 gap-2 xl:mt-16 xl:pl-20">
               <img
                 src={serviceRealstateIcon}
                 alt=""
-                className="lg:w-max w-10"
+                className="xl:w-max w-10"
               />
-              <h1 className="text-[#006FB9] lg:text-2xl text-xl font-extrabold">
+              <h1 className="text-[#006FB9] xl:text-2xl text-xl font-extrabold">
                 Ingatlanközvetítők
               </h1>
-              <p className="lg:text-md text-md text-[#949494] lg:w-10/12 text-justify">
+              <p className="xl:text-md text-md text-[#949494] xl:w-10/12 text-justify">
                 Ingatlan közvetítőink segítségedre lesznek, hogy megtaláld
                 álmaid otthonát. Miért is érdemes közvetítőt fogadni? A válasz
                 nagyon egyszerű, mert a megadott adatok, igények alapján akár
@@ -98,14 +98,14 @@ const Services = () => {
           </div>
         </section>
         <section className="">
-          <div className="flex lg:items-start items-center flex-col px-6 lg:px-0 lg:flex-row lg:w-11/12 lg:mx-auto lg:gap-20">
-            <img src={serviceImg3} alt="" className="hidden lg:block" />
-            <div className="flex flex-col lg:gap-4 gap-2 lg:mt-16 mb-5 lg:mb-0">
-              <img src={service3dIcon} alt="" className="lg:w-max w-10" />
-              <h1 className="text-[#006FB9] lg:text-2xl text-xl font-extrabold">
+          <div className="flex pt-16 xl:pt-0 xl:items-start items-center flex-col px-6 xl:px-0 xl:flex-row xl:w-11/12 xl:mx-auto xl:gap-20">
+            <img src={serviceImg3} alt="" className="hidden xl:block" />
+            <div className="flex flex-col xl:gap-4 gap-2 xl:mt-16 mb-5 xl:mb-0">
+              <img src={service3dIcon} alt="" className="xl:w-max w-10" />
+              <h1 className="text-[#006FB9] xl:text-2xl text-xl font-extrabold">
                 Matterport
               </h1>
-              <p className="lg:text-md text-md text-[#949494] lg:w-10/12 text-justify">
+              <p className="xl:text-md text-md text-[#949494] xl:w-10/12 text-justify">
                 Fedezze fel az ingatlanok új dimenzióját! 3D-s virtuális
                 túrákkal és pontos alaprajzokkal mutassuk be az ingatlanokat,
                 mint még soha. Növelje eladásait és emelkedjen ki a versenyből a
@@ -118,17 +118,17 @@ const Services = () => {
                 +36 20 955 2867
               </a>
             </div>
-            <img src={serviceImg3} alt="" className="lg:hidden block" />
+            <img src={serviceImg3} alt="" className="xl:hidden block" />
           </div>
         </section>
         <section className="">
-          <div className="flex lg:items-start items-center flex-col px-6 lg:px-0 lg:flex-row lg:w-11/12 lg:mx-auto lg:gap-20">
-            <div className="flex flex-col lg:gap-4 gap-2 lg:mt-16 mb-5 lg:mb-0 lg:pl-20">
-              <img src={serviceLawyerIcon} alt="" className="lg:w-max w-10" />
-              <h1 className="text-[#006FB9] lg:text-2xl text-xl font-extrabold">
+          <div className="flex pt-16 xl:pt-0 xl:items-start items-center flex-col px-6 xl:px-0 xl:flex-row xl:w-11/12 xl:mx-auto xl:gap-20">
+            <div className="flex flex-col xl:gap-4 gap-2 xl:mt-16 mb-5 xl:mb-0 xl:pl-20">
+              <img src={serviceLawyerIcon} alt="" className="xl:w-max w-10" />
+              <h1 className="text-[#006FB9] xl:text-2xl text-xl font-extrabold">
                 Ügyvédek
               </h1>
-              <p className="lg:text-md text-md text-[#949494] lg:w-10/12 text-justify">
+              <p className="xl:text-md text-md text-[#949494] xl:w-10/12 text-justify">
                 Az ingatlanokat érintő jogügyletek és lebonyolításuk kiemelt
                 területét képezik az ügyvédi munkának. Várjuk mindazokat az
                 ügyfeleket, akik megfizethető áron várnak professzionális és
@@ -147,14 +147,14 @@ const Services = () => {
           </div>
         </section>
         <section className="">
-          <div className="flex lg:items-start items-center flex-col px-6 lg:px-0 lg:flex-row lg:w-11/12 lg:mx-auto lg:gap-20">
-            <img src={serviceImg5} alt="" className="hidden lg:block" />
-            <div className="flex flex-col lg:gap-4 gap-2 lg:mt-16 mb-5 lg:mb-0">
-              <img src={serviceEnergyIcon} alt="" className="lg:w-max w-10" />
-              <h1 className="text-[#006FB9] lg:text-2xl text-xl font-extrabold">
+          <div className="flex pt-16 xl:pt-0 xl:items-start items-center flex-col px-6 xl:px-0 xl:flex-row xl:w-11/12 xl:mx-auto xl:gap-20">
+            <img src={serviceImg5} alt="" className="hidden xl:block" />
+            <div className="flex flex-col xl:gap-4 gap-2 xl:mt-16 mb-5 xl:mb-0">
+              <img src={serviceEnergyIcon} alt="" className="xl:w-max w-10" />
+              <h1 className="text-[#006FB9] xl:text-2xl text-xl font-extrabold">
                 Energetika
               </h1>
-              <p className="lg:text-md text-md text-[#949494] lg:w-10/12 text-justify">
+              <p className="xl:text-md text-md text-[#949494] xl:w-10/12 text-justify">
                 Az energetikai tanúsítvány egy magánokirat, mely az ingatlan
                 energia fogyasztásáról ad bővebb tájékoztatást. A fogyasztás
                 mértéke fogja meghatározni az ingatlan besorolását,
@@ -171,17 +171,17 @@ const Services = () => {
                 +36 30 090 0000
               </a>
             </div>
-            <img src={serviceImg5} alt="" className="lg:hidden block" />
+            <img src={serviceImg5} alt="" className="xl:hidden block" />
           </div>
         </section>
         <section className="pb-10">
-          <div className="flex lg:items-start items-center flex-col px-6 lg:px-0 lg:flex-row lg:w-11/12 lg:mx-auto lg:gap-20">
-            <div className="flex flex-col lg:gap-4 gap-2 lg:mt-16 mb-5 lg:mb-0 lg:pl-20">
-              <img src={serviceCleaningIcon} alt="" className="lg:w-max w-10" />
-              <h1 className="text-[#006FB9] lg:text-2xl text-xl font-extrabold">
+          <div className="flex pt-16 xl:pt-0 xl:items-start items-center flex-col px-6 xl:px-0 xl:flex-row xl:w-11/12 xl:mx-auto xl:gap-20">
+            <div className="flex flex-col xl:gap-4 gap-2 xl:mt-16 mb-5 xl:mb-0 xl:pl-20">
+              <img src={serviceCleaningIcon} alt="" className="xl:w-max w-10" />
+              <h1 className="text-[#006FB9] xl:text-2xl text-xl font-extrabold">
                 Takarítás
               </h1>
-              <p className="lg:text-md text-md text-[#949494] lg:w-10/12 text-justify">
+              <p className="xl:text-md text-md text-[#949494] xl:w-10/12 text-justify">
                 Add át tisztán ingatlanod, házad, lakásod, irodád! Segítünk
                 megbízható takarítót találni az ország egész területén.
                 Csapatunk értéknek tartja az ügyféllel való közös gondolkodást,

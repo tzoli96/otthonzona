@@ -1,0 +1,59 @@
+.share-wrapper {
+  position: relative;
+  float: right;
+}
+
+.share-button {
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.share-button:hover {
+  color: #000;
+}
+
+.share-popup {
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  margin: 5px;
+  z-index: 1000;
+  top: 100%;
+  padding-top: 2em;
+  padding-bottom: 1em;
+  width: auto;
+  min-width: 250px;
+  max-width: 90%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.share-popup-button {
+  display: flex;
+  align-items: center;
+  text-align: left;
+  gap: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 10px 20px;
+  box-sizing: border-box;
+  justify-content: flex-start;
+}
+
+.share-popup-button img {
+  width: 24px;
+  height: 24px;
+}
+
+.popup-close-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 10px;
+}
+.share-popup button:hover {
+  background-color: #f0f0f0;
+}

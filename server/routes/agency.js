@@ -22,7 +22,7 @@ router.post("/", auth, async (req, res) => {
       officeCompany,
       network,
     } = req.body;
-    const userId = req.user.id; // Assuming the current user is the agency admin
+    const userId = req.user.id;
 
     const newAgency = await prisma.agency.create({
       data: {
@@ -34,6 +34,12 @@ router.post("/", auth, async (req, res) => {
         network,
         adminID: userId,
       },
+    });
+
+    //set isAgent to true
+    await prisma.user.update({
+      where: { id: userId },
+      data: { isAgent: true },
     });
 
     return res.status(201).json({ data: newAgency });
@@ -273,8 +279,14 @@ router.get("/confirm-invite/:token", async (req, res) => {
     data: {
       userId: invitation.userId,
       agencyId: invitation.agencyId,
-      role: "Member", // Default role
+      role: "Member",
     },
+  });
+
+  //set the isAgent to true
+  await prisma.user.update({
+    where: { id: invitation.userId },
+    data: { isAgent: true },
   });
 
   // Update invitation status to accepted

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { request } from "../../utils/request";
 import PostAd from "../PostAd";
+import { toast } from "react-hot-toast";
 
 function EditDraft() {
   const { id } = useParams();
@@ -16,16 +17,13 @@ function EditDraft() {
           setLoading(false);
         })
         .catch((err) => {
-          console.log("ERROR", err);
+          toast.error("Hiba");
           setLoading(false);
         });
     }
   }, [id]);
 
-  if (property)
-    return (
-      <PostAd prefill={property} isDraft="true"/>
-    );
+  if (property) return <PostAd prefill={property} isDraft="true" />;
 }
 
 export default EditDraft;

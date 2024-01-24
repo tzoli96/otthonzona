@@ -1,0 +1,364 @@
+@import url("https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,200;1,300;1,400;1,500;1,600;1,700&display=swap");
+
+body {
+  font-family: "Nunito", sans-serif;
+  background: rgb(247, 247, 247);
+}
+
+input:focus {
+  outline: none;
+}
+
+:root {
+  --blue: #006fb9;
+  --lightgrey: #949494;
+  --orange: #ec6608;
+}
+
+.leaflet-container {
+  height: 100%;
+  width: 100%;
+}
+
+.leaflet-div-icon {
+  background: transparent;
+  border: none;
+}
+
+.section-heading {
+  font-size: 36px;
+  font-weight: bold;
+}
+
+.section-heading-blue,
+.text-blue {
+  color: var(--blue);
+}
+
+.text-lightgrey {
+  color: var(--lightgrey);
+}
+
+.card-heading {
+  color: #1e1e1e;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.orange-button,
+.blue-button,
+.transparent-button {
+  width: 150px;
+  height: 47.6px;
+  background: linear-gradient(107.12deg, #ec6608 9.29%, #ff9b06 86.96%);
+  border-radius: 100px;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+}
+
+.orange-button-cookie {
+  width: 80px;
+  height: 40px;
+  background: linear-gradient(107.12deg, #ec6608 9.29%, #ff9b06 86.96%);
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: bold;
+  color: white;
+}
+
+.transparent-button {
+  background: transparent;
+}
+
+.orange-gradient {
+  background: linear-gradient(107.12deg, #ec6608 9.29%, #ff9b06 86.96%);
+}
+
+.blue-button {
+  background: var(--blue);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.white-button {
+  background: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 150px;
+  height: 47.6px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  color: black;
+}
+
+.bg-blue {
+  background: var(--blue);
+}
+
+.text-orange {
+  color: var(--orange);
+}
+
+.about-footer-circle {
+  width: 506px;
+  height: 506px;
+  position: absolute;
+  top: -300px;
+  background: linear-gradient(107.12deg, #ec6608 9.29%, #ff9b06 86.96%);
+  border-radius: 253px;
+}
+
+.about-footer {
+  background: url(../pictures/key.png);
+  background-size: cover;
+}
+
+@media (min-width: 640px) {
+  .about-footer-circle {
+    left: -151px;
+  }
+}
+
+@media (max-width: 640px) {
+  .about-footer {
+    background: url(../pictures/key-mobile.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+  }
+
+  .about-footer-circle {
+    right: -70px !important;
+    top: -220px;
+    width: 350px;
+    height: 350px;
+  }
+}
+
+.footer-section {
+  background-color: var(--blue);
+  color: white;
+  box-sizing: border-box;
+  padding-left: 128px;
+  padding-right: 128px;
+}
+
+.footer-links-container {
+  display: grid;
+  grid-template-columns: 2fr 2fr 2fr 2fr 3fr;
+  gap: 20px;
+}
+
+.footer-orange-strip {
+  background: linear-gradient(107.12deg, #ec6608 9.29%, #ff9b06 86.96%);
+}
+
+.card-shadow {
+  box-shadow: 0px 3.35466px 24.3213px 6.70933px rgba(0, 0, 0, 0.11);
+}
+
+.light-card-shadow {
+  box-shadow: 0px 3.03586px 22.01px 6.07172px rgba(0, 0, 0, 0.04);
+}
+
+.bg-blue {
+  background: var(--blue);
+}
+
+.card {
+  background: #ffffff;
+  box-shadow: 0px 3.35466px 24.3213px 6.70933px rgba(0, 0, 0, 0.09);
+  border-radius: 56px;
+}
+
+.spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border-top-color: #636767;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.alert-box {
+  background-color: red;
+  color: white;
+  padding: 8px;
+  margin-bottom: 8px;
+  border-radius: 4px;
+}
+
+.alert-box-blue {
+  background-color: #006fb9;
+  color: white;
+  padding: 8px;
+  margin-bottom: 8px;
+  border-radius: 4px;
+}
+
+.filter-switch {
+  border: 1px solid #b2b2b2;
+  box-sizing: border-box;
+}
+
+.filter-flex {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  justify-content: center;
+  flex-basis: 130px;
+}
+
+.filter-switch-active {
+  box-sizing: border-box;
+}
+
+.rounded-image-container {
+  overflow: hidden;
+  border-radius: 50%;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+@media (max-width: 640px) {
+  .footer-links-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .footer-section {
+    padding-left: 32px;
+    padding-right: 32px;
+  }
+}
+
+.phone-number-fix {
+  margin-left: -3em;
+}
+
+.env-fix {
+  margin-right: -2em;
+}
+
+@media (max-width: 1600px) {
+  .small-blue-button {
+    width: 100px !important;
+  }
+}
+
+.service-card {
+  width: 450px;
+}
+
+@media (max-width: 1650px) {
+  .service-card {
+    width: 300px;
+  }
+}
+
+.services-title {
+  margin-top: -8rem;
+}
+
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 50;
+}
+
+.popup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 600px;
+  background: white;
+  padding: 20px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  position: relative;
+  z-index: 60;
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  border: none;
+  background: none;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+input[type="number"] {
+  &::-webkit-inner-spin-button,
+  &::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+@media screen and (max-width: 1000px) {
+  .card {
+    p.card-heading {
+      font-size: 18px;
+    }
+
+    .flex {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .rounded-image-container {
+      width: 100% !important;
+      height: 100% !important;
+      max-width: 300px;
+      margin-bottom: 20px;
+    }
+
+    .grid {
+      grid-template-columns: 1fr;
+
+      > div {
+        width: 100%;
+      }
+    }
+
+    button.blue-button {
+      width: 100%;
+    }
+  }
+}
+
+.center-image {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}

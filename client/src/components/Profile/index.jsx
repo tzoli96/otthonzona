@@ -17,14 +17,6 @@ function Profile() {
   const [loading, setLoading] = useState(false);
   const [newPhoto, setNewPhoto] = useState("");
 
-  const [showRealEstateFields, setShowRealEstateFields] = useState(
-    user?.isAgent || false
-  );
-
-  const toggleRealEstateFields = () => {
-    setShowRealEstateFields(!showRealEstateFields);
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -32,7 +24,6 @@ function Profile() {
       const formData = convertFormDataToJson(e.target);
       const body = JSON.stringify({
         ...formData,
-        isAgent: showRealEstateFields, // Include the isAgent state
       });
       const res = await request("/api/user", {
         method: "PUT",
@@ -40,13 +31,13 @@ function Profile() {
       });
       if (res.data) {
         setData({ ...data, user: res.data });
-        setShowRealEstateFields(res.data.isAgent);
       }
     } catch (err) {
       setLoading(false);
-      toast.error("Unknown error");
+      toast.error("Hiba történt");
     } finally {
       setLoading(false);
+      toast.success("Profil módosítva");
     }
   };
 

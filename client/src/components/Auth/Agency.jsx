@@ -20,7 +20,7 @@ function SignUp() {
       method: "POST",
     }).then((data) => {
       if (data.error) {
-        return alert(data.error);
+        return toast.error(data.error);
       }
       setEmailSent(true); // Set state
       // window.location = "/login"; // Don't redirect yet

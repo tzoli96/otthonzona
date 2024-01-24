@@ -191,6 +191,7 @@ model DraftProperty {
 model PropertyDeleteReasons {
   id   String    @id @map("_id")
   name String
+  comment String?
   propertyDeleteReasonEntities PropertyDeleteReasonEntity[]
 }
 
