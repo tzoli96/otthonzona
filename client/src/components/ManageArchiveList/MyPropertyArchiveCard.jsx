@@ -9,7 +9,14 @@ import trashIcon from "../../pictures/app/trash.svg";
 import Loading from "../Elements/Loading";
 import useIsMobile from "../../utils/useIsMobile";
 
-function MyPropertyArchiveCard({ property, properties, setProperties, setDapIsVisible, setDeletingProperty }) {
+function MyPropertyArchiveCard({
+  property,
+  properties,
+  setProperties,
+  setDapIsVisible,
+  setDeletingProperty,
+  activatePopup,
+}) {
   const [deleting, setDeleting] = useState(false);
   const isMobile = useIsMobile();
 
@@ -21,8 +28,13 @@ function MyPropertyArchiveCard({ property, properties, setProperties, setDapIsVi
   );
 
   const showDeletePopup = (property) => {
-      setDeletingProperty(property);
-      setDapIsVisible(true);
+    setDeletingProperty(property);
+    setDapIsVisible(true);
+  };
+
+  const showActivatePopup = (property) => {
+    activatePopup.setProperty(property);
+    activatePopup.setVisible(true);
   };
 
   return (
@@ -43,7 +55,7 @@ function MyPropertyArchiveCard({ property, properties, setProperties, setDapIsVi
             </span>
           </Link>
           <span onClick={() => showDeletePopup(property)}>
-          {/*<span onClick={handleDelete}>*/}
+            {/*<span onClick={handleDelete}>*/}
             {deleting ? (
               <Loading />
             ) : (
@@ -76,9 +88,15 @@ function MyPropertyArchiveCard({ property, properties, setProperties, setDapIsVi
         <div className="grid grid-cols-2 md:flex gap-2">
           {!isMobile && (
             <div className="my-4">
-              <Link to={`/${property?.id}`}>
-                <button className="blue-button">Aktiválás</button>
-              </Link>
+              {/* <Link to={`/${property?.id}`}>
+                
+              </Link> */}
+              <button
+                onClick={() => showActivatePopup(property)}
+                className="blue-button"
+              >
+                Aktiválás
+              </button>
             </div>
           )}
         </div>
