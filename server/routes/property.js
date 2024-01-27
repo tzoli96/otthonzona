@@ -442,6 +442,33 @@ router.get("/archive-list", auth, async (req, res) => {
   }
 });
 
+router.post("/archive/reactive/", auth, async (req, res) => {
+  try {
+    const requestData = {
+      propertyId: req.body.propertyId
+    };
+
+    if (!requestData.propertyId) {
+      return res.status(400).json({ message: "The 'propertyId' field is required." });
+    }
+
+    await prisma.$transaction(async (prisma) => {
+      await prisma.property.update({
+        where: { id:requestData.propertyId },
+        data: {
+          isArchived: false
+        },
+      });
+
+      await deleteReasonEntityById(requestData.propertyId, req.user.id);
+    });
+
+    return res.status(200).json({ success: true });
+  } catch (error) {
+    console.error("Error reactive property:", error);
+    return res.status(500).json({ message: "Error reactive property" });
+  }
+});
 
 router.delete("/archive", auth, async (req, res) => {
   try {
