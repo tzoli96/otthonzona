@@ -29,6 +29,7 @@ model User {
   Member Member[]
 
   creditPurchases CreditPurchaseHistory[]
+  activityLogs ActivityLog[]
 }
 
 model CreditPurchaseHistory {
@@ -202,4 +203,13 @@ model PropertyDeleteReasonEntity {
   user_id       String
   reason        PropertyDeleteReasons @relation(fields: [reason_id], references: [id])
   property      Property @relation(fields: [property_id], references: [id])
+}
+
+model ActivityLog {
+  id            String    @id @map("_id")
+  user_id       String
+  subject       String
+  activity      String
+  created_at    DateTime
+  user          User @relation(fields: [user_id], references: [id])
 }

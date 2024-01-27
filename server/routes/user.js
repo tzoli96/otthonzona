@@ -1,6 +1,7 @@
 const express = require("express");
 const prisma = require("../prisma/prisma");
 const auth = require("../middleware/auth");
+const { logActivity } = require("../models/ActivityLog");
 
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
@@ -111,6 +112,12 @@ router.post("/save-property/:id", auth, async (req, res) => {
       },
     });
 
+    await logActivity(
+        userId,
+        "Saved Property",
+        `Save  property with id ${propertyId}`
+    );
+
     return res.status(200).json({
       data: updatedUser.savedProperties,
     });
@@ -175,6 +182,12 @@ router.post("/remove-saved-property/:id", auth, async (req, res) => {
         savedProperties: updatedSavedProperties,
       },
     });
+
+    await logActivity(
+        userId,
+        "Removed Property from saved",
+        `Removed from save  property with id ${propertyId}`
+    );
 
     return res.status(200).json({
       message: "Property removed from favorites",
@@ -283,6 +296,12 @@ async function saveCreditPurchase(data) {
       spentMoney: data.currency,
     },
   });
+
+  await logActivity(
+      data.userId,
+      "Credit purchase",
+      `Creadit pruchase: ${data.amount}`
+  );
 
   // Log the successful saving of credit history
   console.log(

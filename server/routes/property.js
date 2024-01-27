@@ -3,6 +3,7 @@ const prisma = require("../prisma/prisma");
 const settlements = require("../res/settlements");
 const { generate8DigitNumericId } = require("../utils/getId");
 const router = require("express").Router();
+const { logActivity } = require("../models/ActivityLog");
 
 const getValidId = async () => {
   try {
@@ -68,6 +69,13 @@ router.post("/", auth, async (req, res) => {
       submittedBy: req.user.id,
     },
   });
+
+  await logActivity(
+      req.user.id,
+      "Property Creation",
+      `Created  property with id ${id}`
+  );
+
   return res.send({
     status: "SUCCESS",
     data: ad,
@@ -87,6 +95,12 @@ router.put("/:id", auth, async (req, res) => {
     where: { id },
     data: req.body,
   });
+
+  await logActivity(
+      req.user.id,
+      "Property Updatation",
+      `Updated  property with id ${id}`
+  );
   return res.send({
     data: updatedAd,
   });
@@ -321,6 +335,13 @@ router.post("/upgrade-home/:id", auth, async (req, res) => {
         credit: { decrement: bidCredits },
       },
     });
+
+    await logActivity(
+        req.user.id,
+        "Property Upgradetion Home",
+        `Upgradeted home property with id ${id}`
+    );
+
     res.status(200).send({
       message: "Hirdetés kiemelve",
       user,
@@ -375,6 +396,13 @@ router.post("/upgrade/:id", auth, async (req, res) => {
         credit: { decrement: bidCredits },
       },
     });
+
+    await logActivity(
+        req.user.id,
+        "Property Upgradetion",
+        `Upgradeted property with id ${id}`
+    );
+
     res.status(200).send({
       message: "Hirdetés kiemelve",
       user,
@@ -463,6 +491,12 @@ router.post("/archive/reactive/", auth, async (req, res) => {
       await deleteReasonEntityById(requestData.propertyId, req.user.id);
     });
 
+    await logActivity(
+        req.user.id,
+        "Property Reactivation",
+        `Reactived property with id ${requestData.propertyId}`
+    );
+
     return res.status(200).json({ success: true });
   } catch (error) {
     console.error("Error reactive property:", error);
@@ -491,6 +525,12 @@ router.delete("/archive", auth, async (req, res) => {
 
       await createReasonEntity(requestData.reasonId, req.user.id,requestData.propertyId);
     });
+
+    await logActivity(
+        req.user.id,
+        "Property Archivation",
+        `Archived property with id ${requestData.propertyId}`
+    );
 
     return res.status(200).json({ success: true });
   } catch (error) {
@@ -522,6 +562,12 @@ router.delete("/", auth, async (req, res) => {
         where: { id:propertyId },
       });
     });
+
+    await logActivity(
+        req.user.id,
+        "Property Deletion",
+        `Deleted property with id ${propertyId}`
+    );
 
     return res.status(200).json({ success: true  });
   } catch (error) {
@@ -569,6 +615,12 @@ const createReasonEntity = async (reasonId, userId , propertyId , comment = null
   } catch (error) {
     console.error("Error creating reason entity:", error);
     throw new Error("Error creating reason entity");
+  } finally {
+    await logActivity(
+        userId,
+        "Property Updatation",
+        `Updated  property with id ${propertyId} and reason id ${reasonId}`
+    );
   }
 };
 
