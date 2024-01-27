@@ -2,7 +2,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 
 export const api = /localhost/.test(window.location)
-  ? "http://localhost:5000"
+  ? "https://localhost:5000"
   : /dev.otthonzona.com/.test(window.location)
   ? "https://dev.otthonzona.com"
   : "https://otthonzona.com";

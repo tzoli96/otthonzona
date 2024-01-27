@@ -48,6 +48,7 @@ import FalusiCsok from "./components/NewsPage/FalusiCsok";
 import MekkoratVehetunk from "./components/NewsPage/MekkoratVehetunk";
 import IntelligensSzellozok from "./components/NewsPage/IntelligensSzellozok";
 import EditDraft from "./components/Drafts/EditDraft";
+import AdminApp from "./uiConfig";
 
 export const AppContext = createContext();
 
@@ -93,6 +94,7 @@ function App() {
           element={config.mode === "MAINTAINENCE" ? <Maintainence /> : <Home />}
         />
         <Route path="/search" element={<Search />} />
+        <Route path="/admin" element={<AdminApp />} />
         <Route path="/register" element={<SignUp />} />
         <Route path="/agency-register" element={<AgencyRegister />} />
         <Route path="/login" element={<Login />} />
