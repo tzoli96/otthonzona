@@ -23,6 +23,7 @@ function ManageArchiveList() {
     setVisible: setActivatePopup,
     property: activatingProperty,
     setProperty: setActivatingProperty,
+    properties: properties,
     setProperties: setProperties,
   };
 

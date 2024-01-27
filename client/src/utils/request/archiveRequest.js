@@ -32,7 +32,7 @@ export const archiveDelete = async (propertyId, reasonId) => {
 
 export const activateArchive = async (propertyId) => {
   try {
-    return await request(`/api/archive/reactive`, {
+    return await request(`/api/property/archive/reactive`, {
       method: "POST",
       body: JSON.stringify({ propertyId: propertyId }),
     });

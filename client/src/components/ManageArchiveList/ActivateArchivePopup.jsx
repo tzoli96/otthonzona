@@ -8,17 +8,17 @@ export function ActivateArchivePopup({
   setVisible,
   property,
   setProperty,
+  properties,
   setProperties,
 }) {
   const [activating, setActivating] = useState(false);
 
   const activate = async () => {
-    console.log("activating");
-
     try {
       setActivating(true);
       const response = await activateArchive(property.id);
-      if (response.isSuccess) {
+      console.log(response);
+      if (response.success) {
         setProperties(properties.filter((p) => p.id !== property.id));
       }
     } catch (err) {
