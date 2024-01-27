@@ -74,7 +74,7 @@ function Gallery({ closeModal, images, property, setShowModal }) {
             alt="Modal Main"
           />
           <div className="absolute bottom-0 right-4 rounded-lg bg-white text-sm font-bold text-gray-600 px-4 py-2 shadow">
-            {currentImageIndex + 1} of {images.length}
+            {currentImageIndex + 1} / {images.length}
           </div>
         </div>
         <button

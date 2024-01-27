@@ -10,7 +10,10 @@ import thousandSeparator, {
   formatPhoneNumber,
 } from "../../utils/thousandSeparator";
 
+
+
 function Agent({ agent }) {
+
   const [showPhone, setShowPhone] = useState(false);
 
   const handleShowPhone = () => {

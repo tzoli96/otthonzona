@@ -10,8 +10,6 @@ const nodemailer = require("nodemailer");
 const wrapEmail = require("../utils/wrapEmail");
 const wrapEmailInvite = require("../utils/wrapEmailInvite");
 const { getToken, createUser } = require("../utils/auth");
-const { logActivity } = require("../models/ActivityLog");
-
 
 // POST route to create a new agency
 router.post("/", auth, async (req, res) => {
@@ -43,11 +41,7 @@ router.post("/", auth, async (req, res) => {
       where: { id: userId },
       data: { isAgent: true },
     });
-    await logActivity(
-        userId,
-        "Creation Agency",
-        `Created  Agency with id ${userId}`
-    );
+
     return res.status(201).json({ data: newAgency });
   } catch (error) {
     console.error("Error creating agency:", error);
@@ -125,11 +119,7 @@ router.put("/:agencyId", auth, async (req, res) => {
         network,
       },
     });
-    await logActivity(
-        userId,
-        "Update Agency",
-        `Updated  Agency with id ${userId}`
-    );
+
     return res.status(200).json({ data: updatedAgency });
   } catch (error) {
     console.error("Error updating agency:", error);
@@ -248,11 +238,6 @@ router.post("/:agencyId/invite", auth, async (req, res) => {
       }),
     });
 
-    await logActivity(
-        userToInvite.id,
-        "User invation to Agency",
-        `Invated  User with id ${userToInvite.id} to Agency with id ${agencyId}`
-    );
     res.status(200).json({ message: "Invitation sent successfully" });
   } catch (error) {
     console.error("Error sending invitation:", error);
@@ -332,12 +317,6 @@ router.delete("/:agencyId/members/:memberId", auth, async (req, res) => {
       },
     });
 
-    await logActivity(
-        memberId,
-        "Removed member from Agency",
-        `Removed  User with id ${memberId} from Agency with id ${agencyId}`
-    );
-
     res.status(200).json({ message: "Member removed successfully" });
   } catch (error) {
     console.error("Error removing member:", error);
@@ -406,11 +385,6 @@ router.post("/credit-sending", auth, async (req, res) => {
       data: { credit: { decrement: creditAmount } },
     });
 
-    await logActivity(
-        memberId,
-        "Sended credit to member",
-        `Removed  User with id ${memberId} from Agency with id ${agencyId} ammount: ${creditAmount}`
-    );
     console.log("Credits sent successfully");
     res
       .status(200)

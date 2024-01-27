@@ -9,6 +9,7 @@ import serviceCleaningIcon from "../../../pictures/services/services-cleaning-ic
 import service3dIcon from "../../../pictures/services/services-3d-icon.svg";
 
 const HomeServiceCard = () => {
+
   const services = [
     {
       id: "removal",
@@ -53,7 +54,7 @@ const HomeServiceCard = () => {
       <div className="relative pb-20">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 z-50 gap-6 w-10/12 mx-auto">
           {services.map(service => (
-              <a href="/services" key={service.id}>
+              <a href={`/services#${service.id}`} key={service.id}>
                 <div className="bg-white max-w-full py-4 px-7 lg:py-7 lg:px-10 rounded-xl lg:rounded-2xl gap-2 shadow-lg flex flex-col h-full">
                   <img src={service.icon} alt="" className="w-[60px] h-[60px] max-w-full object-contain" />
 

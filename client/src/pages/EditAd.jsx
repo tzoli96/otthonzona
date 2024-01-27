@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { request } from "../utils/request";
 import PostAd from "../components/PostAd";
+import { toast } from "react-hot-toast";
 
 function EditAd() {
   const { id } = useParams();
@@ -16,7 +17,7 @@ function EditAd() {
           setLoading(false);
         })
         .catch((err) => {
-          console.log("ERROR", err);
+          toast.error("Hiba", err);
           setLoading(false);
         });
     }

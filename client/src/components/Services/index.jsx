@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import heroBg from "../../pictures/services/services-hero-img.png";
 import Navbar from "../Navbar";
 import Footer from "../Footer";
@@ -18,6 +18,15 @@ import serviceCleaningIcon from "../../pictures/services/services-cleaning-icon.
 import service3dIcon from "../../pictures/services/services-3d-icon.svg";
 
 const Services = () => {
+
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (hash) {
+      const element = document.getElementById(hash.slice(1));
+      if (element) element.scrollIntoView();
+    }
+  }, []);
+
   return (
     <>
       <Navbar />
@@ -40,7 +49,7 @@ const Services = () => {
           </span>{" "}
           teljes lebonyolításában
         </h1>
-        <section>
+        <section id="removal">
           <div className="flex pt-10 xl:pt-0 xl:items-start items-center flex-col px-6 xl:px-0 xl:flex-row xl:w-11/12 xl:mx-auto xl:gap-20">
             <img src={serviceImg1} alt="" className="hidden xl:block" />
             <div className="flex flex-col xl:gap-4 gap-2 xl:mt-16 mb-5 xl:mb-0 ">
@@ -60,7 +69,7 @@ const Services = () => {
               </p>
               <a
                 href="tel:+36300900000"
-                className="bg-gradient-to-r from-[#ec6608] to-[#ff9b06] px-4 py-2 mt-5 rounded-full text-white text-center text-sm font-semibold w-full md:w-[25%]"
+                className="bg-gradient-to-r from-[#ec6608] to-[#ff9b06] px-4 py-2 mt-5 rounded-full text-white text-center text-sm font-semibold w-full md:w-[25%] xl:w-[55%]"
               >
                 +36 30 090 0000
               </a>
@@ -68,7 +77,7 @@ const Services = () => {
             <img src={serviceImg1} alt="" className="block xl:hidden" />
           </div>
         </section>
-        <section className="">
+        <section id="realstate" className="">
           <div className="flex pt-16 xl:pt-0 xl:items-start items-center flex-col px-6 xl:px-0 xl:flex-row xl:w-11/12 xl:mx-auto xl:gap-20">
             <div className="flex flex-col xl:gap-4 gap-2 xl:mt-16 xl:pl-20">
               <img
@@ -89,7 +98,7 @@ const Services = () => {
               </p>
               <a
                 href="tel:+36300900000"
-                className="bg-gradient-to-r from-[#ec6608] to-[#ff9b06] px-4 py-2 mt-5 rounded-full text-white text-center text-sm font-semibold w-full md:w-[25%]"
+                className="bg-gradient-to-r from-[#ec6608] to-[#ff9b06] px-4 py-2 mt-5 rounded-full text-white text-center text-sm font-semibold w-full md:w-[25%] xl:w-[55%]"
               >
                 +36 30 090 0000
               </a>
@@ -97,7 +106,7 @@ const Services = () => {
             <img src={serviceImg2} alt="" className="mt-5" />
           </div>
         </section>
-        <section className="">
+        <section id="matterport" className="">
           <div className="flex pt-16 xl:pt-0 xl:items-start items-center flex-col px-6 xl:px-0 xl:flex-row xl:w-11/12 xl:mx-auto xl:gap-20">
             <img src={serviceImg3} alt="" className="hidden xl:block" />
             <div className="flex flex-col xl:gap-4 gap-2 xl:mt-16 mb-5 xl:mb-0">
@@ -113,7 +122,7 @@ const Services = () => {
               </p>
               <a
                 href="tel:+36209552867"
-                className="bg-gradient-to-r from-[#ec6608] to-[#ff9b06] px-4 py-2 mt-5 rounded-full text-white text-center text-sm font-semibold w-full md:w-[25%]"
+                className="bg-gradient-to-r from-[#ec6608] to-[#ff9b06] px-4 py-2 mt-5 rounded-full text-white text-center text-sm font-semibold w-full md:w-[25%] xl:w-[55%]"
               >
                 +36 20 955 2867
               </a>
@@ -121,7 +130,7 @@ const Services = () => {
             <img src={serviceImg3} alt="" className="xl:hidden block" />
           </div>
         </section>
-        <section className="">
+        <section id="lawyer" className="">
           <div className="flex pt-16 xl:pt-0 xl:items-start items-center flex-col px-6 xl:px-0 xl:flex-row xl:w-11/12 xl:mx-auto xl:gap-20">
             <div className="flex flex-col xl:gap-4 gap-2 xl:mt-16 mb-5 xl:mb-0 xl:pl-20">
               <img src={serviceLawyerIcon} alt="" className="xl:w-max w-10" />
@@ -138,7 +147,7 @@ const Services = () => {
               </p>
               <a
                 href="tel:+36300900000"
-                className="bg-gradient-to-r from-[#ec6608] to-[#ff9b06] px-4 py-2 mt-5 rounded-full text-white text-center text-sm font-semibold w-full md:w-[25%]"
+                className="bg-gradient-to-r from-[#ec6608] to-[#ff9b06] px-4 py-2 mt-5 rounded-full text-white text-center text-sm font-semibold w-full md:w-[25%] xl:w-[55%]"
               >
                 +36 30 090 0000
               </a>
@@ -146,7 +155,7 @@ const Services = () => {
             <img src={serviceImg4} alt="" className="" />
           </div>
         </section>
-        <section className="">
+        <section id="energy" className="">
           <div className="flex pt-16 xl:pt-0 xl:items-start items-center flex-col px-6 xl:px-0 xl:flex-row xl:w-11/12 xl:mx-auto xl:gap-20">
             <img src={serviceImg5} alt="" className="hidden xl:block" />
             <div className="flex flex-col xl:gap-4 gap-2 xl:mt-16 mb-5 xl:mb-0">
@@ -166,7 +175,7 @@ const Services = () => {
               </p>
               <a
                 href="tel:+36300900000"
-                className="bg-gradient-to-r from-[#ec6608] to-[#ff9b06] px-4 py-2 mt-5 rounded-full text-white text-center text-sm font-semibold w-full md:w-[25%]"
+                className="bg-gradient-to-r from-[#ec6608] to-[#ff9b06] px-4 py-2 mt-5 rounded-full text-white text-center text-sm font-semibold w-full md:w-[25%] xl:w-[55%]"
               >
                 +36 30 090 0000
               </a>
@@ -174,7 +183,7 @@ const Services = () => {
             <img src={serviceImg5} alt="" className="xl:hidden block" />
           </div>
         </section>
-        <section className="pb-10">
+        <section id="cleaning" className="pb-10">
           <div className="flex pt-16 xl:pt-0 xl:items-start items-center flex-col px-6 xl:px-0 xl:flex-row xl:w-11/12 xl:mx-auto xl:gap-20">
             <div className="flex flex-col xl:gap-4 gap-2 xl:mt-16 mb-5 xl:mb-0 xl:pl-20">
               <img src={serviceCleaningIcon} alt="" className="xl:w-max w-10" />
@@ -192,7 +201,7 @@ const Services = () => {
               </p>
               <a
                 href="tel:+36300900000"
-                className="bg-gradient-to-r from-[#ec6608] to-[#ff9b06] px-4 py-2 mt-5 rounded-full text-white text-center text-sm font-semibold w-full md:w-[25%]"
+                className="bg-gradient-to-r from-[#ec6608] to-[#ff9b06] px-4 py-2 mt-5 rounded-full text-white text-center text-sm font-semibold w-full md:w-[25%] xl:w-[55%]"
               >
                 +36 30 090 0000
               </a>

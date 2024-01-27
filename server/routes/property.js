@@ -3,7 +3,6 @@ const prisma = require("../prisma/prisma");
 const settlements = require("../res/settlements");
 const { generate8DigitNumericId } = require("../utils/getId");
 const router = require("express").Router();
-const { logActivity } = require("../models/ActivityLog");
 
 const getValidId = async () => {
   try {
@@ -69,13 +68,6 @@ router.post("/", auth, async (req, res) => {
       submittedBy: req.user.id,
     },
   });
-
-  await logActivity(
-      req.user.id,
-      "Property Creation",
-      `Created  property with id ${id}`
-  );
-
   return res.send({
     status: "SUCCESS",
     data: ad,
@@ -95,12 +87,6 @@ router.put("/:id", auth, async (req, res) => {
     where: { id },
     data: req.body,
   });
-
-  await logActivity(
-      req.user.id,
-      "Property Updatation",
-      `Updated  property with id ${id}`
-  );
   return res.send({
     data: updatedAd,
   });
@@ -335,13 +321,6 @@ router.post("/upgrade-home/:id", auth, async (req, res) => {
         credit: { decrement: bidCredits },
       },
     });
-
-    await logActivity(
-        req.user.id,
-        "Property Upgradetion Home",
-        `Upgradeted home property with id ${id}`
-    );
-
     res.status(200).send({
       message: "Hirdetés kiemelve",
       user,
@@ -396,13 +375,6 @@ router.post("/upgrade/:id", auth, async (req, res) => {
         credit: { decrement: bidCredits },
       },
     });
-
-    await logActivity(
-        req.user.id,
-        "Property Upgradetion",
-        `Upgradeted property with id ${id}`
-    );
-
     res.status(200).send({
       message: "Hirdetés kiemelve",
       user,
@@ -470,39 +442,6 @@ router.get("/archive-list", auth, async (req, res) => {
   }
 });
 
-router.post("/archive/reactive/", auth, async (req, res) => {
-  try {
-    const requestData = {
-      propertyId: req.body.propertyId
-    };
-
-    if (!requestData.propertyId) {
-      return res.status(400).json({ message: "The 'propertyId' field is required." });
-    }
-
-    await prisma.$transaction(async (prisma) => {
-      await prisma.property.update({
-        where: { id:requestData.propertyId },
-        data: {
-          isArchived: false
-        },
-      });
-
-      await deleteReasonEntityById(requestData.propertyId, req.user.id);
-    });
-
-    await logActivity(
-        req.user.id,
-        "Property Reactivation",
-        `Reactived property with id ${requestData.propertyId}`
-    );
-
-    return res.status(200).json({ success: true });
-  } catch (error) {
-    console.error("Error reactive property:", error);
-    return res.status(500).json({ message: "Error reactive property" });
-  }
-});
 
 router.delete("/archive", auth, async (req, res) => {
   try {
@@ -526,13 +465,7 @@ router.delete("/archive", auth, async (req, res) => {
       await createReasonEntity(requestData.reasonId, req.user.id,requestData.propertyId);
     });
 
-    await logActivity(
-        req.user.id,
-        "Property Archivation",
-        `Archived property with id ${requestData.propertyId}`
-    );
-
-    return res.status(200).json({ success: true });
+    return res.status(200).json({ isSuccess: true });
   } catch (error) {
     console.error("Error archiving property:", error);
     return res.status(500).json({ message: "Error archiving property" });
@@ -563,13 +496,7 @@ router.delete("/", auth, async (req, res) => {
       });
     });
 
-    await logActivity(
-        req.user.id,
-        "Property Deletion",
-        `Deleted property with id ${propertyId}`
-    );
-
-    return res.status(200).json({ success: true  });
+    return res.status(200).json({ isSuccess: true  });
   } catch (error) {
     console.log(error);
     return handleErrorResponse(res, 500, "Error deleting property");
@@ -577,14 +504,14 @@ router.delete("/", auth, async (req, res) => {
 });
 
 
-const deleteReasonEntityById = async (propertyId,userId) => {
-  if (!propertyId) {
+const deleteReasonEntityById = async (id,userId) => {
+  if (!id) {
     throw new Error("'id' is required.");
   }
 
   try {
     await prisma.PropertyDeleteReasonEntity.deleteMany({
-      where: { property_id:propertyId, user_id:userId }
+      where: { property_id:id, user_id:userId }
     });
 
   } catch (error) {
@@ -594,12 +521,9 @@ const deleteReasonEntityById = async (propertyId,userId) => {
 };
 
 
-const createReasonEntity = async (reasonId, userId , propertyId , comment = null) => {
+const createReasonEntity = async (reasonId, userId , propertyId) => {
   if (!reasonId || !userId || !propertyId) {
     throw new Error("Both 'reasonId' and 'userId' and 'propertyId' are required.");
-  }
-  if (reasonId === 3 && comment !== null) {
-    throw new Error("For reasonId 3, 'comment' must be null.");
   }
 
   try {
@@ -615,12 +539,6 @@ const createReasonEntity = async (reasonId, userId , propertyId , comment = null
   } catch (error) {
     console.error("Error creating reason entity:", error);
     throw new Error("Error creating reason entity");
-  } finally {
-    await logActivity(
-        userId,
-        "Property Updatation",
-        `Updated  property with id ${propertyId} and reason id ${reasonId}`
-    );
   }
 };
 

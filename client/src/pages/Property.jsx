@@ -10,6 +10,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { request } from "../utils/request";
 import useIsMobile, {useIsSmallerScreen} from "../utils/useIsMobile";
 import ErrorPage from "../components/ErrorPage";
+import { toast } from "react-hot-toast";
 
 function Property() {
   const { id } = useParams();
@@ -31,7 +32,7 @@ function Property() {
           setLoading(false);
         })
         .catch((err) => {
-          console.log("ERROR", err);
+          toast.error("Hiba", err);
           setLoading(false);
         });
     }
@@ -52,7 +53,7 @@ function Property() {
             <Photos property={property} />
           </div>
           <div className="mt-4">
-            <Info property={property} />
+            <Info property={property}/>
           </div>
           <div className="mb-4 mt-0">
             <About property={property} />

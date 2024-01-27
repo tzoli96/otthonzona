@@ -235,11 +235,11 @@ function Info({ property }) {
       <div className="mt-4 text-2xl text-blue font-bold">
         {thousandSeparator(property.price)} Ft
       </div>
-      <div className="my-6">
+      <a href={`mailto:${property.agent?.email}`} className="block my-6">
         <button className="orange-button w-full" style={{ width: "100%" }}>
           Érdekel az ingatlan
         </button>
-      </div>
+      </a>
       <div className="mt-2 grid grid-cols-2 text-lightgrey font-bold text-md">
         <div>
           <button className="inline-flex gap-2" onClick={handleAddToFavorites}>

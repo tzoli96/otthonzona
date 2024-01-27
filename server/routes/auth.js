@@ -169,12 +169,12 @@ router.post("/register", async (req, res) => {
     };
 
     let transporter = nodemailer.createTransport({
-      host: "mail.otthonzona.com",
-      port: 465,
+      host: process.env.EMAIL_HOST,
+      port: process.env.EMAIL_PORT,
       secure: true,
       auth: {
-        user: "no-reply@otthonzona.com",
-        pass: "n8yewXbyP$SRcc",
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASSWORD,
       },
     });
 
@@ -255,12 +255,12 @@ router.post("/forgot-password", async (req, res) => {
   });
 
   let transporter = nodemailer.createTransport({
-    host: "mail.otthonzona.com",
-    port: 465,
+    host: process.env.EMAIL_HOST,
+    port: process.env.EMAIL_PORT,
     secure: true,
     auth: {
-      user: "no-reply@otthonzona.com",
-      pass: "n8yewXbyP$SRcc",
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASSWORD,
     },
   });
 
