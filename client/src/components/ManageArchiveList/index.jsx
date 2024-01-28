@@ -5,6 +5,7 @@ import MyPropertyArchiveCard from "./MyPropertyArchiveCard";
 import { AppContext } from "../../App";
 import { DeleteArchivePopup } from "./DeleteArchivePopup";
 import { getArchiveListRequest } from "../../utils/request/archiveRequest";
+import { ActivateArchivePopup } from "./ActivateArchivePopup";
 
 function ManageArchiveList() {
   const [properties, setProperties] = useState([]);
@@ -14,8 +15,20 @@ function ManageArchiveList() {
   const [dapIsVisible, setDapIsVisible] = useState(false);
   const [deletingProperty, setDeletingProperty] = useState(null);
 
+  const [activatePopup, setActivatePopup] = useState(false);
+  const [activatingProperty, setActivatingProperty] = useState(null);
+
+  const activatePopupProps = {
+    visible: activatePopup,
+    setVisible: setActivatePopup,
+    property: activatingProperty,
+    setProperty: setActivatingProperty,
+    properties: properties,
+    setProperties: setProperties,
+  };
+
   useEffect(() => {
-      getArchiveListRequest()
+    getArchiveListRequest()
       .then((data) => {
         setLoading(false);
         setProperties(data);
@@ -29,9 +42,7 @@ function ManageArchiveList() {
     <>
       <Layout selected={8}>
         <div className="p-4 md:p-8">
-          <p className="text-xl font-semibold">
-              Archívált hirdetések
-          </p>
+          <p className="text-xl font-semibold">Archívált hirdetések</p>
           {loading ? (
             <div className="flex justify-center h-48 items-center my-8 gap-4 font-medium text-gray-900">
               <Loading />
@@ -46,6 +57,7 @@ function ManageArchiveList() {
                   setProperties={setProperties}
                   setDapIsVisible={setDapIsVisible}
                   setDeletingProperty={setDeletingProperty}
+                  activatePopup={activatePopupProps}
                 />
               ))}
             </div>
@@ -60,6 +72,7 @@ function ManageArchiveList() {
           properties={properties}
         ></DeleteArchivePopup>
       )}
+      {activatePopup && <ActivateArchivePopup {...activatePopupProps} />}
     </>
   );
 }

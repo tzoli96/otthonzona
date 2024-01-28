@@ -1,17 +1,4 @@
-.delete-ad-popup {
-  position: relative;
-  .orange-button, .blue-button, .delete-button {
-    width: 100%;
-  }
-
-  .delete-button {
-    background: red;
-    &.disabled {
-      background: #a8acb3;
-      cursor: not-allowed;
-    }
-  }
-  .loader {
+.popup-loader {
     position: absolute;
     width: 100%;
     height: 100%;
@@ -37,9 +24,3 @@
       animation: pulsate 1s linear infinite;
     }
   }
-  &.archive {
-    .blue-button, .delete-button {
-      width: 150px;
-    }
-  }
-}

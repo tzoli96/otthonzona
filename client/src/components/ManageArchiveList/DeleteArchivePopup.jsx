@@ -1,9 +1,14 @@
 import React, { useState } from "react";
 import { BasePopup } from "../Elements/Base/BasePopup";
-import { DeleteLoader } from "../Loader";
+import { DeleteLoader } from "../DeleteLoader";
 import { finalPropertyDelete } from "../../utils/request/propertyRequests";
 
-export function DeleteArchivePopup({ setIsVisible, property, setProperties,properties}) {
+export function DeleteArchivePopup({
+  setIsVisible,
+  property,
+  setProperties,
+  properties,
+}) {
   const [deleting, setDeleting] = useState(false);
 
   const handleDelete = async () => {
