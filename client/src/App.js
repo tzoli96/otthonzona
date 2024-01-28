@@ -49,6 +49,9 @@ import MekkoratVehetunk from "./components/NewsPage/MekkoratVehetunk";
 import IntelligensSzellozok from "./components/NewsPage/IntelligensSzellozok";
 import EditDraft from "./components/Drafts/EditDraft";
 import AdminApp from "./uiConfig";
+import { Dashboard } from "./components/Admin/index";
+import { AdminLayout } from "./components/Admin/AdminLayout";
+import { UserActivity } from "./components/Admin/UserActivity";
 
 export const AppContext = createContext();
 
@@ -94,7 +97,10 @@ function App() {
           element={config.mode === "MAINTAINENCE" ? <Maintainence /> : <Home />}
         />
         <Route path="/search" element={<Search />} />
-        <Route path="/admin" element={<AdminApp />} />
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route path="/admin/" element={<Dashboard />} />
+          <Route path="/admin/user-activity" element={<UserActivity />} />
+        </Route>
         <Route path="/register" element={<SignUp />} />
         <Route path="/agency-register" element={<AgencyRegister />} />
         <Route path="/login" element={<Login />} />
