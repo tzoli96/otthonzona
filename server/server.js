@@ -31,6 +31,7 @@ app.use("/api/draft_property", require("./routes/draftproperty"));
 app.use("/api/media", require("./routes/media"));
 app.use("/api/agency", require("./routes/agency"));
 app.use("/api/delete_reasons", require("./routes/deletereasons"));
+app.use("/api/activity_logs", require("./routes/activityLogs"));
 
 const PORT = process.env.PORT || 5000;
 
