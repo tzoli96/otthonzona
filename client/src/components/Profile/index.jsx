@@ -1,19 +1,20 @@
 import React, { useContext, useState } from "react";
 import Layout from "../Elements/AppLayout";
 import Input from "../Elements/Input";
-import App, { AppContext } from "../../App";
 import Loading from "../Elements/Loading";
 import UploadComponent from "../Elements/UploadComponent";
 import { toast } from "react-hot-toast";
 import { request } from "../../utils/request";
 import convertFormDataToJson from "../../utils/fd";
+import useAuthUser from "react-auth-kit/hooks/useAuthUser";
+import useIsAuthenticated from "react-auth-kit/hooks/useIsAuthenticated";
 
 export const profilePhotoPlaceholder =
   "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png";
 
 function Profile() {
-  const data = useContext(AppContext);
-  const { user, setData } = useContext(AppContext);
+  const user = useAuthUser()?.userData;
+  const isLoggedIn = useIsAuthenticated()
   const [loading, setLoading] = useState(false);
   const [newPhoto, setNewPhoto] = useState("");
 

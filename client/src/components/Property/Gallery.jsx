@@ -3,9 +3,8 @@ import chevronLeft from "../../pictures/app/chevron-left.svg";
 import whiteLogo from "../../icons/white-logo.svg";
 import placeHolder from "../../pictures/property_placeholder.png";
 
-function Gallery({ closeModal, images, property, setShowModal }) {
-  const [mainImage, setMainImage] = useState(property.photos[0] || placeHolder);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+function Gallery({ closeModal, images, property, setShowModal, currentImageIndex, setCurrentImageIndex }) {
+  const [mainImage, setMainImage] = useState(property.photos[currentImageIndex] || placeHolder);
 
   const changeMainImage = (newImage, index) => {
     setMainImage(newImage);

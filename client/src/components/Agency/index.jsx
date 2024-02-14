@@ -4,7 +4,7 @@ import Input from "../Elements/Input";
 import { toast } from "react-hot-toast";
 import { request } from "../../utils/request";
 import MemberRow from "./MemberRow";
-import { AppContext } from "../../App";
+import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 
 function CreateAgency() {
   const [agency, setAgency] = useState(null);
@@ -20,7 +20,7 @@ function CreateAgency() {
   const [pendingInvitations, setPendingInvitations] = useState([]);
 
   const [isAdmin, setIsAdmin] = useState(false);
-  const { user } = useContext(AppContext);
+  const user = useAuthUser()?.userData;
 
   useEffect(() => {
     async function fetchAgencyData() {
@@ -305,7 +305,7 @@ function CreateAgency() {
                   Ha szeretnéd létrehozni saját ingatlan irodádat, kérjük,
                   látogasd meg az{" "}
                   <a
-                    href="otthonzona.com/agency-register"
+                    href="/agency-register"
                     style={{ color: "#007BFF", textDecoration: "underline" }}
                   >
                     Ingatlan iroda regisztrációs

@@ -9,12 +9,47 @@ import convertFormDataToJson from "../../utils/fd";
 import Cookies from "js-cookie";
 import fbIcon from "../../pictures/facebook.svg";
 import googleIcon from "../../pictures/google.svg";
+import useSignIn from 'react-auth-kit/hooks/useSignIn';
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
+import CryptoJS from 'crypto-js';
 
 function Login() {
   const [emailNotVerified, setEmailNotVerified] = useState(false);
   const [wrongCredentials, setWrongCredentials] = useState(false);
   const [forgotPassword, setForgotPassword] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
+  const signIn = useSignIn();
+  const navigate = useNavigate();
+
+  const handleSignIn = (data) => {
+    const { token } = data.data;
+    const { pwHash,userRole, ...userData } = data.data.user;
+    const expiresAt = 3600;
+    const encryptedPermissions = data.data.user.userRole.userRolePermissions.map(item => {
+      const permissionString = JSON.stringify(item.permission);
+      const encryptedPermission = CryptoJS.AES.encrypt(permissionString, 'yourSecretKey').toString();
+      return encryptedPermission;
+    });
+
+    if (signIn({
+      auth: {
+        token,
+        expiresAt,
+        type: 'Bearer'
+      },
+      userState: {
+        userData,
+        encryptedPermissions
+      }
+    })) {
+      navigate("/post-ad");
+      toast.success("Sikeresen bejelentkeztél");
+
+    } else {
+      toast.error("Nem sikerült bejelentkezni");
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -23,9 +58,6 @@ function Login() {
     let apiEndpoint = forgotPassword
       ? "/api/auth/forgot-password"
       : "/api/auth/login";
-
-    //console.log("API endpoint:", apiEndpoint);
-    //console.log("Form data:", json);
 
     request(apiEndpoint, {
       body: JSON.stringify(json),
@@ -39,11 +71,9 @@ function Login() {
           setWrongCredentials(true);
       } else {
         if (!forgotPassword) {
-          Cookies.set("token", data.data.token);
-          window.location = "/post-ad";
+          handleSignIn(data);
         } else {
           setEmailSent(true);
-          //console.log("Email sent state:", emailSent);
         }
       }
     });

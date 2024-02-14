@@ -2,7 +2,6 @@ import React, { useEffect, useState, useContext, createContext } from "react";
 import Layout from "../Elements/AppLayout";
 import Loading from "../Elements/Loading";
 import MyPropertyArchiveCard from "./MyPropertyArchiveCard";
-import { AppContext } from "../../App";
 import { DeleteArchivePopup } from "./DeleteArchivePopup";
 import { getArchiveListRequest } from "../../utils/request/archiveRequest";
 import { ActivateArchivePopup } from "./ActivateArchivePopup";
@@ -10,7 +9,6 @@ import { ActivateArchivePopup } from "./ActivateArchivePopup";
 function ManageArchiveList() {
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { user } = useContext(AppContext);
   //delete ad popup is visible
   const [dapIsVisible, setDapIsVisible] = useState(false);
   const [deletingProperty, setDeletingProperty] = useState(null);

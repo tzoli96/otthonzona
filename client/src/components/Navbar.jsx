@@ -9,13 +9,20 @@ import menuIcon from "../pictures/app/menu.svg";
 import manageAdsIcon from "../pictures/app/manage-ads.png";
 import createAdIcon from "../pictures/app/create-ad.svg";
 import bankIcon from "../pictures/app/bank.svg";
-import starIcon from "../pictures/app/star.svg";
 import profileIcon from "../pictures/app/profile.svg";
 import messageIcon from "../pictures/app/message.svg";
 import notificationIcon from "../pictures/app/notification.svg";
 import eyeIcon from "../pictures/app/eye.svg";
 import heartIcon from "../pictures/app/heart.png";
-import {useIsSmallerScreen} from "../utils/useIsMobile";
+import { useIsSmallerScreen } from "../utils/useIsMobile";
+import draftIcon from "../pictures/app/draft.svg";
+import myAgencyIcon from "../pictures/app/my-agency.svg";
+import previousPurchaseIcon from "../pictures/app/previous-purchase.svg";
+import useSignOut from "react-auth-kit/hooks/useSignOut";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
+import useAuthUser from "react-auth-kit/hooks/useAuthUser";
+import useIsAuthenticated from "react-auth-kit/hooks/useIsAuthenticated";
 
 function MobileLinks({ hide, isActive }) {
   return (
@@ -62,7 +69,11 @@ function MobileLinks({ hide, isActive }) {
   );
 }
 
-function NavbarProfile({ setShow, show, user, logout, isLoggedIn }) {
+function NavbarProfile({ setShow, show, user, logout }) {
+  const isSmallerScreen = useIsSmallerScreen(1023);
+  const isLoggedIn = useIsAuthenticated();
+
+  const navigation = useNavigate();
   const menus = useMemo(
     () => [
       {
@@ -80,21 +91,30 @@ function NavbarProfile({ setShow, show, user, logout, isLoggedIn }) {
       //{ label: "Megtekintett ingatlanok", href: "/post-ad", icon: heartIcon },
       //{ label: "Értesítések", href: "/post-ad", icon: notificationIcon },
       { label: "Profil adatok", href: "/profile", icon: profileIcon },
-      { label: "Piszkozatok", href: "/drafts", icon: createAdIcon },
+      { label: "Piszkozatok", href: "/drafts", icon: draftIcon },
       //{ label: "Értékelések", href: "/post-ad", icon: starIcon },
       //{ label: "Iroda létrehozása", href: "/agency", icon: starIcon },
       //{ label: "Megkeresések", href: "/post-ad", icon: messageIcon },
       {
         label: "Korábbi vásárlásaim",
         href: "/credit-purchase-history",
-        icon: bankIcon,
+        icon: previousPurchaseIcon,
       },
-      { label: "Ingatlan irodám", href: "/agency", icon: starIcon },
+      { label: "Ingatlan irodám", href: "/agency", icon: myAgencyIcon },
+      {
+        label: "Archivált hirdetések",
+        href: "/manage-archives",
+        icon: manageAdsIcon,
+      },
+      {
+        label: "Ingatlanos profilom",
+        href: "/agency-member-profile",
+        icon: profileIcon,
+        onlyAgencyMember: true,
+      }, // show menu element to agency members only
     ],
     []
   );
-
-  const isSmallerScreen = useIsSmallerScreen(1023);
 
   return (
     <>
@@ -102,17 +122,20 @@ function NavbarProfile({ setShow, show, user, logout, isLoggedIn }) {
         className="flex gap-2 cursor-pointer"
         onClick={(e) => {
           e.stopPropagation();
-          if (isLoggedIn) {
+          if (isLoggedIn()) {
             setShow(!show);
           } else {
-            window.location.href = "/login";
+            navigation("/login");
           }
         }}
       >
         <div>
           <div className="flex gap-2 mt-1">
             <div className="flex h-10 w-10">
-              <img className="rounded-full w-full" src={user?.photo || profilePhotoPlaceholder} />
+              <img
+                className="rounded-full w-full"
+                src={user?.photo || profilePhotoPlaceholder}
+              />
             </div>
             <div className="hidden lg:flex justify-center items-center text-blue select-none">
               {user?.lastName}
@@ -169,7 +192,14 @@ function NavbarProfile({ setShow, show, user, logout, isLoggedIn }) {
             </button>
             <div className="lg:hidden">
               {menus.map((profileText, profileIndex) => (
-                <Link to={profileText.href}>
+                <Link
+                  className={
+                    profileText.onlyAgencyMember && !user?.isAgent
+                      ? "hidden"
+                      : ""
+                  }
+                  to={profileText.href}
+                >
                   <button className="flex items-center justify-start w-full active:bg-orange-600 gap-3 self-start p-2 pl-5 text-left hover:text-black">
                     <img src={profileText.icon} alt="" className="w-6" />
                     {profileText.label}
@@ -188,24 +218,17 @@ function NavbarProfile({ setShow, show, user, logout, isLoggedIn }) {
 }
 
 const Navbar = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const location = useLocation();
   const [show, setShow] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
-
-  const { user } = useContext(AppContext);
-
-  useEffect(() => {
-    const token = Cookies.get("token");
-    setIsLoggedIn(!!token);
-    const hide = () => setShow(false);
-    window.addEventListener("click", hide);
-    return () => window.removeEventListener("click", hide);
-  }, []);
-
+  const signOut = useSignOut();
+  const navigate = useNavigate();
+  const user = useAuthUser()?.userData;
+  const isLoggedIn = useIsAuthenticated();
   const logout = () => {
-    Cookies.remove("token");
-    window.location.assign("/");
+    signOut();
+    navigate("/");
+    toast.success("Kijelentkeztél");
   };
 
   const isActive = (path) => location.pathname === path;
@@ -218,7 +241,7 @@ const Navbar = () => {
           show={show}
           setShow={setShow}
           logout={logout}
-          isLoggedIn={isLoggedIn}
+          isLoggedIn={isLoggedIn()}
         />
       </div>
       <div className="w-[120px] xl:max-2xl:max-w-[150px] lg:w-[35%] lg:hidden xl:block">
@@ -253,7 +276,7 @@ const Navbar = () => {
             <Link to="/contact-us">Kapcsolat</Link>
           </li>
         </ul>
-        {isLoggedIn ? (
+        {isLoggedIn() ? (
           <NavbarProfile
             show={show}
             setShow={setShow}

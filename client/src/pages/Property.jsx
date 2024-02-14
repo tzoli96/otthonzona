@@ -11,6 +11,7 @@ import { request } from "../utils/request";
 import useIsMobile, {useIsSmallerScreen} from "../utils/useIsMobile";
 import ErrorPage from "../components/ErrorPage";
 import { toast } from "react-hot-toast";
+import Agency from "../components/Elements/Agency";
 
 function Property() {
   const { id } = useParams();
@@ -48,6 +49,7 @@ function Property() {
     return (
       <>
         <Navbar />
+
         <div className="p-6">
           <div className="my-4">
             <Photos property={property} />
@@ -76,30 +78,40 @@ function Property() {
 
   if (property)
     return (
-      <>
-        <Navbar />
-        <div className="orange-gradient relative rounded-br-3xl rounded-bl-3xl h-44 -mb-24 z-0" />
-        <div className="grid grid-cols-3 gap-10 w-10/12 mx-auto relative z-30 mb-12">
-          <div>
-            <Info property={property} />
-            <div className="mt-4">
-              <Agent agent={property?.agent} />
+        <>
+          <Navbar/>
+          <div className="orange-gradient relative rounded-br-3xl rounded-bl-3xl h-44 -mb-24 z-0"/>
+          <div className="grid grid-cols-3 gap-10 w-10/12 mx-auto relative z-30 mb-12">
+            <div className="h-full">
+              <div className="sticky top-[2rem] h-auto">
+                <Info property={property}/>
+
+                <div className="mt-4">
+                  <Agent agent={property.agent}/>
+                </div>
+
+                {property.agent?.member[0]?.agency &&
+                  <div className="mt-4">
+                    <Agency agency={property.agent.member[0].agency} />
+                  </div>
+                }
+              </div>
+            </div>
+
+            <div className="col-span-2">
+              <Photos property={property}/>
+              <About property={property}/>
+              <div className="mt-6">
+                <Map
+                    centerLocation={`${property?.address || ""} ${
+                        property?.district || ""
+                    } ${property?.settlement || ""} ${property?.street || ""}`}
+                />
+              </div>
             </div>
           </div>
-          <div className="col-span-2">
-            <Photos property={property} />
-            <About property={property} />
-            <div className="mt-6">
-              <Map
-                centerLocation={`${property?.address || ""} ${
-                  property?.district || ""
-                } ${property?.settlement || ""} ${property?.street || ""}`}
-              />
-            </div>
-          </div>
-        </div>
-        <Footer />
-      </>
+          <Footer/>
+        </>
     );
 }
 

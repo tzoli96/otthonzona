@@ -4,14 +4,14 @@ import Loading from "../Elements/Loading";
 import { request } from "../../utils/request";
 import MyPropertyCard from "./MyPropertyCard";
 import { BuyCreditModal } from "../BiddingDashboard/BuyCredit";
-import { AppContext } from "../../App";
 import { DeleteAdPopup } from "./DeleteAdPopup";
 import { getDeleteReasons } from "../../utils/request/archiveRequest";
+import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 
 function ManageAds({}) {
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { user } = useContext(AppContext);
+  const user = useAuthUser()?.userData;
   const [showBuyCredit, setShowBuyCredit] = useState(false);
   const [reasonOptions, setReasonOptions] = useState([]);
   const [dapIsVisible, setDapIsVisible] = useState(false);

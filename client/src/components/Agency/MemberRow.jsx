@@ -2,6 +2,7 @@ import React, { useState, useRef } from "react";
 import { toast } from "react-hot-toast";
 import { request } from "../../utils/request";
 import { useIsSmallerScreen } from "../../utils/useIsMobile";
+import { Link } from "react-router-dom";
 
 function MemberRow({ member, handleRemoveMember, isAdmin, agencyId }) {
   const [rowCollapsed, setRowCollapsed] = useState(true);
@@ -44,7 +45,9 @@ function MemberRow({ member, handleRemoveMember, isAdmin, agencyId }) {
   return (
     <div className="flex flex-col xl:flex-row border-b border-gray-300 py-2 items-center">
       <div className="w-full xl:w-2/12 pr-2 break-words max-xl:my-2">
-        {member.name}
+        <Link to={`/agent/${member.id}`} target="_blank" className="underline">
+          {member.name}
+        </Link>
       </div>
       <div className="w-full xl:w-3/12 pr-2 break-words max-xl:my-2">
         {member.email}

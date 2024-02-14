@@ -1,6 +1,7 @@
 const auth = require("../middleware/auth");
 const prisma = require("../prisma/prisma");
 const { generate8DigitNumericId } = require("../utils/getId");
+const { logActivity } = require("../models/ActivityLog");
 
 const router = require("express").Router();
 
@@ -33,6 +34,11 @@ router.post("/", auth, async (req, res) => {
       submittedBy: req.user.id,
     },
   });
+  await logActivity(
+      req.user.id,
+      "Created Draft",
+      `Created draft  User with id ${req.user.id} draft id ${id}`
+  );
   return res.send({
     status: "SUCCESS",
     data: ad,
@@ -48,6 +54,11 @@ router.put("/:id", auth, async (req, res) => {
       message: "Ezt az piszkozatott nincs jogosultságod szerkeszteni.",
     });
   }
+  await logActivity(
+      req.user.id,
+      "Updated Draft",
+      `Updated draft  User with id ${req.user.id} draft id ${id}`
+  );
   const updatedAd = await prisma.DraftProperty.update({
     where: { id },
     data: req.body,
@@ -62,6 +73,11 @@ router.delete("/delete", auth, async (req, res) => {
     await prisma.DraftProperty.delete({
       where: { id: req.body.id},
     });
+    await logActivity(
+        req.user.id,
+        "Deleted Draft",
+        `Deleted draft  User with id ${req.user.id} draft id ${req.body.id}`
+    );
     return res.json({ success: true });
   } catch (error) {
     console.error("Hiba a DraftProperty törlése közben:", error);

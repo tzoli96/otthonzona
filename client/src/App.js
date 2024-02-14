@@ -1,4 +1,5 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route,Navigate } from "react-router-dom";
+import { Helmet } from "react-helmet";
 
 import "./scss/app.scss";
 // import "./App.css";
@@ -29,7 +30,6 @@ import Profile from "./components/Profile";
 import Agency from "./components/Agency";
 import ConfirmInvite from "./components/Agency/InvitationConfirm";
 import { createContext, useEffect, useState } from "react";
-import { request } from "./utils/request";
 import ManageAds from "./components/ManageAds";
 import EditAd from "./pages/EditAd";
 import CreditPurchaseHistory from "./components/CreditPurchaseHistory";
@@ -48,10 +48,34 @@ import FalusiCsok from "./components/NewsPage/FalusiCsok";
 import MekkoratVehetunk from "./components/NewsPage/MekkoratVehetunk";
 import IntelligensSzellozok from "./components/NewsPage/IntelligensSzellozok";
 import EditDraft from "./components/Drafts/EditDraft";
-import AdminApp from "./uiConfig";
+import AgencyMemberProfile from "./components/AgencyMemberProfile";
+import Member from "./pages/Member";
 import { Dashboard } from "./components/Admin/index";
 import { AdminLayout } from "./components/Admin/AdminLayout";
-import { UserActivity } from "./components/Admin/UserActivity";
+import { UserAcitvityIndex } from "./components/Admin/UserActivity/UserAcitvityIndex";
+import { PermissionsIndex } from "./components/Admin/Permissions/PermissionsIndex";
+
+function generateSessionId(length = 16) {
+  let result = "";
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  const charactersLength = characters.length;
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+}
+
+function setSessionIdCookie() {
+  if (
+    !document.cookie.split("; ").find((row) => row.startsWith("sessionId="))
+  ) {
+    const sessionId = generateSessionId();
+    const expiryDate = new Date();
+    expiryDate.setFullYear(expiryDate.getFullYear() + 1);
+    document.cookie = `sessionId=${sessionId}; expires=${expiryDate.toUTCString()}; path=/`;
+  }
+}
 
 export const AppContext = createContext();
 
@@ -60,6 +84,11 @@ const Home = () => {
 
   return (
     <>
+      <Helmet>
+        <title>Otthon Zóna</title>
+        <meta property="og:title" content="Otthon Zóna" />
+      </Helmet>
+
       <Navbar />
       <Hero />
       <PopularProperties />
@@ -76,18 +105,6 @@ const Home = () => {
 
 function App() {
   const [data, setData] = useState({});
-
-  const loadData = async () => {
-    const user = await request("/api/user/me");
-    setData({
-      ...data,
-      user: user.data,
-    });
-  };
-
-  useEffect(() => {
-    loadData();
-  }, []);
   return (
     <AppContext.Provider value={{ ...data, setData }}>
       <Routes>
@@ -96,11 +113,12 @@ function App() {
           path="/"
           element={config.mode === "MAINTAINENCE" ? <Maintainence /> : <Home />}
         />
-        <Route path="/search" element={<Search />} />
-        <Route path="/admin" element={<AdminLayout />}>
-          <Route path="/admin/" element={<Dashboard />} />
-          <Route path="/admin/user-activity" element={<UserActivity />} />
-        </Route>
+          <Route path="/search" element={<Search />} />
+              <Route path="/admin" element={<AdminLayout />}>
+                  <Route path="/admin/" element={<Dashboard />} />
+                  <Route path="/admin/user-activity" element={<UserAcitvityIndex />} />
+                  <Route path="/admin/permissions" element={<PermissionsIndex />} />
+              </Route>
         <Route path="/register" element={<SignUp />} />
         <Route path="/agency-register" element={<AgencyRegister />} />
         <Route path="/login" element={<Login />} />
@@ -124,6 +142,8 @@ function App() {
         <Route path="/saved-properties" element={<SavedAds />} />
         <Route path="/services" element={<Services />} />
         <Route path="/agency" element={<Agency />} />
+        <Route path="/agency-member-profile" element={<AgencyMemberProfile />} />
+        <Route path="/agent/:memberId" element={<Member />} />
         <Route path="/get-social-login" element={<GetSocialLogin />} />
         <Route path="/contact-us" element={<ContactUs />} />
         <Route path="/falusi-csok-2024" element={<FalusiCsok />} />

@@ -8,6 +8,7 @@ const passport = require("passport");
 const FacebookStrategy = require("passport-facebook").Strategy;
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const session = require("express-session");
+const { getConfig } = require("../models/coreConfig");
 
 require("dotenv").config();
 const router = express.Router();
@@ -117,7 +118,20 @@ router.get("/social-login", async (req, res) => {
 // Login route
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
-  const user = await prisma.user.findFirst({ where: { email } });
+  const user = await prisma.user.findFirst({ 
+    where: { email },
+    include: {
+      userRole: {
+        include: {
+          userRolePermissions: {
+            include: {
+              permission: true,
+            }
+          },
+        },
+      },
+    }
+  });
 
   if (user) {
     if (!user.isEmailVerified) {
@@ -126,7 +140,7 @@ router.post("/login", async (req, res) => {
     if (await bcrypt.compare(password, user.pwHash || "")) {
       return res.send({
         data: {
-          token: jwt.sign({ id: user.id }, process.env.SECRET),
+          token: jwt.sign({ id: user.id }, process.env.SECRET, { expiresIn: '1h' }),
           user,
         },
       });
@@ -149,6 +163,7 @@ router.post("/register", async (req, res) => {
 
     // Generate email confirmation token
     const emailConfirmationToken = crypto.randomBytes(20).toString("hex");
+    const NormalUserRoleId = await getConfig("user/group/normal_id");
 
     const user = await prisma.user.create({
       data: {
@@ -157,8 +172,9 @@ router.post("/register", async (req, res) => {
         email,
         phone,
         pwHash,
-        emailConfirmationToken, // Assuming you have a field for this in your User model
-      },
+        emailConfirmationToken,
+        userRoleId:NormalUserRoleId
+      }
     });
 
     const logToFile = (message) => {
@@ -316,12 +332,12 @@ router.post("/reset-password/:token", async (req, res) => {
 
 router.post("/send-details", async (req, res) => {
   let transporter = nodemailer.createTransport({
-    host: "mail.otthonzona.com",
-    port: 465,
+    host: process.env.EMAIL_HOST,
+    port: process.env.EMAIL_PORT,
     secure: true,
     auth: {
-      user: "no-reply@otthonzona.com",
-      pass: "n8yewXbyP$SRcc",
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASSWORD,
     },
   });
 

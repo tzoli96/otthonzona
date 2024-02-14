@@ -118,10 +118,11 @@ function About({ property }) {
   const renderContent = () => {
     switch (activeTab) {
       case "Leírás":
+        const formattedDescription = property?.description
+          ? property.description.replace(/\n/g, "<br>")
+          : "";
         return (
-          <div
-            dangerouslySetInnerHTML={{ __html: property?.description || "" }}
-          />
+          <div dangerouslySetInnerHTML={{ __html: formattedDescription }} />
         );
       case "Tulajdonágok":
         return (

@@ -3,7 +3,7 @@ import whiteLogo from "../icons/white-logo.svg";
 import insta from "../icons/insta.svg";
 import yt from "../icons/yt.svg";
 import fb from "../icons/fb.svg";
-import useIsMobile from "../utils/useIsMobile";
+import { useIsSmallerScreen } from "../utils/useIsMobile";
 import barion from "../pictures/barion.png";
 
 const social = [
@@ -19,11 +19,11 @@ const stripLinks = [
 ];
 
 function Footer({}) {
-  const isMobile = useIsMobile();
+  const isTablet = useIsSmallerScreen(1023);
 
   return (
     <>
-      <div className="md:hidden w-full h-44 flex justify-center items-center bg-blue">
+      <div className="lg:hidden w-full h-44 flex justify-center items-center bg-blue">
         <img src={whiteLogo} className="h-40 w-40" />
       </div>
       <div className="footer-section py-8 footer-links-container text-white overflow-hidden">
@@ -34,7 +34,7 @@ function Footer({}) {
           <p className="my-1">munkanapokon 10:00-17:00-ig</p>
           <p className="my-1">Millennium Projekt Management Kft.</p>
         </div>
-        {isMobile && <div />}
+        {isTablet && <div />}
         <div>
           <p className="font-bold my-4">Szolgáltatások</p>
           <p className="my-1">
@@ -72,7 +72,7 @@ function Footer({}) {
           </p>
         </div>
         <div className="-mt-4">
-          {!isMobile && <img src={whiteLogo} className="h-40 w-40" />}
+          {!isTablet && <img src={whiteLogo} className="h-40 w-40" />}
           <div className="flex gap-2 relative h-full">
             <div className="flex gap-2 absolute bottom-0 md:top-0 md:bottom-auto">
               {social.map(({ icon, link }, index) => (

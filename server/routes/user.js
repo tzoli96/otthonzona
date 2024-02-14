@@ -1,18 +1,16 @@
 const express = require("express");
 const prisma = require("../prisma/prisma");
 const auth = require("../middleware/auth");
+const { logActivity } = require("../models/ActivityLog");
+const { updateConfig,getConfig } = require("../models/coreConfig");
+const { getUserRoleById , updateRoleNameById,DeleteUserRole, createUserRole } = require("../models/UserRole");
+const { createUserRolePermission , getUserRolePermissionById, updateUserRolePermission } = require("../models/UserRolePermission");
+const { createPermission , updatePermissionNameById, DeletePermission } = require("../models/Permission");
 
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 const router = require("express").Router();
 
-router.get("/me", auth, async (req, res) => {
-  const { id } = req.user || {};
-  const user = await prisma.user.findFirst({ where: { id } });
-  return res.send({
-    data: user,
-  });
-});
 
 router.put("/", auth, async (req, res) => {
   const data = req.body;
@@ -56,6 +54,99 @@ router.get("/my-properties", auth, async (req, res) => {
     data: ads,
   });
 });
+
+router.get("/roles", auth, async (req, res) => {
+  const ads = await prisma.UserRole.findMany();
+  return res.send({
+    data: ads,
+  });
+});
+router.get("/permissions", auth, async (req, res) => {
+  const ads = await prisma.Permission.findMany();
+  return res.send({
+    data: ads,
+  });
+});
+
+router.get("/assign/permission/:id", auth, async (req, res) => {
+  const ads = await getUserRolePermissionById(req.params.id)
+  return res.send({
+    data: ads,
+  });
+});
+
+router.post("/assign/user-permission", auth, async (req, res) => {
+  const ads = await updateUserRolePermission(
+      req.body.entity.id,
+      req.body.data.permissions
+  );
+  return res.send({
+    data: ads,
+  });
+});
+
+router.post("/permissions", auth, async (req, res) => {
+  const permissions = await createPermission(req.body.name);
+  return res.send({
+    data: permissions,
+  });
+});
+
+router.put("/permission/:id", auth, async (req, res) => {
+  const ads = await updatePermissionNameById(req.params.id,req.body.name);
+  return res.send({
+    data: ads,
+  });
+});
+router.delete("/permissions", auth, async (req, res) => {
+  const ads = await DeletePermission(req.body.id);
+  return res.send({
+    data: ads,
+  });
+});
+router.get("/current/role", auth, async (req, res) => {
+  const ads = await getConfig("user/group/normal_id");
+  return res.send({
+    data: ads,
+  });
+});
+
+router.get("/role/:id", auth, async (req, res) => {
+  const { id } = req.params;
+  const ads = await getUserRoleById(id);
+  return res.send({
+    data: ads,
+  });
+});
+router.put("/role/:id", auth, async (req, res) => {
+  const ads = await updateRoleNameById(req.params.id,req.body.name);
+  return res.send({
+    data: ads,
+  });
+});
+
+router.post("/role/", auth, async (req, res) => {
+  const ads = await createUserRole(req.body.name);
+  return res.send({
+    data: ads,
+  });
+});
+router.delete("/role", auth, async (req, res) => {
+  const ads = await DeleteUserRole(req.body.id);
+  return res.send({
+    data: ads,
+  });
+});
+
+router.post("/update/role", auth, async (req, res) => {
+  const ads = await updateConfig("user/group/normal_id",req.body.userRoleId);
+  return res.send({
+    data: ads,
+  });
+
+});
+
+
 
 router.get("/credit-purchase-history", auth, async (req, res) => {
   const creditPurchaseHistory = await prisma.creditPurchaseHistory.findMany({
@@ -110,6 +201,12 @@ router.post("/save-property/:id", auth, async (req, res) => {
         },
       },
     });
+
+    await logActivity(
+        userId,
+        "Saved Property",
+        `Save  property with id ${propertyId}`
+    );
 
     return res.status(200).json({
       data: updatedUser.savedProperties,
@@ -175,6 +272,12 @@ router.post("/remove-saved-property/:id", auth, async (req, res) => {
         savedProperties: updatedSavedProperties,
       },
     });
+
+    await logActivity(
+        userId,
+        "Removed Property from saved",
+        `Removed from save  property with id ${propertyId}`
+    );
 
     return res.status(200).json({
       message: "Property removed from favorites",
@@ -283,6 +386,12 @@ async function saveCreditPurchase(data) {
       spentMoney: data.currency,
     },
   });
+
+  await logActivity(
+      data.userId,
+      "Credit purchase",
+      `Creadit pruchase: ${data.amount}`
+  );
 
   // Log the successful saving of credit history
   console.log(

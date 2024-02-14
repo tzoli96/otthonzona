@@ -1,5 +1,3 @@
-// activityLogModel.js
-
 const prisma = require("../prisma/prisma");
 const { generate8DigitNumericId } = require("../utils/getId");
 

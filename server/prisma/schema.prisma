@@ -26,11 +26,12 @@ model User {
 
   adminOf Agency?
 
-  Member Member[]
+  member Member[]
 
   creditPurchases CreditPurchaseHistory[]
-  ActivityLog ActivityLog[]
-
+  activityLogs    ActivityLog[]
+  userRoleId      String
+  userRole        UserRole                @relation(fields: [userRoleId], references: [id])
 }
 
 model CreditPurchaseHistory {
@@ -66,13 +67,42 @@ model Agency {
 }
 
 model Member {
-  id       String @id @default(auto()) @map("_id") @db.ObjectId
-  userId   String @db.ObjectId
-  agencyId String @db.ObjectId
-  role     String // "Admin" or "Member"
+  id           String            @id @default(auto()) @map("_id") @db.ObjectId
+  userId       String            @db.ObjectId
+  agencyId     String            @db.ObjectId
+  tagIds       String[]          @db.ObjectId
+  role         String // "Admin" or "Ügynök"
+  introduction String?
+  attributes   MemberAttribute[]
 
-  user   User   @relation(fields: [userId], references: [id])
-  agency Agency @relation(fields: [agencyId], references: [id])
+  user   User        @relation(fields: [userId], references: [id])
+  agency Agency      @relation(fields: [agencyId], references: [id])
+  tags   MemberTag[] @relation(fields: [tagIds], references: [id])
+}
+
+model Attribute {
+  id         String            @id @default(auto()) @map("_id") @db.ObjectId
+  label      String            @unique
+  attributes MemberAttribute[]
+}
+
+model MemberAttribute {
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  memberId    String @db.ObjectId
+  attributeId String @db.ObjectId
+  value       String
+
+  member    Member    @relation(fields: [memberId], references: [id])
+  attribute Attribute @relation(fields: [attributeId], references: [id])
+}
+
+model MemberTag {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String   @unique
+  type      String // area || skill
+  memberIds String[] @db.ObjectId
+
+  members Member[] @relation(fields: [memberIds], references: [id])
 }
 
 model Invitation {
@@ -118,11 +148,11 @@ model Property {
   street             String?
   view               String?
 
-  title String?
-  rooms Int?
+  title     String?
+  rooms     Int?
   halfRooms Int?
-  area  Int?
-  landArea Int?
+  area      Int?
+  landArea  Int?
 
   atype String?
   btype String?
@@ -140,76 +170,106 @@ model Property {
   submittedBy String
   submittedOn DateTime? @default(now())
 
-  isArchived    Boolean @default(false)
-  referenceLink String?
+  isArchived                   Boolean                      @default(false)
+  referenceLink                String?
   propertyDeleteReasonEntities PropertyDeleteReasonEntity[]
 }
 
 model DraftProperty {
-  id                  String    @id @map("_id")
-  adType              String?
-  balcony             String?
-  builtYear           String?
-  ceilingHeight       String?
-  constructionMethod  String?
-  description         String?
-  district            String?
-  disabled            String?
-  exactPosition       Boolean?
-  floor               String?
-  furdo               String?
-  garden              String?
-  tetoter             String?
-  heating             String?
-  houseNo             String?
-  houseFloors         String?
-  lift                String?
-  legkondicionalo     String?
-  komfort             String?
-  orientation         String?
-  parktype            String?
-  photos              String[]
-  price               Int?
-  property_condition  String?
-  propertyStatus      String?
-  propertyType        String?
-  settlement          String?
-  street              String?
-  view                String?
+  id                 String   @id @map("_id")
+  adType             String?
+  balcony            String?
+  builtYear          String?
+  ceilingHeight      String?
+  constructionMethod String?
+  description        String?
+  district           String?
+  disabled           String?
+  exactPosition      Boolean?
+  floor              String?
+  furdo              String?
+  garden             String?
+  tetoter            String?
+  heating            String?
+  houseNo            String?
+  houseFloors        String?
+  lift               String?
+  legkondicionalo    String?
+  komfort            String?
+  orientation        String?
+  parktype           String?
+  photos             String[]
+  price              Int?
+  property_condition String?
+  propertyStatus     String?
+  propertyType       String?
+  settlement         String?
+  street             String?
+  view               String?
 
-  title               String?
-  rooms               Int?
-  halfRooms           Int?
-  area                Int?
-  landArea            Int?
+  title     String?
+  rooms     Int?
+  halfRooms Int?
+  area      Int?
+  landArea  Int?
 
-  atype               String?
-  btype               String?
+  atype String?
+  btype String?
 
-  submittedBy         String
-  submittedOn         DateTime?  @default(now())
+  submittedBy String
+  submittedOn DateTime? @default(now())
 }
 
 model PropertyDeleteReasons {
-  id   String    @id @map("_id")
-  name String
+  id                           String                       @id @map("_id")
+  name                         String
+  comment                      String?
   propertyDeleteReasonEntities PropertyDeleteReasonEntity[]
 }
 
-model ActivityLog {
-  id          String    @id @map("_id")
+model PropertyDeleteReasonEntity {
+  id          String                @id @map("_id")
+  reason_id   String
+  property_id String
   user_id     String
-  subject     String
-  activity    String
-  created_at  DateTime
-  user        User @relation(fields: [user_id], references: [id])
+  reason      PropertyDeleteReasons @relation(fields: [reason_id], references: [id])
+  property    Property              @relation(fields: [property_id], references: [id])
 }
 
-model PropertyDeleteReasonEntity {
-  id            String    @id @map("_id")
-  reason_id     String
-  property_id   String
-  user_id       String
-  reason        PropertyDeleteReasons @relation(fields: [reason_id], references: [id])
-  property      Property @relation(fields: [property_id], references: [id])
+model ActivityLog {
+  id         String   @id @map("_id")
+  user_id    String
+  subject    String
+  activity   String
+  created_at DateTime
+  user       User     @relation(fields: [user_id], references: [id])
+}
+
+model UserRole {
+  id                  String               @id @map("_id")
+  name                String
+  users               User[]
+  userRolePermissions UserRolePermission[]
+}
+
+model Permission {
+  id        String               @id @map("_id")
+  name      String
+  userRoles UserRolePermission[]
+}
+
+model UserRolePermission {
+  id           String     @id @map("_id")
+  userRoleId   String
+  permissionId String
+  userRole     UserRole   @relation(fields: [userRoleId], references: [id])
+  permission   Permission @relation(fields: [permissionId], references: [id])
+
+  @@unique([userRoleId, permissionId])
+}
+
+model coreConfig {
+  id    String @id @map("_id")
+  path  String @unique
+  value String
 }

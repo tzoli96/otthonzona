@@ -2,6 +2,9 @@
   "name": "atthon-zona-backend",
   "version": "1.0.0",
   "description": "Backend for Atthon Zona project",
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
+  },
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -27,13 +30,18 @@
     "passport-facebook": "^3.0.0",
     "passport-google-oauth2": "^0.2.0",
     "passport-google-oauth20": "^2.0.0",
+    "passport-http-bearer": "^1.0.1",
+    "prerender-node": "^3.7.0",
     "react-router-dom": "^6.21.2",
     "stripe": "^14.10.0",
     "xml2js": "^0.6.2",
     "xmldom": "^0.6.0"
   },
   "devDependencies": {
+    "@types/node": "^20.11.17",
     "nodemon": "^3.0.1",
-    "prisma": "5.8.0"
+    "prisma": "5.8.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
   }
 }

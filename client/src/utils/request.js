@@ -25,7 +25,7 @@ export const request = async (
       url: `${api}${route}${params}${toQuery(query)}`,
       headers: {
         "Content-Type": "application/json",
-        authorization: `Bearer ${Cookies.get("token")}`,
+        authorization: `Bearer ${Cookies.get("_auth")}`,
       },
       credentials: "include",
       data: method === "GET" ? null : body,

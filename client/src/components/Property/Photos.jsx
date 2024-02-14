@@ -7,8 +7,22 @@ function Photos({ property }) {
   const [mainImage, setMainImage] = useState(property.photos[0] || placeHolder);
   const [showModal, setShowModal] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [highlightedThumbIndex, setHighlightedThumbIndex] = useState(0);
 
   const images = property.photos;
+
+  const startIndex = Math.floor(currentImageIndex / 3) * 3;
+  const shownThumbNails = [0, 1, 2].map(
+    (offset) => (startIndex + offset) % images.length
+  );
+
+  const updateThumbnailAndImage = (index) => {
+    const newIndex = index % images.length;
+    const newThumbIndex = newIndex % 3;
+    setMainImage(images[newIndex]);
+    setCurrentImageIndex(newIndex);
+    setHighlightedThumbIndex(newThumbIndex);
+  };
 
   const changeMainImage = (newImage, index) => {
     setMainImage(newImage);
@@ -16,16 +30,19 @@ function Photos({ property }) {
   };
 
   const nextImage = () => {
-    let newIndex = (currentImageIndex + 1) % images.length;
-    changeMainImage(images[newIndex], newIndex);
+    const newIndex = currentImageIndex + 1;
+    updateThumbnailAndImage(newIndex);
   };
 
   const prevImage = () => {
-    let newIndex = (currentImageIndex - 1 + images.length) % images.length;
-    changeMainImage(images[newIndex], newIndex);
+    const newIndex = currentImageIndex - 1 + images.length;
+    updateThumbnailAndImage(newIndex % images.length);
   };
 
-  const closeModal = () => setShowModal(false);
+  const closeModal = () => {
+    setShowModal(false);
+    changeMainImage(images[currentImageIndex], currentImageIndex);
+  };
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -35,10 +52,7 @@ function Photos({ property }) {
     };
 
     window.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [currentImageIndex]);
 
   if (images.length === 0) {
@@ -54,11 +68,8 @@ function Photos({ property }) {
         <div className="absolute h-full w-10 left-0 top-0 flex justify-center items-center">
           <span
             onClick={(e) => {
+              prevImage();
               e.stopPropagation();
-              if (currentImageIndex > 0) {
-                setCurrentImageIndex(currentImageIndex - 1);
-                setMainImage(images[currentImageIndex - 1]);
-              }
             }}
           >
             <img
@@ -71,11 +82,8 @@ function Photos({ property }) {
         <div className="absolute h-full w-10 right-0 top-0 flex justify-center items-center">
           <span
             onClick={(e) => {
+              nextImage();
               e.stopPropagation();
-              if (currentImageIndex < images.length - 1) {
-                setCurrentImageIndex(currentImageIndex + 1);
-                setMainImage(images[currentImageIndex + 1]);
-              }
             }}
           >
             <img
@@ -90,6 +98,34 @@ function Photos({ property }) {
           {currentImageIndex + 1} / {images.length}
         </div>
       </div>
+
+      <div className="grid grid-cols-3 gap-5 mt-3">
+        {[0, 1, 2].map((offset) => {
+          const indexToShow = (startIndex + offset) % images.length;
+          return (
+            <div
+              key={indexToShow}
+              onClick={(e) => {
+                e.stopPropagation();
+                updateThumbnailAndImage(indexToShow);
+              }}
+              className={
+                "rounded-xl overflow-hidden " +
+                (offset === highlightedThumbIndex
+                  ? "border-4 border-spacing-1 thumbnail-border"
+                  : "")
+              }
+            >
+              <img
+                src={images[indexToShow]}
+                className="w-full h-auto cursor-pointer"
+                alt={`Thumbnail ${indexToShow}`}
+              />
+            </div>
+          );
+        })}
+      </div>
+
       {false && (
         <div className="w-full whitespace-nowrap" style={{ overflowX: "auto" }}>
           <div
@@ -117,6 +153,8 @@ function Photos({ property }) {
 
       {showModal && (
         <Gallery
+          currentImageIndex={currentImageIndex}
+          setCurrentImageIndex={setCurrentImageIndex}
           closeModal={closeModal}
           images={images}
           property={property}

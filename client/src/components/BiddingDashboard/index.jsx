@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import Layout from "../Elements/AppLayout";
-import { AppContext } from "../../App";
 import Loading from "../Elements/Loading";
 import { request } from "../../utils/request";
 import moment from "moment";
@@ -9,12 +8,12 @@ import toast from "react-hot-toast";
 import Switch from "../Elements/Switch";
 import homeIcon from "../../pictures/home.svg";
 import { BuyCreditModal } from "./BuyCredit";
+import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 
 const ordinals = ["st", "nd", "rd", "th"];
 
 export function BiddingPropertyCard({ property, properties, setProperties }) {
-  const context = useContext(AppContext);
-
+  const context = useAuthUser().userData;
   const [data, setData] = useState();
   const [loading, setLoading] = useState();
   const [credit, setCredit] = useState();
@@ -205,7 +204,7 @@ export function BiddingPropertyCard({ property, properties, setProperties }) {
 }
 
 function BiddingDashboard() {
-  const { user } = useContext(AppContext);
+  const user = useAuthUser()?.userData;
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showDetailsId, setShowDetailsId] = useState();

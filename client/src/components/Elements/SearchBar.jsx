@@ -16,28 +16,55 @@ function SearchBar({ onChangeFilters, onSubmit }) {
   const [filters, setFilters] = useState({});
   const [ready, setReady] = useState(false);
   const [forSale, setForSale] = useState(true);
+  const [debounceTimer, setDebounceTimer] = useState(null);
   const selectedSettlement = searchParams.get("settlement");
 
   const multiplier = forSale ? 1000000 : 1000;
   const [displayMinPrice, setDisplayMinPrice] = useState("");
   const [displayMaxPrice, setDisplayMaxPrice] = useState("");
   const handleMinPriceChange = (e) => {
-    const displayValue = e.target.value;
-    setDisplayMinPrice(displayValue);
-    onChange("minPrice", displayValue * multiplier);
+    if (e.target.value.length <= 4) {
+      const displayValue = e.target.value;
+      setDisplayMinPrice(displayValue);
+      onChange("minPrice", displayValue * multiplier);
+    }
   };
   const priceAddon = forSale ? "M Ft" : "E Ft";
 
   const handleMaxPriceChange = (e) => {
-    const displayValue = e.target.value;
-    setDisplayMaxPrice(displayValue);
-    onChange("maxPrice", displayValue * multiplier);
+    if (e.target.value.length <= 4) {
+      const displayValue = e.target.value;
+      setDisplayMaxPrice(displayValue);
+      onChange("maxPrice", displayValue * multiplier);
+    }
   };
 
   const onChange = (name, value) => {
+    const updatedValue = value !== null ? value.toString() : "";
+
     if (ready) {
-      setSearchParams({ ...filters, [name]: value });
-      setFilters({ ...filters, [name]: value });
+      const newFilters = { ...filters, [name]: updatedValue };
+      if (updatedValue === "") {
+        delete newFilters[name];
+      }
+
+      const newSearchParams = new URLSearchParams(window.location.search);
+      if (updatedValue !== "") {
+        newSearchParams.set(name, updatedValue);
+      } else {
+        newSearchParams.delete(name);
+      }
+
+      setSearchParams(newSearchParams);
+      setFilters(newFilters);
+
+      if (debounceTimer) clearTimeout(debounceTimer);
+
+      const newTimer = setTimeout(() => {
+        logSearchData(newFilters);
+      }, 10000);
+
+      setDebounceTimer(newTimer);
     }
   };
 
@@ -60,6 +87,36 @@ function SearchBar({ onChangeFilters, onSubmit }) {
   if (!ready) {
     return false;
   }
+
+  function getSessionIdFromCookie() {
+    const sessionIdCookie = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("sessionId="));
+    return sessionIdCookie ? sessionIdCookie.split("=")[1] : null;
+  }
+
+  const logSearchData = async (searchData) => {
+    const now = new Date();
+    const timestamp = now.toISOString().replace(/T/, " ").replace(/\..+/, "");
+
+    const sessionId = getSessionIdFromCookie();
+
+    try {
+      const response = await request("/api/log-search", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...searchData,
+          timestamp,
+          sessionId,
+        }),
+      });
+    } catch (error) {
+      console.error("Error logging search data:", error);
+    }
+  };
 
   return (
     <div>

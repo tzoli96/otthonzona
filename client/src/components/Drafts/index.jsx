@@ -3,12 +3,10 @@ import Layout from "../Elements/AppLayout";
 import Loading from "../Elements/Loading";
 import { request } from "../../utils/request";
 import MyDraftPropertyCard from "./MyDraftPropertyCard";
-import { AppContext } from "../../App";
 
 function Drafts({}) {
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { user } = useContext(AppContext);
 
   useEffect(() => {
     request("/api/user/my-drafts")

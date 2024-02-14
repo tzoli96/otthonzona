@@ -18,6 +18,10 @@ app.use(
   })
 );
 
+app.use(
+  require("prerender-node").set("prerenderToken", "BKbJpBUzXkbZr6Wds3DQ")
+);
+
 // MongoDB connection (if you want to enable it later)
 // mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
 //     .then(() => console.log('MongoDB connected'))
@@ -32,6 +36,7 @@ app.use("/api/media", require("./routes/media"));
 app.use("/api/agency", require("./routes/agency"));
 app.use("/api/delete_reasons", require("./routes/deletereasons"));
 app.use("/api/activity_logs", require("./routes/activityLogs"));
+app.use("/api/log-search", require("./routes/log-search"));
 
 const PORT = process.env.PORT || 5000;
 
