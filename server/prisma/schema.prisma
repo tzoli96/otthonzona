@@ -30,7 +30,7 @@ model User {
 
   creditPurchases CreditPurchaseHistory[]
   activityLogs    ActivityLog[]
-  userRoleId      String
+  userRoleId      String @default("41202419")
   userRole        UserRole                @relation(fields: [userRoleId], references: [id])
 }
 

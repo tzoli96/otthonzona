@@ -6,6 +6,7 @@ const { updateConfig,getConfig } = require("../models/coreConfig");
 const { getUserRoleById , updateRoleNameById,DeleteUserRole, createUserRole } = require("../models/UserRole");
 const { createUserRolePermission , getUserRolePermissionById, updateUserRolePermission } = require("../models/UserRolePermission");
 const { createPermission , updatePermissionNameById, DeletePermission } = require("../models/Permission");
+const { creditManipulate } = require("../models/CreditManagement");
 
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
@@ -399,5 +400,21 @@ async function saveCreditPurchase(data) {
     insertedCreditPurchase
   );
 }
+
+
+/////User Credit management
+router.get("/admin/users", auth, async (req, res) => {
+  const users = await prisma.User.findMany();
+  return res.send({
+    data: users,
+  });
+});
+
+router.post("/admin/credit/manipulate", auth, async (req, res) => {
+  const response = await creditManipulate(req.body.userid,req.body.changedirection,req.body,ammount);
+  return res.send({
+    data: response,
+  });
+});
 
 module.exports = router;
