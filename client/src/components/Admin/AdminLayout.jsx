@@ -31,6 +31,11 @@ export function AdminLayout() {
                           <Link to="/admin/permissions">Permissions</Link>
                         </CommandItem>
                       </PermissionAuth>
+                      <PermissionAuth role="admin.creditmanagement">
+                        <CommandItem>
+                          <Link to="/admin/user-credit">CreditManagement</Link>
+                        </CommandItem>
+                      </PermissionAuth>
                     </CommandGroup>
                   </CommandList>
                 </Command>

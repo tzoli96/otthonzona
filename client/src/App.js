@@ -54,6 +54,7 @@ import { Dashboard } from "./components/Admin/index";
 import { AdminLayout } from "./components/Admin/AdminLayout";
 import { UserAcitvityIndex } from "./components/Admin/UserActivity/UserAcitvityIndex";
 import { PermissionsIndex } from "./components/Admin/Permissions/PermissionsIndex";
+import { UserCreditIndex } from "./components/Admin/UserCredit/UserCreditIndex";
 
 function generateSessionId(length = 16) {
   let result = "";
@@ -118,6 +119,7 @@ function App() {
                   <Route path="/admin/" element={<Dashboard />} />
                   <Route path="/admin/user-activity" element={<UserAcitvityIndex />} />
                   <Route path="/admin/permissions" element={<PermissionsIndex />} />
+                  <Route path="/admin/user-credit" element={<UserCreditIndex />} />
               </Route>
         <Route path="/register" element={<SignUp />} />
         <Route path="/agency-register" element={<AgencyRegister />} />

@@ -411,7 +411,7 @@ router.get("/admin/users", auth, async (req, res) => {
 });
 
 router.post("/admin/credit/manipulate", auth, async (req, res) => {
-  const response = await creditManipulate(req.body.userid,req.body.changedirection,req.body,ammount);
+  const response = await creditManipulate(req.body.userid,req.body.changedirection,req.body.amount);
   return res.send({
     data: response,
   });

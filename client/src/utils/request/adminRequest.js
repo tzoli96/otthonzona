@@ -1,9 +1,36 @@
-import { request } from "../request";
+import {api, request} from "../request";
+import axios from "axios";
+import Cookies from "js-cookie";
 
 export const getUserActivity = async () => {
   try {
     return await request(`/api/activity_logs`, {
       method: "GET",
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getUserCredit = async () => {
+  try {
+    return await request(`/api/user/admin/users`, {
+      method: "GET",
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const updateUserCredit = async (userId, changeDirection, amount) => {
+  try {
+    return await request(`/api/user/admin/credit/manipulate`, {
+      method: "POST",
+      body: JSON.stringify({
+        userid: userId,
+        changedirection: changeDirection,
+        amount: amount
+      }),
     });
   } catch (error) {
     throw error;
