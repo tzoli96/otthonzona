@@ -50,7 +50,12 @@ export function DataTable<TData, TValue>({
         state: {
             sorting,
             columnFilters
-        }
+        },
+        initialState: {
+            pagination: {
+                pageSize: 25,
+            },
+        },
     })
 
     return (

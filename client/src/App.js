@@ -119,7 +119,7 @@ function App() {
                   <Route path="/admin/" element={<Dashboard />} />
                   <Route path="/admin/user-activity" element={<UserAcitvityIndex />} />
                   <Route path="/admin/permissions" element={<PermissionsIndex />} />
-                  <Route path="/admin/user-credit" element={<UserCreditIndex />} />
+                  <Route path="/admin/credit-management" element={<UserCreditIndex />} />
               </Route>
         <Route path="/register" element={<SignUp />} />
         <Route path="/agency-register" element={<AgencyRegister />} />
