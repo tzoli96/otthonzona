@@ -22,7 +22,7 @@ import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 import useIsAuthenticated from "react-auth-kit/hooks/useIsAuthenticated";
 import PermissionAuth from "../PermissionAuth";
 
-function Layout({ children, selected }) {
+function Layout({ children, selected, }) {
     const user = useAuthUser()?.userData;
 
     const adminMenus = useMemo(
@@ -99,8 +99,7 @@ function Layout({ children, selected }) {
                           <Link to={m.href}>
                               <button
                                   className={
-                                      "my-2 p-2 px-4 pt-2.5 grid items-center gap-4 rounded-full !text-left !w-full !bg-opacity-0 lg:max-xl:!text-[15px] " +
-                                      (i === selected ? "orange-button" : "transparent-button")
+                                      "my-2 p-2 px-4 pt-2.5 grid items-center gap-4 rounded-full !text-left !w-full !bg-opacity-0 lg:max-xl:!text-[15px] transparent-button"
                                   }
                                   style={{
                                       gridTemplateColumns: "30px 1fr",
@@ -116,7 +115,11 @@ function Layout({ children, selected }) {
               </PermissionAuth>
               <div className="border-t my-4">
                   {menus.map((m, i) => (
-                      <Link to={m.href}>
+                      <Link to={m.href} className={
+                        m.onlyAgencyMember && !user?.isAgent
+                            ? "hidden"
+                            : ""
+                      }>
                           <button
                               className={
                                   "my-2 p-2 px-4 pt-2.5 grid items-center gap-4 rounded-full !text-left !w-full !bg-opacity-0 lg:max-xl:!text-[15px] " +

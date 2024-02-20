@@ -3,6 +3,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const prisma = require("../prisma/prisma");
+const { logActivity } = require("../models/ActivityLog");
 
 const passport = require("passport");
 const FacebookStrategy = require("passport-facebook").Strategy;
@@ -118,7 +119,7 @@ router.get("/social-login", async (req, res) => {
 // Login route
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
-  const user = await prisma.user.findFirst({ 
+  const user = await prisma.user.findFirst({
     where: { email },
     include: {
       userRole: {
@@ -126,11 +127,11 @@ router.post("/login", async (req, res) => {
           userRolePermissions: {
             include: {
               permission: true,
-            }
+            },
           },
         },
       },
-    }
+    },
   });
 
   if (user) {
@@ -140,7 +141,9 @@ router.post("/login", async (req, res) => {
     if (await bcrypt.compare(password, user.pwHash || "")) {
       return res.send({
         data: {
-          token: jwt.sign({ id: user.id }, process.env.SECRET, { expiresIn: '1h' }),
+          token: jwt.sign({ id: user.id }, process.env.SECRET, {
+            expiresIn: "24h",
+          }),
           user,
         },
       });
@@ -173,16 +176,11 @@ router.post("/register", async (req, res) => {
         phone,
         pwHash,
         emailConfirmationToken,
-        userRoleId:NormalUserRoleId
-      }
+        userRoleId: NormalUserRoleId,
+      },
     });
 
-    const logToFile = (message) => {
-      fs.appendFileSync(
-        "mailgun.log",
-        `${new Date().toISOString()} - ${message}\n`
-      );
-    };
+    await logActivity(user.id, "Regisztráció", `Új felhasználó regisztált`);
 
     let transporter = nodemailer.createTransport({
       host: process.env.EMAIL_HOST,
@@ -241,7 +239,11 @@ router.get("/confirm-email/:token", async (req, res) => {
     where: { id: user.id },
     data: { isEmailVerified: true, emailConfirmationToken: null }, // Assuming you have an emailConfirmed field in your User model
   });
-
+  await logActivity(
+    user.id,
+    "Email Megerősítve",
+    `A felhasználó sikeresen megerősítette az email címét`
+  );
   res.send({ success: "Email confirmed" });
 });
 
@@ -326,7 +328,11 @@ router.post("/reset-password/:token", async (req, res) => {
     where: { id: user.id },
     data: { pwHash: newPwHash, resetToken: null },
   });
-
+  await logActivity(
+    user.id,
+    "Jelszó Helyreállítás",
+    `A felhasználó sikeresen megváltoztatta a jelszavát`
+  );
   res.send({ message: "Password successfully reset" });
 });
 
@@ -373,7 +379,11 @@ router.post("/send-details", async (req, res) => {
       subject: "Irodai regisztráció",
       html: emailContent,
     });
-
+    await logActivity(
+      officeEmail,
+      "Ingatlan Iroda Regisztráció Kérelem",
+      `A felhasználó ingatlan iroda regisztrálási kérelmet nyújtott be`
+    );
     console.log("Message sent: %s", info.messageId);
     res.send({ message: "Details sent successfully" });
   } catch (error) {

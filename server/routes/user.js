@@ -4,7 +4,7 @@ const auth = require("../middleware/auth");
 const { logActivity } = require("../models/ActivityLog");
 const { updateConfig,getConfig } = require("../models/coreConfig");
 const { getUserRoleById , updateRoleNameById,DeleteUserRole, createUserRole } = require("../models/UserRole");
-const { createUserRolePermission , getUserRolePermissionById, updateUserRolePermission } = require("../models/UserRolePermission");
+const { getUserRolePermissionById, updateUserRolePermission } = require("../models/UserRolePermission");
 const { createPermission , updatePermissionNameById, DeletePermission } = require("../models/Permission");
 const { creditManipulate } = require("../models/CreditManagement");
 
@@ -203,12 +203,6 @@ router.post("/save-property/:id", auth, async (req, res) => {
       },
     });
 
-    await logActivity(
-        userId,
-        "Saved Property",
-        `Save  property with id ${propertyId}`
-    );
-
     return res.status(200).json({
       data: updatedUser.savedProperties,
     });
@@ -273,12 +267,6 @@ router.post("/remove-saved-property/:id", auth, async (req, res) => {
         savedProperties: updatedSavedProperties,
       },
     });
-
-    await logActivity(
-        userId,
-        "Removed Property from saved",
-        `Removed from save  property with id ${propertyId}`
-    );
 
     return res.status(200).json({
       message: "Property removed from favorites",
@@ -390,8 +378,8 @@ async function saveCreditPurchase(data) {
 
   await logActivity(
       data.userId,
-      "Credit purchase",
-      `Creadit pruchase: ${data.amount}`
+      "Kreditvásárlás",
+      `${data.userId} kreditet vásárolt, Mennyiség: ${data.amount}`
   );
 
   // Log the successful saving of credit history
@@ -400,7 +388,6 @@ async function saveCreditPurchase(data) {
     insertedCreditPurchase
   );
 }
-
 
 /////User Credit management
 router.get("/admin/users", auth, async (req, res) => {
@@ -416,5 +403,5 @@ router.post("/admin/credit/manipulate", auth, async (req, res) => {
     data: response,
   });
 });
-
+/////User Credit management
 module.exports = router;

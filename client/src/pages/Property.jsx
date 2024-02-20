@@ -8,7 +8,7 @@ import About from "../components/Property/About";
 import Map from "../components/Property/Map";
 import { useParams, useNavigate } from "react-router-dom";
 import { request } from "../utils/request";
-import useIsMobile, {useIsSmallerScreen} from "../utils/useIsMobile";
+import useIsMobile, { useIsSmallerScreen } from "../utils/useIsMobile";
 import ErrorPage from "../components/ErrorPage";
 import { toast } from "react-hot-toast";
 import Agency from "../components/Elements/Agency";
@@ -30,6 +30,7 @@ function Property() {
       request(`/api/property/${id}`)
         .then((data) => {
           setProperty(data.data);
+          updateViewCount(id);
           setLoading(false);
         })
         .catch((err) => {
@@ -38,6 +39,14 @@ function Property() {
         });
     }
   }, [id]);
+
+  const updateViewCount = (propertyId) => {
+    request(`/api/property/update-view/${propertyId}`, {
+      method: "GET",
+    }).catch((error) => {
+      console.error("Failed to update view count", error);
+    });
+  };
 
   const isSmallerScreen = useIsSmallerScreen(1023);
 
@@ -55,7 +64,7 @@ function Property() {
             <Photos property={property} />
           </div>
           <div className="mt-4">
-            <Info property={property}/>
+            <Info property={property} />
           </div>
           <div className="mb-4 mt-0">
             <About property={property} />
@@ -78,40 +87,40 @@ function Property() {
 
   if (property)
     return (
-        <>
-          <Navbar/>
-          <div className="orange-gradient relative rounded-br-3xl rounded-bl-3xl h-44 -mb-24 z-0"/>
-          <div className="grid grid-cols-3 gap-10 w-10/12 mx-auto relative z-30 mb-12">
-            <div className="h-full">
-              <div className="sticky top-[2rem] h-auto">
-                <Info property={property}/>
+      <>
+        <Navbar />
+        <div className="orange-gradient relative rounded-br-3xl rounded-bl-3xl h-44 -mb-24 z-0" />
+        <div className="grid grid-cols-3 gap-10 w-10/12 mx-auto relative z-30 mb-12">
+          <div className="h-full">
+            <div className="sticky top-[2rem] h-auto">
+              <Info property={property} />
 
+              <div className="mt-4">
+                <Agent agent={property.agent} />
+              </div>
+
+              {property.agent?.member[0]?.agency && (
                 <div className="mt-4">
-                  <Agent agent={property.agent}/>
+                  <Agency agency={property.agent.member[0].agency} />
                 </div>
-
-                {property.agent?.member[0]?.agency &&
-                  <div className="mt-4">
-                    <Agency agency={property.agent.member[0].agency} />
-                  </div>
-                }
-              </div>
-            </div>
-
-            <div className="col-span-2">
-              <Photos property={property}/>
-              <About property={property}/>
-              <div className="mt-6">
-                <Map
-                    centerLocation={`${property?.address || ""} ${
-                        property?.district || ""
-                    } ${property?.settlement || ""} ${property?.street || ""}`}
-                />
-              </div>
+              )}
             </div>
           </div>
-          <Footer/>
-        </>
+
+          <div className="col-span-2">
+            <Photos property={property} />
+            <About property={property} />
+            <div className="mt-6">
+              <Map
+                centerLocation={`${property?.address || ""} ${
+                  property?.district || ""
+                } ${property?.settlement || ""} ${property?.street || ""}`}
+              />
+            </div>
+          </div>
+        </div>
+        <Footer />
+      </>
     );
 }
 

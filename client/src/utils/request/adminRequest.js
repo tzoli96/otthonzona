@@ -12,6 +12,7 @@ export const getUserActivity = async () => {
   }
 };
 
+
 export const getUserCredit = async () => {
   try {
     return await request(`/api/user/admin/users`, {
@@ -36,7 +37,6 @@ export const updateUserCredit = async (userId, changeDirection, amount) => {
     throw error;
   }
 };
-
 export const getUserRoleList = async () => {
   try {
     return await request(`/api/user/roles`, {

@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import chevronLeft from "../../pictures/app/chevron-left.svg";
-import Gallery from "./Gallery";
 import placeHolder from "../../pictures/property_placeholder.png";
+import Gallery from "./Gallery";
 
 function Photos({ property }) {
   const [mainImage, setMainImage] = useState(property.photos[0] || placeHolder);
@@ -65,7 +65,7 @@ function Photos({ property }) {
         className="md:w-full rounded-lg overflow-hidden h-[40vh] md:h-[50vh] bg-slate-900 bg-opacity-20 flex justify-center items-center relative"
         onClick={() => setShowModal(true)}
       >
-        <div className="absolute h-full w-10 left-0 top-0 flex justify-center items-center">
+        <div className="absolute h-full left-0 top-0 flex justify-center items-center">
           <span
             onClick={(e) => {
               prevImage();
@@ -99,7 +99,13 @@ function Photos({ property }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-5 mt-3">
+      <div className={"grid gap-3 md:gap-5 mt-3 " + 
+            (images.length === 2
+              ? "grid-cols-2 " 
+              : "grid-cols-3 ") + 
+              (images.length < 2
+              ? "hidden"
+              : "")}>
         {[0, 1, 2].map((offset) => {
           const indexToShow = (startIndex + offset) % images.length;
           return (
@@ -110,7 +116,7 @@ function Photos({ property }) {
                 updateThumbnailAndImage(indexToShow);
               }}
               className={
-                "rounded-xl overflow-hidden " +
+                "rounded-xl overflow-hidden flex items-center w-full xs-vh h-[12vh] sm:h-[15vh] md:h-[20vh] lg:h-[15vh] xl:h-[20vh] bg-slate-900 bg-opacity-20 " +
                 (offset === highlightedThumbIndex
                   ? "border-4 border-spacing-1 thumbnail-border"
                   : "")
@@ -118,7 +124,7 @@ function Photos({ property }) {
             >
               <img
                 src={images[indexToShow]}
-                className="w-full h-auto cursor-pointer"
+                className="w-full h-auto cursor-pointer flex items-center"
                 alt={`Thumbnail ${indexToShow}`}
               />
             </div>

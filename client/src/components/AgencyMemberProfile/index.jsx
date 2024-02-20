@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import Layout from "../Elements/AppLayout";
 import Input from "../Elements/Input";
-import { AppContext } from "../../App";
 import Loading from "../Elements/Loading";
 import { toast } from "react-hot-toast";
 import { request } from "../../utils/request";
@@ -9,12 +8,13 @@ import { Link } from "react-router-dom";
 import ReactQuill from "react-quill";
 import TagButton from "./TagButton";
 import AppSelect from "../Elements/AppSelect";
+import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 
 export const profilePhotoPlaceholder =
   "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png";
 
 function MemberProfile() {
-  const { user } = useContext(AppContext);
+  const user = useAuthUser()?.userData;
   const [member, setMember] = useState(null);
   const [attributes, setAttributes] = useState([]);
   const [tags, setTags] = useState([]);
@@ -121,6 +121,8 @@ function MemberProfile() {
 
     return "";
   };
+
+  console.log(user?.isAgent);
 
   return (
     <Layout selected={9}>
@@ -256,21 +258,21 @@ function MemberProfile() {
                   </div>
                 </div>
 
-                  <div className="responsive-flex gap-4 justify-center my-12 sm:justify-end">
-                      <a
-                        href={`/agent/${member?.id}`}
-                        target="_blank"
-                        className="blue-button min-w-[150px] text-center"
-                      >
-                        Profilom megtekintése
-                      </a>
-                      <button 
-                      style={{width: 150}}
-                      className="blue-button min-w-[150px]"
-                      >
-                        {loading ? <Loading /> : "Mentés"}
-                      </button>
-                  </div>
+                <div className="responsive-flex gap-4 justify-center my-12 sm:justify-end">
+                  <a
+                    href={`/agent/${member?.id}`}
+                    target="_blank"
+                    className="blue-button min-w-[150px] text-center"
+                  >
+                    Profilom megtekintése
+                  </a>
+                  <button
+                    style={{ width: 150 }}
+                    className="blue-button min-w-[150px]"
+                  >
+                    {loading ? <Loading /> : "Mentés"}
+                  </button>
+                </div>
               </div>
             </div>
           </div>

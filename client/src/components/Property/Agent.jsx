@@ -12,7 +12,6 @@ import thousandSeparator, {
 import formatHiddenPhoneNumber from "../../utils/formatHiddenPhoneNumber";
 
 function Agent({ agent }) {
-
   const [showPhone, setShowPhone] = useState(false);
 
   const handleShowPhone = () => {
@@ -56,7 +55,9 @@ function Agent({ agent }) {
 
           <div className="flex w-full justify-between items-center">
             <button
-              className={`relative blue-button flex-1 mt-3 gap-12 items-center ${!showPhone ? 'max-sm:!hidden lg:max-2xl:!hidden' : ''}`}
+              className={`relative blue-button flex-1 mt-3 gap-12 items-center ${
+                !showPhone ? "max-sm:!hidden lg:max-2xl:!hidden" : ""
+              }`}
               style={{ maxWidth: "100%" }}
             >
               <img src={phone} className="env-fix" />
@@ -64,8 +65,7 @@ function Agent({ agent }) {
               <span>
                 {showPhone
                   ? formatPhoneNumber(agent?.phone)
-                  : formatHiddenPhoneNumber(agent?.phone)
-                }
+                  : formatHiddenPhoneNumber(agent?.phone)}
               </span>
             </button>
 
@@ -74,7 +74,10 @@ function Agent({ agent }) {
                 className="relative blue-button ml-4 max-sm:ml-0 lg:max-2xl:ml-0 p-2 mt-3 max-sm:!w-full lg:max-2xl:!w-full gap-12"
                 onClick={handleShowPhone}
               >
-                <img src={phone} className="sm:max-lg:hidden 2xl:hidden env-fix" />
+                <img
+                  src={phone}
+                  className="sm:max-lg:hidden 2xl:hidden env-fix"
+                />
 
                 <span>Mutatás</span>
               </button>

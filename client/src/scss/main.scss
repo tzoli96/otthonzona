@@ -393,3 +393,9 @@ input[type="number"] {
     margin-bottom: 20px;
   }
 }
+
+@media screen and (max-width: 500px) {
+  .xs-vh {
+    height: 10vh;
+  }
+}

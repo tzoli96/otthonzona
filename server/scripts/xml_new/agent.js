@@ -2,6 +2,7 @@ const bcrypt = require("bcryptjs");
 const prisma = require("../../prisma/prisma");
 const logFile = require("../utils/logFile");
 const { getProperties, getValidId } = require("./property");
+const { getConfig } = require("../../models/coreConfig");
 const BATCH_SIZE = 20;
 
 function generateAlphanumericPassword() {
@@ -74,11 +75,13 @@ exports.handleAgent = async (agents) => {
     );
 
     // Create new agents in the database
+    const NormalUserRoleId = await getConfig("user/group/normal_id");
     if (newAgents.length > 0) {
       await prisma.user.createMany({
         data: newAgents.map(({ password, xml, ...others }) => ({
           ...others,
           isEmailVerified: true,
+          userRoleId: NormalUserRoleId,
         })),
       });
 

@@ -61,7 +61,10 @@ function Location({ prefill }) {
                       name="settlement"
                       prefill={prefill}
                       onChange={(selectedOption) => {
-                        setSelectedSettlement(selectedOption.value);
+                        const value = selectedOption
+                          ? selectedOption.value
+                          : "";
+                        setSelectedSettlement(value);
                       }}
                       loadOptions={async (inputValue, callback) => {
                         const response = await request(
@@ -106,13 +109,14 @@ function Location({ prefill }) {
 
                     <div className="grid !grid-cols-10 gap-4 h-[auto] xl:h-[40px]">
                       <p className="text-gray-500 text-sm font-medium col-span-8 items-center flex !flex-row">
-                        Szeretnéd, hogy az ingatlan a találati listában pontos címmel jelenjen meg?
+                        Szeretnéd, hogy az ingatlan a találati listában pontos
+                        címmel jelenjen meg?
                       </p>
 
                       <div className="flex !flex-row justify-end items-center col-span-2">
                         <Switch
-                            name="exactPosition"
-                            defaultValue={prefill?.["exactPosition"]}
+                          name="exactPosition"
+                          defaultValue={prefill?.["exactPosition"]}
                         />
                       </div>
                     </div>

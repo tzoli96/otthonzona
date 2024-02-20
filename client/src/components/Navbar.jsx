@@ -23,6 +23,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 import useIsAuthenticated from "react-auth-kit/hooks/useIsAuthenticated";
+import PermissionAuth from "./PermissionAuth";
 
 function MobileLinks({ hide, isActive }) {
   return (
@@ -74,6 +75,18 @@ function NavbarProfile({ setShow, show, user, logout }) {
   const isLoggedIn = useIsAuthenticated();
 
   const navigation = useNavigate();
+
+  const adminMenus = useMemo(
+    () => [
+      {
+        label: "Admin",
+        href: "/admin",
+        icon: manageAdsIcon,
+      },
+    ],
+    []
+  );
+
   const menus = useMemo(
     () => [
       {

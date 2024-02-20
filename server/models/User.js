@@ -1,6 +1,5 @@
 
 const mongoose = require('mongoose');
-const prisma = require("../prisma/prisma");
 
 const UserSchema = new mongoose.Schema({
     username: {

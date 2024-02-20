@@ -58,6 +58,9 @@ function Footer({}) {
           <p className="my-1">
             <a href="/login">Belépés</a>
           </p>
+          <p className="my-1">
+            <a href="/agency-register">Ingatlan irodát regisztrálok</a>
+          </p>
         </div>
         <div>
           <p className="font-bold my-4">Rólunk</p>

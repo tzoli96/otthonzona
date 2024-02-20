@@ -3,7 +3,7 @@ import chevronLeft from "../../pictures/app/chevron-left.svg";
 import whiteLogo from "../../icons/white-logo.svg";
 import placeHolder from "../../pictures/property_placeholder.png";
 
-function Gallery({ closeModal, images, property, setShowModal, currentImageIndex, setCurrentImageIndex }) {
+function Gallery({ closeModal, images, property, setShowModal, currentImageIndex, setCurrentImageIndex, }) {
   const [mainImage, setMainImage] = useState(property.photos[currentImageIndex] || placeHolder);
 
   const changeMainImage = (newImage, index) => {
@@ -21,11 +21,13 @@ function Gallery({ closeModal, images, property, setShowModal, currentImageIndex
     changeMainImage(images[newIndex], newIndex);
   };
 
+
   return (
     <div
-      className="fixed inset-0 bg-black bg-opacity-90 z-40 w-screen p-6"
+      className="fixed inset-0 bg-black bg-opacity-90 z-40 w-screen"
       onClick={closeModal}
     >
+      <div className="pt-6 px-6">
       <div
         className="text-white grid gap-4"
         style={{ gridTemplateColumns: "80px 1fr" }}
@@ -53,12 +55,13 @@ function Gallery({ closeModal, images, property, setShowModal, currentImageIndex
           ✕
         </button>
       }
+      </div>
       <div
-        className="h-4/5 w-screen overflow-hidden"
-        style={{ height: "calc(80% - 40px)" }}
+        className="w-screen overflow-hidden grid grid-cols-12 md:grid-cols-9 h-[90%] px-0 pb-12"
       >
+        <div className="flex my-auto justify-end mr-3 col-span-2 md:!col-span-1">
         <button
-          className="absolute top-[40%] left-4 p-2 text-white z-10 bg-white rounded"
+          className="p-2 text-white z-10 bg-white rounded"
           onClick={(e) => {
             prevImage();
             e.stopPropagation();
@@ -66,18 +69,20 @@ function Gallery({ closeModal, images, property, setShowModal, currentImageIndex
         >
           <img src={chevronLeft} style={{ width: 28, height: 28 }} />
         </button>
-        <div className="relative mx-auto w-4/5 md:w-3/5 h-full flex justify-center items-center">
+        </div>
+        <div className="col-span-8 md:!col-span-7 m-auto h-full w-full overflow-hidden bg-slate-900 bg-opacity-20 flex justify-center items-center relative">
           <img
             src={mainImage || placeHolder}
             className="max-w-full max-h-full"
             alt="Modal Main"
           />
-          <div className="absolute bottom-0 right-4 rounded-lg bg-white text-sm font-bold text-gray-600 px-4 py-2 shadow">
+          <div className="absolute bottom-0 right-0 rounded-lg bg-white text-sm font-bold text-gray-600 px-4 py-2 shadow">
             {currentImageIndex + 1} / {images.length}
           </div>
         </div>
+        <div className="my-auto ml-3 col-span-2 md:!col-span-1">
         <button
-          className="absolute top-[40%] right-4 p-2 text-white z-10 bg-white rounded" // Added z-10 to bring above background
+          className="p-2 text-white z-10 bg-white rounded" // Added z-10 to bring above background
           onClick={(e) => {
             nextImage();
             e.stopPropagation();
@@ -89,37 +94,7 @@ function Gallery({ closeModal, images, property, setShowModal, currentImageIndex
             className="rotate-180"
           />
         </button>
-      </div>
-      <div className="bottom-0 h-1/5 max-w-full overflow-x-auto flex justify-center gap-4 p-4">
-        {images.map((image, index) => (
-          <div
-            onClick={(e) => {
-              e.stopPropagation();
-              setMainImage(image);
-              setCurrentImageIndex(index);
-            }}
-            className={
-              "w-1/2 rounded-lg overflow-hidden " +
-              (image === mainImage
-                ? "border-2 border-spacing-1 border-white"
-                : "")
-            }
-          >
-            <div
-              className={
-                "overflow-hidden h-full rounded-lg border-4 border-transparent flex justify-center items-center"
-              }
-            >
-              <img
-                key={index}
-                src={image}
-                className="w-full h-auto cursor-pointer"
-                alt={`Thumbnail ${index}`}
-                onClick={() => changeMainImage(image, index)}
-              />
-            </div>
-          </div>
-        ))}
+        </div>
       </div>
     </div>
   );

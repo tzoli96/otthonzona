@@ -40,10 +40,11 @@ const getValidReasonEntityId = async () => {
 router.get("/settlements", async (req, res) => {
   const { q } = req.query;
   if (q) {
-    const settlemensOptions = settlements.filter(f => f.value.toLocaleLowerCase().indexOf(q.toLowerCase()) === 0).slice(0, 20);
+    const settlemensOptions = settlements
+      .filter((f) => f.value.toLocaleLowerCase().indexOf(q.toLowerCase()) === 0)
+      .slice(0, 20);
     res.send(settlemensOptions);
-  }
-  else {
+  } else {
     res.send(settlements.slice(0, 20));
   }
 });
@@ -53,7 +54,7 @@ router.post("/", auth, async (req, res) => {
   if (req.body.draft_id) {
     try {
       await prisma.DraftProperty.delete({
-        where: { id: req.body.draft_id},
+        where: { id: req.body.draft_id },
       });
     } catch (error) {
       console.error("Hiba a DraftProperty törlése közben:", error);
@@ -71,9 +72,9 @@ router.post("/", auth, async (req, res) => {
   });
 
   await logActivity(
-      req.user.id,
-      "Property Creation",
-      `Created  property with id ${id}`
+    req.user.id,
+    "Hirdetésfeladás",
+    `Ingatlanhirdetés készült, ingatlan ID: ${id}`
   );
 
   return res.send({
@@ -99,9 +100,9 @@ router.put("/:id", auth, async (req, res) => {
   });
 
   await logActivity(
-      req.user.id,
-      "Property Updatation",
-      `Updated  property with id ${id}`
+    req.user.id,
+    "Ingatlan Szerkesztve",
+    `Szerkesztett ingatlan ID: ${id}`
   );
 
   return res.send({
@@ -134,31 +135,31 @@ router.get("/", async (req, res) => {
   } = req.query;
 
   const promotedWithFilter = (
-      await prisma.property.findMany({
-        take: 4,
-        where: {
-          district,
-          isArchived: false,
-          bidExpirationTime: { gt: new Date() },
-          ...(minPrice && {
-            price: {
-              gte:
-                  (minPrice *
-                      (100 - Number(process.env.PRICE_TOLERANCE_PERCENTAGE))) /
-                  100,
-            },
-          }),
-          ...(maxPrice && {
-            price: {
-              lte:
-                  (maxPrice *
-                      (100 + Number(process.env.PRICE_TOLERANCE_PERCENTAGE))) /
-                  100,
-            },
-          }),
-        },
-        orderBy: { credit: "desc" },
-      })
+    await prisma.property.findMany({
+      take: 4,
+      where: {
+        district,
+        isArchived: false,
+        bidExpirationTime: { gt: new Date() },
+        ...(minPrice && {
+          price: {
+            gte:
+              (minPrice *
+                (100 - Number(process.env.PRICE_TOLERANCE_PERCENTAGE))) /
+              100,
+          },
+        }),
+        ...(maxPrice && {
+          price: {
+            lte:
+              (maxPrice *
+                (100 + Number(process.env.PRICE_TOLERANCE_PERCENTAGE))) /
+              100,
+          },
+        }),
+      },
+      orderBy: { credit: "desc" },
+    })
   ).map((p) => ({ ...p, isPromoted: true }));
   //const promotedWithoutPriceFilter = (promotedWithFilter.length < 4 && (minPrice || maxPrice)) ? await (prisma.property.findMany({
   //  take: 4 - promotedWithFilter.length,
@@ -221,13 +222,13 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/member/:memberId", async (req, res) => {
-  const {offset = 0, limit: inputLimit, adType} = req.query;
+  const { offset = 0, limit: inputLimit, adType } = req.query;
   const limit = Math.min(inputLimit || 20, 20);
-  const {memberId} = req.params;
+  const { memberId } = req.params;
 
   const member = await prisma.member.findUnique({
-    select:{
-      user: true
+    select: {
+      user: true,
     },
     where: {
       id: memberId,
@@ -235,13 +236,13 @@ router.get("/member/:memberId", async (req, res) => {
   });
 
   if (!member?.user?.id) {
-    return res.status(404).json({message: "Member not found"});
+    return res.status(404).json({ message: "Member not found" });
   }
 
   const where = {
     submittedBy: member.user.id,
     isArchived: false,
-    adType
+    adType,
   };
 
   const properties = await prisma.property.findMany({
@@ -250,7 +251,7 @@ router.get("/member/:memberId", async (req, res) => {
     skip: parseInt(offset || 0),
   });
 
-  const count = await prisma.property.count({where});
+  const count = await prisma.property.count({ where });
 
   return res.send({
     data: properties,
@@ -262,15 +263,15 @@ router.get("/homepage-ads", async (req, res) => {
   const totalRequired = 3;
 
   let promoted = (
-      await prisma.property.findMany({
-        take: 4,
-        where: {
-          isArchived: false,
-          h_bidExpirationTime: { gt: new Date() },
-        },
-        orderBy: { credit: "desc" },
-        take: totalRequired,
-      })
+    await prisma.property.findMany({
+      take: 4,
+      where: {
+        isArchived: false,
+        h_bidExpirationTime: { gt: new Date() },
+      },
+      orderBy: { credit: "desc" },
+      take: totalRequired,
+    })
   ).map((p) => ({ ...p, isPromoted: true }));
   if (promoted.length < totalRequired) {
     const remainingProperties = await prisma.property.findMany({
@@ -354,18 +355,18 @@ router.post("/upgrade-home/:id", auth, async (req, res) => {
     });
 
     const isPromotionActive =
-        currentProperty?.h_bidExpirationTime &&
-        new Date(currentProperty?.h_bidExpirationTime).getTime() > Date.now();
+      currentProperty?.h_bidExpirationTime &&
+      new Date(currentProperty?.h_bidExpirationTime).getTime() > Date.now();
 
     const property = await prisma.property.update({
       where: { id },
       data: isPromotionActive
-          ? {
+        ? {
             h_credit: {
               increment: bidCredits,
             },
           }
-          : {
+        : {
             h_credit: bidCredits,
             h_bidExpirationTime: new Date(Date.now() + 86400 * 1000),
           },
@@ -378,9 +379,9 @@ router.post("/upgrade-home/:id", auth, async (req, res) => {
     });
 
     await logActivity(
-        req.user.id,
-        "Property Upgradetion Home",
-        `Upgradeted home property with id ${id}`
+      req.user.id,
+      "Hirdetéskiemelés Home",
+      `Ingatlan kiemelve ${bidCredits} mennyiségű kredittel Home, Ingatlan ID: ${id}`
     );
 
     res.status(200).send({
@@ -415,18 +416,18 @@ router.post("/upgrade/:id", auth, async (req, res) => {
     });
 
     const isPromotionActive =
-        currentProperty?.bidExpirationTime &&
-        new Date(currentProperty?.bidExpirationTime).getTime() > Date.now();
+      currentProperty?.bidExpirationTime &&
+      new Date(currentProperty?.bidExpirationTime).getTime() > Date.now();
 
     const property = await prisma.property.update({
       where: { id },
       data: isPromotionActive
-          ? {
+        ? {
             credit: {
               increment: bidCredits,
             },
           }
-          : {
+        : {
             credit: bidCredits,
             bidExpirationTime: new Date(Date.now() + 86400 * 1000),
           },
@@ -439,9 +440,9 @@ router.post("/upgrade/:id", auth, async (req, res) => {
     });
 
     await logActivity(
-        req.user.id,
-        "Property Upgradetion",
-        `Upgradeted property with id ${id}`
+      req.user.id,
+      "Hirdetéskiemelés",
+      `Ingatlan kiemelve ${bidCredits} mennyiségű kredittel, Ingatlan ID: ${id}`
     );
 
     res.status(200).send({
@@ -497,18 +498,20 @@ router.get("/bid-place", auth, async (req, res) => {
 router.post("/archive/reactive/", auth, async (req, res) => {
   try {
     const requestData = {
-      propertyId: req.body.propertyId
+      propertyId: req.body.propertyId,
     };
 
     if (!requestData.propertyId) {
-      return res.status(400).json({ message: "The 'propertyId' field is required." });
+      return res
+        .status(400)
+        .json({ message: "The 'propertyId' field is required." });
     }
 
     await prisma.$transaction(async (prisma) => {
       await prisma.property.update({
-        where: { id:requestData.propertyId },
+        where: { id: requestData.propertyId },
         data: {
-          isArchived: false
+          isArchived: false,
         },
       });
 
@@ -516,9 +519,9 @@ router.post("/archive/reactive/", auth, async (req, res) => {
     });
 
     await logActivity(
-        req.user.id,
-        "Property Reactivation",
-        `Reactived property with id ${requestData.propertyId} by ${req.user.id}`
+      req.user.id,
+      "Archivált Hirdetés Aktiválása",
+      `Archivált ingatlanhirdetés újra lett aktiválva, ingatlan ID: ${requestData.propertyId}`
     );
     return res.status(200).json({ success: true });
   } catch (error) {
@@ -534,30 +537,34 @@ router.get("/archive-list", auth, async (req, res) => {
       where: {
         isArchived: true,
         submittedBy: userId,
-      }
+      },
     });
     return res.status(200).json(properties);
   } catch (error) {
     console.error("Error fetching archived properties:", error);
-    return res.status(500).json({ message: "Error fetching archived properties" });
+    return res
+      .status(500)
+      .json({ message: "Error fetching archived properties" });
   }
 });
 
 router.post("/archive/reactive/", auth, async (req, res) => {
   try {
     const requestData = {
-      propertyId: req.body.propertyId
+      propertyId: req.body.propertyId,
     };
 
     if (!requestData.propertyId) {
-      return res.status(400).json({ message: "The 'propertyId' field is required." });
+      return res
+        .status(400)
+        .json({ message: "The 'propertyId' field is required." });
     }
 
     await prisma.$transaction(async (prisma) => {
       await prisma.property.update({
-        where: { id:requestData.propertyId },
+        where: { id: requestData.propertyId },
         data: {
-          isArchived: false
+          isArchived: false,
         },
       });
 
@@ -565,9 +572,9 @@ router.post("/archive/reactive/", auth, async (req, res) => {
     });
 
     await logActivity(
-        req.user.id,
-        "Property Reactivation",
-        `Reactived property with id ${requestData.propertyId}`
+      req.user.id,
+      "Property Reactivation",
+      `Reactived property with id ${requestData.propertyId}`
     );
 
     return res.status(200).json({ success: true });
@@ -581,28 +588,34 @@ router.delete("/archive", auth, async (req, res) => {
   try {
     const requestData = {
       propertyId: req.body.propertyId,
-      reasonId: req.body.reasonId
+      reasonId: req.body.reasonId,
     };
 
     if (!requestData.propertyId || !requestData.reasonId) {
-      return res.status(400).json({ message: "Both 'id' and 'reason_id' are required." });
+      return res
+        .status(400)
+        .json({ message: "Both 'id' and 'reason_id' are required." });
     }
 
     await prisma.$transaction(async (prisma) => {
       await prisma.property.update({
-        where: { id:requestData.propertyId },
+        where: { id: requestData.propertyId },
         data: {
           isArchived: true,
         },
       });
 
-      await createReasonEntity(requestData.reasonId, req.user.id,requestData.propertyId);
+      await createReasonEntity(
+        requestData.reasonId,
+        req.user.id,
+        requestData.propertyId
+      );
     });
 
     await logActivity(
-        req.user.id,
-        "Property Archivation",
-        `Archived property with id ${requestData.propertyId}`
+      req.user.id,
+      "Archivált Ingatlanhirdetés",
+      `Ingatlanhirdetés archiválva, ingatlan ID: ${requestData.propertyId}`
     );
 
     return res.status(200).json({ success: true });
@@ -621,7 +634,7 @@ router.delete("/", auth, async (req, res) => {
     }
 
     const property = await prisma.property.findFirst({
-      where: { id:propertyId, submittedBy: req.user.id },
+      where: { id: propertyId, submittedBy: req.user.id },
     });
 
     if (!property) {
@@ -629,47 +642,51 @@ router.delete("/", auth, async (req, res) => {
     }
 
     await prisma.$transaction(async (prisma) => {
-      await deleteReasonEntityById(propertyId,req.user.id);
+      await deleteReasonEntityById(propertyId, req.user.id);
 
       await prisma.property.delete({
-        where: { id:propertyId },
+        where: { id: propertyId },
       });
     });
 
     await logActivity(
-        req.user.id,
-        "Property Deletion",
-        `Deleted property with id ${propertyId}`
+      req.user.id,
+      "Törölt Hirdetés",
+      `Ingatlanhirdetés törölve lett, Ingatlan ID: ${propertyId}`
     );
 
-    return res.status(200).json({ success: true  });
+    return res.status(200).json({ success: true });
   } catch (error) {
     console.log(error);
     return handleErrorResponse(res, 500, "Error deleting property");
   }
 });
 
-
-const deleteReasonEntityById = async (propertyId,userId) => {
+const deleteReasonEntityById = async (propertyId, userId) => {
   if (!propertyId) {
     throw new Error("'id' is required.");
   }
 
   try {
     await prisma.PropertyDeleteReasonEntity.deleteMany({
-      where: { property_id:propertyId, user_id:userId }
+      where: { property_id: propertyId, user_id: userId },
     });
-
   } catch (error) {
     console.error("Error deleting reason entity:", error);
     throw new Error("Error deleting reason entity");
   }
 };
 
-
-const createReasonEntity = async (reasonId, userId , propertyId , comment = null) => {
+const createReasonEntity = async (
+  reasonId,
+  userId,
+  propertyId,
+  comment = null
+) => {
   if (!reasonId || !userId || !propertyId) {
-    throw new Error("Both 'reasonId' and 'userId' and 'propertyId' are required.");
+    throw new Error(
+      "Both 'reasonId' and 'userId' and 'propertyId' are required."
+    );
   }
   if (reasonId === 3 && comment !== null) {
     throw new Error("For reasonId 3, 'comment' must be null.");
@@ -690,9 +707,9 @@ const createReasonEntity = async (reasonId, userId , propertyId , comment = null
     throw new Error("Error creating reason entity");
   } finally {
     await logActivity(
-        userId,
-        "Property Updatation",
-        `Updated  property with id ${propertyId} and reason id ${reasonId}`
+      userId,
+      "Ingatlanhirdetés Frissítve",
+      `Ingatlanhirdetés Frissítve, Ingatlan ID ${propertyId}, Indoklás ID ${reasonId}`
     );
   }
 };
@@ -702,6 +719,26 @@ const handleErrorResponse = (res, status, message) => {
   return res.status(status).json({ message });
 };
 
+router.get("/update-view/:id", async (req, res) => {
+  const { id } = req.params;
+  const data = await prisma.property.findUnique({
+    where: { id, isArchived: false },
+  });
+
+  if (data) {
+    await prisma.property.update({
+      where: { id },
+      data: {
+        views: (data.views || 0) + 1,
+      },
+    });
+    return res.status(200).send({ message: "View count updated successfully" });
+  } else {
+    return res
+      .status(404)
+      .send({ message: "Property not found or is archived" });
+  }
+});
 
 /**
  * Note: This route must be the last in the sorting order to avoid conflicts with other routes.
@@ -725,22 +762,14 @@ router.get("/:id", async (req, res) => {
         phone: true,
         member: {
           select: {
-            agency: true
-          }
-        }
+            agency: true,
+          },
+        },
       },
       where: { id: data?.submittedBy },
     });
   }
 
-  try {
-    await prisma.property.update({
-      where: { id },
-      data: {
-        views: (data?.views || 0) + 1,
-      },
-    });
-  }catch(err){}
   return res.send({
     data,
   });
