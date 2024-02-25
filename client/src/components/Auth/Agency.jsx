@@ -10,11 +10,15 @@ import convertFormDataToJson from "../../utils/fd";
 
 function SignUp() {
   const [emailSent, setEmailSent] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const json = convertFormDataToJson(e.target);
+
+    setErrors({});
+
     request("/api/auth/send-details", {
       body: JSON.stringify(json),
       method: "POST",
@@ -22,6 +26,13 @@ function SignUp() {
       if (data.error) {
         return toast.error(data.error);
       }
+
+      if (data.validation) {
+        setErrors(data.validation);
+
+        return;
+      }
+
       setEmailSent(true); // Set state
       // window.location = "/login"; // Don't redirect yet
     });
@@ -82,6 +93,9 @@ function SignUp() {
                       type="text"
                       required
                     />
+                    {errors.officeName && (
+                      <p className="text-red-700 text-sm">{errors.officeName}</p>
+                    )}
                   </div>
                   <div className="my-2 mt-4 w-full md:w-2/3">
                     <p className="font-bold my-2">Irodai email cím</p>
@@ -91,6 +105,9 @@ function SignUp() {
                       type="email"
                       required
                     />
+                    {errors.officeEmail && (
+                      <p className="text-red-700 text-sm">{errors.officeEmail}</p>
+                    )}
                   </div>
                   <div className="mb-4 mt-4 w-full md:w-2/3">
                     <p className="font-bold my-2">Irodai telefonszám</p>
@@ -110,6 +127,9 @@ function SignUp() {
                         required
                       />
                     </div>
+                    {errors.officePhone && (
+                      <p className="text-red-700 text-sm">{errors.officePhone}</p>
+                    )}
                   </div>
                   <div className="mb-4 mt-4 w-full md:w-2/3">
                     <p className="font-bold my-2">Hálózat</p>

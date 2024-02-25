@@ -35,6 +35,13 @@ export function AdminLayout() {
                         </Link>
                       </CommandItem>
                     </PermissionAuth>
+                    <PermissionAuth role="admin.agency">
+                      <CommandItem>
+                        <Link to="/admin/agencies">
+                          Agencies
+                        </Link>
+                      </CommandItem>
+                    </PermissionAuth>
                   </CommandGroup>
                 </CommandList>
               </Command>

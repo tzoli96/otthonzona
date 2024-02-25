@@ -1,4 +1,5 @@
 "use client"
+
 import { Button } from "../../ui/button"
 import * as React from "react"
 
@@ -33,12 +34,10 @@ export function DataTable<TData, TValue>({
                                              columns,
                                              data,
                                          }: DataTableProps<TData, TValue>) {
-    const [sorting, setSorting] = React.useState<SortingState>([{'id': 'created_at', 'desc': true}])
+    const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
         []
     )
-
-    console.log(sorting);
 
     const table = useReactTable({
         data,
@@ -52,7 +51,12 @@ export function DataTable<TData, TValue>({
         state: {
             sorting,
             columnFilters
-        }
+        },
+        initialState: {
+            pagination: {
+                pageSize: 25,
+            },
+        },
     })
 
     return (
@@ -60,9 +64,9 @@ export function DataTable<TData, TValue>({
             <div className="flex items-center py-4">
                 <Input
                     placeholder="Filter emails..."
-                    value={(table.getColumn("userEmail")?.getFilterValue() as string) ?? ""}
+                    value={(table.getColumn("officeEmail")?.getFilterValue() as string) ?? ""}
                     onChange={(event) =>
-                        table.getColumn("userEmail")?.setFilterValue(event.target.value)
+                        table.getColumn("officeEmail")?.setFilterValue(event.target.value)
                     }
                     className="max-w-sm"
                 />

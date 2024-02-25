@@ -37,6 +37,43 @@ export const updateUserCredit = async (userId, changeDirection, amount) => {
     throw error;
   }
 };
+
+export const getAgencies = async () => {
+  try {
+    return await request(`/api/agency/admin/agencies`, {
+      method: "GET",
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const approveAgency = async (agencyId) => {
+  try {
+    return await request(`/api/agency/admin/approve`, {
+      method: "POST",
+      body: JSON.stringify({
+        agencyId: agencyId
+      }),
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const deleteAgency = async (agencyId) => {
+  try {
+    return await request(`/api/agency/admin/delete`, {
+      method: "DELETE",
+      body: JSON.stringify({
+        agencyId: agencyId
+      }),
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const getUserRoleList = async () => {
   try {
     return await request(`/api/user/roles`, {

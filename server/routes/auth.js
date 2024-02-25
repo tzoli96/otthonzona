@@ -13,6 +13,7 @@ const nodemailer = require("nodemailer");
 const wrapEmail = require("../utils/wrapEmail");
 const wrapEmailPasswordReset = require("../utils/wrapEmailPasswordReset");
 const { getToken, createUser } = require("../utils/auth");
+const { createAgency, validateParameters } = require("../models/Agency");
 
 require("dotenv").config();
 const router = express.Router();
@@ -348,16 +349,6 @@ router.post("/reset-password/:token", async (req, res) => {
 });
 
 router.post("/send-details", async (req, res) => {
-  let transporter = nodemailer.createTransport({
-    host: process.env.EMAIL_HOST,
-    port: process.env.EMAIL_PORT,
-    secure: true,
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASSWORD,
-    },
-  });
-
   try {
     const {
       officeName,
@@ -370,35 +361,29 @@ router.post("/send-details", async (req, res) => {
       officeAddress,
     } = req.body;
 
-    // Prepare the email content
-    const emailContent = `
-          <h1>Iroda regisztráció</h1>
-          <p><strong>Vezetéknév:</strong> ${lastName}</p>
-          <p><strong>Keresztnév:</strong> ${firstName}</p>
-          <p><strong>Iroda neve:</strong> ${officeName}</p>
-          <p><strong>Hálózat:</strong> ${network}</p>
-          <p><strong>Iroda telefonszáma</strong> ${officePhone}</p>
-          <p><strong>Iroda email címe</strong> ${officeEmail}</p>
-          <p><strong>Iroda cégnév</strong> ${officeCompany}</p>
-          <p><strong>Iroda címe</strong> ${officeAddress}</p>
-      `;
+    const data = {
+      firstName: firstName,
+      lastName: lastName,
+      officeName: officeName,
+      officeAddress: officeAddress,
+      officeEmail: officeEmail,
+      officePhone: officePhone,
+      officeCompany: officeCompany,
+      network: network
+    };
 
-    // Send an email
-    let info = await transporter.sendMail({
-      from: '"OtthonZona.com" <no-reply@otthonzona.com>',
-      to: "iroda@otthonzona.com", // Replace with your company email address
-      subject: "Irodai regisztráció",
-      html: emailContent,
-    });
-    await logActivity(
-      officeEmail,
-      "Ingatlan Iroda Regisztráció Kérelem",
-      `A felhasználó ingatlan iroda regisztrálási kérelmet nyújtott be`
-    );
-    console.log("Message sent: %s", info.messageId);
+    const validation = await validateParameters(data);
+
+    if (Object.keys(validation).length) {
+      res.send({ validation: validation });
+
+      return;
+    }
+
+    await createAgency(data);
     res.send({ message: "Details sent successfully" });
   } catch (error) {
-    console.log("Error sending email:", error);
+    console.log(error);
     res.status(500).send({ error: "Failed to send details" });
   }
 });

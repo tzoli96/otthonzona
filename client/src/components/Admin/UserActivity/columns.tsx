@@ -56,6 +56,17 @@ export const columns: ColumnDef<Activity>[] = [
                     <ArrowUpDown className="ml-2 h-4 w-4"/>
                 </Button>
             )
+        },
+        cell: ({ row }) => {
+            const date = new Date(row.original.created_at);
+            let formattedDate = date.getFullYear().toString();
+            formattedDate += '-' + (date.getMonth() + 1).toString().padStart(2, '0');
+            formattedDate += '-' + date.getDate().toString().padStart(2, '0');
+            formattedDate += ' ' + date.getHours().toString().padStart(2, '0');
+            formattedDate += ':' + date.getMinutes().toString().padStart(2, '0');
+            formattedDate += ':' + date.getSeconds().toString().padStart(2, '0');
+
+            return formattedDate;
         }
     },
 ]
