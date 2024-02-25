@@ -1,7 +1,7 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 
-export const api = "http://localhost:5000";
+export const api = "https://localhost:5000";
 
 const toQuery = (query) => {
   let queryStr = "";
