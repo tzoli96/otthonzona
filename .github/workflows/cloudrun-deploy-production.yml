@@ -11,7 +11,11 @@ jobs:
       - name: 'Checkout'
         uses: actions/checkout@master
 
-      - name: 'Setup GCP Service Account'
+      - run: |
+          sudo apt-get install python2.7
+            export CLOUDSDK_PYTHON="/usr/bin/python2"
+
+        name: 'Setup GCP Service Account'
         uses: google-github-actions/setup-gcloud@v0
         with:
           project_Id: ${{ secrets.GCP_PROJECT_ID }}
