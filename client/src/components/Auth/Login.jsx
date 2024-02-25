@@ -157,7 +157,7 @@ function Login() {
                       className="w-[35px]"
                     />
                     <p className="text-[#949494] font-bold text-sm">
-                      Folytatás Facebook-kal
+                      Folytatás Facebook-kal2
                     </p>
                   </div>
                 </Link>
