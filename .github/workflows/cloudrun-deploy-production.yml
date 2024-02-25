@@ -12,9 +12,9 @@ jobs:
         uses: actions/checkout@master
 
       - name: 'Setup GCP Service Account'
+
         uses: google-github-actions/setup-gcloud@v0
         with:
-          version: '318.0.0'
           project_Id: ${{ secrets.GCP_PROJECT_ID }}
           service_account_key: ${{ secrets.GCP_SERVICE_ACCOUNT_SECRET }}
           export_default_credentials: true
