@@ -5,6 +5,6 @@ server/routes/uploads
 server/log
 logs
 server/logs
-
+client/src/utils/request.js
 # phpstorm
 .idea/
