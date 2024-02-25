@@ -8,22 +8,48 @@ function GetSocialLogin() {
   const forgotPassword = false;
 
   useEffect(() => {
-    request("/api/auth/social-login").then((data) => {
-      if (data.error) {
-        if (data.error === "Email not verified") setEmailNotVerified(true);
-        else if (data.error === "Incorrect email or password")
-          setWrongCredentials(true);
-        else if (data.error === "User with this email does not exist")
-          setWrongCredentials(true);
-      } else {
-        if (!forgotPassword) {
-          Cookies.set("token", data.data.token);
-          window.location = "/post-ad";
+    const handleSocialLogin = async () => {
+      try {
+        const response = await request("/api/auth/social-login");
+        console.log(response)
+        if (response.error) {
+          handleLoginError(response.error);
         } else {
+          handleSuccessfulLogin(response.data.token);
         }
+      } catch (error) {
+        console.error("Error during social login:", error);
       }
-    });
+    };
+
+    const handleLoginError = (errorType) => {
+      switch (errorType) {
+        case "Email not verified":
+          setEmailNotVerified(true);
+          break;
+        case "Incorrect email or password":
+        case "User with this email does not exist":
+          setWrongCredentials(true);
+          break;
+        default:
+          console.error("Unhandled error:", errorType);
+          break;
+      }
+    };
+
+    const handleSuccessfulLogin = (token) => {
+      if (!forgotPassword) {
+        Cookies.set("token", token);
+        window.location = "/post-ad";
+      } else {
+        // Ide írhatod a kódodat, ha elfelejtett jelszó esetén más történik
+      }
+    };
+
+    // Hívjuk meg a fő függvényt
+    handleSocialLogin();
   }, []);
+
 
   return (
     <div>

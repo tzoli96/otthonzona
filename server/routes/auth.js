@@ -4,12 +4,15 @@ const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const prisma = require("../prisma/prisma");
 const { logActivity } = require("../models/ActivityLog");
-
 const passport = require("passport");
 const FacebookStrategy = require("passport-facebook").Strategy;
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const session = require("express-session");
 const { getConfig } = require("../models/coreConfig");
+const nodemailer = require("nodemailer");
+const wrapEmail = require("../utils/wrapEmail");
+const wrapEmailPasswordReset = require("../utils/wrapEmailPasswordReset");
+const { getToken, createUser } = require("../utils/auth");
 
 require("dotenv").config();
 const router = express.Router();
@@ -31,7 +34,7 @@ passport.use(
     {
       clientID: process.env.FB_CLIENT_ID,
       clientSecret: process.env.FB_CLIENT_SECRET,
-      callbackURL: process.env.BACKEND_URL + "/api/auth/facebook/callback",
+      callbackURL: process.env.BACKEND_URL + "api/auth/facebook/callback",
       profileFields: ["id", "displayName", "emails"],
     },
     async (accessToken, refreshToken, profile, done) => {
@@ -49,7 +52,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: process.env.BACKEND_URL + "/api/auth/google/callback",
+      callbackURL: process.env.BACKEND_URL + "api/auth/google/callback",
     },
     async (accessToken, refreshToken, profile, done) => {
       const { displayName, emails, photos } = profile;
@@ -92,28 +95,42 @@ router.get(
 
 router.get(
   "/google",
-  passport.authenticate("google", { scope: ["profile", "email"] })
+  passport.authenticate("google",
+      { scope: ["profile", "email"] }
+  )
 );
 
 router.get(
   "/google/callback",
   passport.authenticate("google", {
-    successRedirect: process.env.FRONTEND_URL + "/get-social-login",
+    successRedirect: process.env.FRONTEND_URL + "get-social-login",
     failureRedirect: "/",
   })
 );
 
 router.get("/social-login", async (req, res) => {
-  const email = req.user?.emails?.[0]?.value;
-  if (email) {
-    const user = await prisma.user.findFirst({
-      where: { email },
-    });
-    const tokens = await getToken(user);
-    res.send(tokens);
+  const userEmail = req.user?.emails?.[0]?.value;
+  console.log(userEmail)
+  if (userEmail) {
+    try {
+      const user = await prisma.user.findFirst({
+        where: { email: userEmail },
+      });
+
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      const tokens = await getToken(user);
+      res.send(tokens);
+    } catch (error) {
+      console.error("Error fetching user:", error);
+      res.status(500).send({ error: "Internal Server Error" });
+    }
   } else {
-    res.status(401).send({ error: "failed" });
+    res.status(401).send({ error: "Unauthorized" });
   }
+
 });
 
 // Login route
@@ -152,12 +169,6 @@ router.post("/login", async (req, res) => {
     res.send({ error: "Incorrect email or password" });
   }
 });
-
-const fs = require("fs");
-const nodemailer = require("nodemailer");
-const wrapEmail = require("../utils/wrapEmail");
-const wrapEmailPasswordReset = require("../utils/wrapEmailPasswordReset");
-const { getToken, createUser } = require("../utils/auth");
 
 router.post("/register", async (req, res) => {
   try {

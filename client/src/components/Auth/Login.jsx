@@ -148,7 +148,7 @@ function Login() {
                   {forgotPassword ? "Jelszó helyreállítása" : "Bejelentkezés"}
                 </button>
               </div>
-              {/*<div className="flex flex-col lg:flex-row gap-5 py-5">
+              {<div className="flex flex-col lg:flex-row gap-5 py-5">
                 <Link to={api + "/api/auth/facebook"}>
                   <div className="flex items-center gap-2 border border-gray-300 rounded-full p-2">
                     <img
@@ -173,7 +173,7 @@ function Login() {
                     </p>
                   </div>
                 </Link>
-                  </div>*/}
+                  </div>}
             </form>
             <div className="bg-gray-300 w-full h-[1px] xl:w-2/3 my-8" />
             <Link to="/register">
