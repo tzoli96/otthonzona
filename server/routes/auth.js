@@ -42,22 +42,40 @@ router.get(
 );
 
 router.get("/social-login", async (req, res) => {
-  console.log(req.user)
-  console.log(req)
-  const userEmail = req.user?.emails?.[0]?.value;
-  console.log(userEmail)
+  const sessions = req.sessionStore.sessions;
+  const keys = Object.keys(sessions);
+  const dynamicKey = keys[0];
+  const passportDataString = JSON.parse(sessions[dynamicKey]).passport;
+  const userEmail = passportDataString.user?.emails?.[0]?.value;
   if (userEmail) {
     try {
       const user = await prisma.user.findFirst({
-        where: { email: userEmail },
+        where: { email:userEmail },
+        include: {
+          userRole: {
+            include: {
+              userRolePermissions: {
+                include: {
+                  permission: true,
+                },
+              },
+            },
+          },
+        },
       });
 
       if (!user) {
         throw new Error("User not found");
       }
 
-      const tokens = await getToken(user);
-      res.send(tokens);
+      return res.send({
+        data: {
+          token: jwt.sign({ id: user.id }, process.env.SECRET, {
+            expiresIn: "24h",
+          }),
+          user,
+        },
+      });
     } catch (error) {
       console.error("Error fetching user:", error);
       res.status(500).send({ error: "Internal Server Error" });
