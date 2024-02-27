@@ -30,7 +30,7 @@ model User {
 
   creditPurchases CreditPurchaseHistory[]
   activityLogs    ActivityLog[]
-  userRoleId      String                  
+  userRoleId      String                  @default("41202419")
   userRole        UserRole                @relation(fields: [userRoleId], references: [id])
 }
 
@@ -54,6 +54,7 @@ model Agency {
   officePhone   String? @default("")
   officeCompany String? @default("")
   network       String? @default("")
+  isActive      Boolean @default(false)
   photo         String?
 
   adminID String   @unique @db.ObjectId

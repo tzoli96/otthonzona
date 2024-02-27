@@ -11,6 +11,7 @@ const wrapEmail = require("../utils/wrapEmail");
 const wrapEmailInvite = require("../utils/wrapEmailInvite");
 const { getToken, createUser } = require("../utils/auth");
 const { logActivity } = require("../models/ActivityLog");
+const { activateAgency, deleteAgency } = require("../models/Agency");
 
 // POST route to create a new agency
 router.post("/", auth, async (req, res) => {
@@ -646,6 +647,27 @@ router.post("/credit-sending", auth, async (req, res) => {
       .status(500)
       .json({ message: "Error sending credits", errorDetails: error.message });
   }
+});
+
+router.get("/admin/agencies", auth, async (req, res) => {
+  const agencies = await prisma.Agency.findMany();
+  return res.send({
+    data: agencies,
+  });
+});
+
+router.post("/admin/approve", auth, async (req, res) => {
+  const agencies = await activateAgency(req.body.agencyId);
+  return res.send({
+    data: agencies,
+  });
+});
+
+router.delete("/admin/delete", auth, async (req, res) => {
+  const success = await deleteAgency(req.body.agencyId);
+  return res.send({
+    data: success,
+  });
 });
 
 module.exports = router;
