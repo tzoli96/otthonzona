@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { request } from "../utils/request";
-import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import CryptoJS from "crypto-js";
 import {toast} from "react-hot-toast";
@@ -8,7 +7,6 @@ import useSignIn from "react-auth-kit/hooks/useSignIn";
 function GetSocialLogin() {
   const [emailNotVerified, setEmailNotVerified] = useState(false);
   const [wrongCredentials, setWrongCredentials] = useState(false);
-  const forgotPassword = false;
   const navigate = useNavigate();
   const signIn = useSignIn();
 
@@ -17,8 +15,8 @@ function GetSocialLogin() {
       try {
         const response = await request("/api/auth/social-login");
         console.log(response)
-        if (response.error) {
-          handleLoginError(response.error);
+        if (response.status !== 200) {
+          handleLoginError();
         } else {
           handleSuccessfulLogin(response);
         }
@@ -27,19 +25,9 @@ function GetSocialLogin() {
       }
     };
 
-    const handleLoginError = (errorType) => {
-      switch (errorType) {
-        case "Email not verified":
-          setEmailNotVerified(true);
-          break;
-        case "Incorrect email or password":
-        case "User with this email does not exist":
-          setWrongCredentials(true);
-          break;
-        default:
-          console.error("Unhandled error:", errorType);
-          break;
-      }
+    const handleLoginError = () => {
+      navigate("/login")
+      toast.error("Sikertelen bejelentkezés")
     };
 
     const handleSuccessfulLogin = (data) => {
