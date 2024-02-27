@@ -7,4 +7,4 @@ echo RUN prisma db push
 npx prisma db push
 
 echo Start backend
-npm start server.js
+node server.js
