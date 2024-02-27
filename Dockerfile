@@ -41,7 +41,7 @@ USER nginx
 WORKDIR /backend
 
 # Setup networking
-EXPOSE 80 443 5000
+EXPOSE 80 5000
 
 # Start Nginx and Backend
 CMD nginx && /entrypoint.sh
