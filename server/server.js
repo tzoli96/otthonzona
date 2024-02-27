@@ -5,7 +5,9 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 require("dotenv").config();
-
+const setupPassport = require("./passport");
+const passport = require("passport");
+const session = require("express-session");
 const app = express();
 
 // Middleware
@@ -17,6 +19,11 @@ app.use(
     origin: process.env.FRONTEND_URL,
   })
 );
+
+//Express Session
+app.use(session({ secret: 'secret' }))
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use(
   require("prerender-node").set("prerenderToken", "BKbJpBUzXkbZr6Wds3DQ")

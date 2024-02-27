@@ -1,7 +1,11 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 
-export const api = "/";
+export const api = /localhost/.test(window.location)
+    ? "http://localhost:5000"
+    : /dev.otthonzona.com/.test(window.location)
+        ? "https://dev.otthonzona.com"
+        : "https://otthonzona.com";
 
 const toQuery = (query) => {
   let queryStr = "";
@@ -12,13 +16,13 @@ const toQuery = (query) => {
 };
 
 export const request = async (
-  route,
-  { params = "", body = "", query = {}, method = "GET", signal } = {}
+    route,
+    { params = "", body = "", query = {}, method = "GET", signal } = {}
 ) => {
   try {
     const response = await axios({
       method,
-      url: `${route}${params}${toQuery(query)}`,
+      url: `${api}${route}${params}${toQuery(query)}`,
       headers: {
         "Content-Type": "application/json",
         authorization: `Bearer ${Cookies.get("_auth")}`,

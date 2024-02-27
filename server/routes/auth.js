@@ -4,83 +4,15 @@ const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const prisma = require("../prisma/prisma");
 const { logActivity } = require("../models/ActivityLog");
-const passport = require("passport");
-const FacebookStrategy = require("passport-facebook").Strategy;
-const GoogleStrategy = require("passport-google-oauth20").Strategy;
-const session = require("express-session");
 const { getConfig } = require("../models/coreConfig");
 const nodemailer = require("nodemailer");
 const wrapEmail = require("../utils/wrapEmail");
 const wrapEmailPasswordReset = require("../utils/wrapEmailPasswordReset");
 const { getToken, createUser } = require("../utils/auth");
 const { createAgency, validateParameters } = require("../models/Agency");
-
+const passport = require("passport");
 require("dotenv").config();
 const router = express.Router();
-
-router.use(
-  session({
-    secret: process.env.SESSION_SECRET,
-    resave: true,
-    saveUninitialized: true,
-  })
-);
-
-// Initialize passport
-router.use(passport.initialize());
-router.use(passport.session());
-
-passport.use(
-  new FacebookStrategy(
-    {
-      clientID: process.env.FB_CLIENT_ID,
-      clientSecret: process.env.FB_CLIENT_SECRET,
-      callbackURL: process.env.BACKEND_URL + "api/auth/facebook/callback",
-      profileFields: ["id", "displayName", "emails"],
-    },
-    async (accessToken, refreshToken, profile, done) => {
-      const { displayName, emails } = profile;
-      const email = emails?.[0]?.value;
-      const [firstName, lastName] = displayName.split(" ");
-      await createUser({ firstName, lastName, email, isEmailVerified: true });
-      return done(null, profile);
-    }
-  )
-);
-
-passport.use(
-  new GoogleStrategy(
-    {
-      clientID: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: process.env.BACKEND_URL + "api/auth/google/callback",
-    },
-    async (accessToken, refreshToken, profile, done) => {
-      const { displayName, emails, photos } = profile;
-      const [firstName, lastName] = displayName.split(" ");
-      const email = emails?.[0]?.value;
-      const photo = photos?.[0]?.value;
-
-      await createUser({
-        firstName,
-        lastName,
-        email,
-        photo,
-        isEmailVerified: true,
-      });
-
-      return done(null, profile);
-    }
-  )
-);
-
-passport.serializeUser((user, done) => {
-  done(null, user);
-});
-
-passport.deserializeUser((obj, done) => {
-  done(null, obj);
-});
 
 router.get(
   "/facebook",
@@ -104,12 +36,14 @@ router.get(
 router.get(
   "/google/callback",
   passport.authenticate("google", {
-    successRedirect: process.env.FRONTEND_URL + "get-social-login",
+    successRedirect: process.env.FRONTEND_URL + "/get-social-login",
     failureRedirect: "/",
   })
 );
 
 router.get("/social-login", async (req, res) => {
+  console.log(req.user)
+  console.log(req)
   const userEmail = req.user?.emails?.[0]?.value;
   console.log(userEmail)
   if (userEmail) {
