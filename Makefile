@@ -21,3 +21,10 @@ gcloud-run-deploy:
 	--labels enviroment=$(ENVIRONMENT) \
 	--allow-unauthenticated
 
+	gcloud compute instances create-with-container $(APP)-$(ENVIRONMENT) \
+    --container-image=gcr.io/$(GCP_PROJECT_ID)/$(APP):$(ENVIRONMENT) \
+    --image-family=cos-stable \
+    --image-project=cos-cloud \
+    --machine-type=f1-micro \
+    --zone=europe-west1 \
+    --project=${APP}
