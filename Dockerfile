@@ -44,4 +44,4 @@ WORKDIR /backend
 EXPOSE 80 443 5000
 
 # Start Nginx and Backend
-CMD /entrypoint.sh
+CMD nginx && /entrypoint.sh
