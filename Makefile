@@ -1,5 +1,6 @@
 APP=otthonzona
 ENVIRONMENT=stg
+GCP_PROJECT_ID=otthonzona-415409
 
 # GCloud-specifikus célok
 gcloud-docker-init:
@@ -12,19 +13,11 @@ gcloud-docker-push:
 	docker push gcr.io/$(GCP_PROJECT_ID)/$(APP):$(ENVIRONMENT)
 
 gcloud-run-deploy:
-	gcloud run deploy $(APP)-$(ENVIRONMENT) \
-	--region europe-west1 \
-	--image gcr.io/$(GCP_PROJECT_ID)/$(APP):$(ENVIRONMENT) \
-	--project $(GCP_PROJECT_ID) \
-	--max-instances 1 \
-	--platform managed \
-	--labels enviroment=$(ENVIRONMENT) \
-	--allow-unauthenticated
-
-	gcloud compute instances create-with-container $(APP)-$(ENVIRONMENT) \
+	gcloud compute instances create-with-container  $(APP)-$(ENVIRONMENT) \
     --container-image=gcr.io/$(GCP_PROJECT_ID)/$(APP):$(ENVIRONMENT) \
+    --container-arg="--job_id=1" \
     --image-family=cos-stable \
     --image-project=cos-cloud \
     --machine-type=f1-micro \
-    --zone=europe-west1 \
-    --project=${APP}
+    --zone=us-east1-c \
+    --project=$(GCP_PROJECT_ID)
