@@ -13,4 +13,5 @@ gcloud-docker-push:
 gcloud-run-deploy:
 	gcloud compute instances update-container $(APP)-$(ENVIRONMENT) \
 	--container-image gcr.io/$(GCP_PROJECT_ID)/$(APP):$(ENVIRONMENT) \
+    --zone europe-west3-b \
     --project $(GCP_PROJECT_ID)
