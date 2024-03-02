@@ -1,5 +1,6 @@
 APP=otthonzona
 ENVIRONMENT=stg
+GCP_PROJECT_ID=otthonzona-415409
 
 gcloud-docker-init:
 	gcloud auth configure-docker

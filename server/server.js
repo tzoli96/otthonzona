@@ -53,7 +53,7 @@ const PORT = process.env.PORT || 5000;
 
 if (process.env.MODE === "dev") {
   app.listen(PORT, () => {
-    console.log(`HTTPS Server running on port ${PORT}`);
+    console.log(`HTTP Server running on port ${PORT}`);
   });
 } else {
   const httpsOptions = {

@@ -94,7 +94,7 @@ const Hero = () => {
       <div className="w-10/12 mx-auto py-6 lg:py-40">
         <div className="flex flex-col gap-6">
           <h1 className="hidden lg:block text-[2.5rem] font-bold text-white w-full max-w-[400px]">
-            testTaláld meg nálunk <span className="text-[#006FB9]">álmaid</span>{" "}
+            Találd meg nálunk <span className="text-[#006FB9]">álmaid</span>{" "}
             otthonát
           </h1>
 
