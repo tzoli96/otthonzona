@@ -22,7 +22,7 @@ export const request = async (
   try {
     const response = await axios({
       method,
-      url: `${api}${route}${params}${toQuery(query)}`,
+      url: `${route}${params}${toQuery(query)}`,
       headers: {
         "Content-Type": "application/json",
         authorization: `Bearer ${Cookies.get("_auth")}`,
