@@ -2,9 +2,9 @@ import axios from "axios";
 import Cookies from "js-cookie";
 
 export const api = /localhost/.test(window.location)
-    ? "http://localhost:5000"
+    ? "https://justadev.xyz"
     : /dev.otthonzona.com/.test(window.location)
-        ? "https://dev.otthonzona.com"
+        ? "https://justadev.xyz"
         : "https://justadev.xyz";
 
 const toQuery = (query) => {
