@@ -5,7 +5,7 @@ export const api = /localhost/.test(window.location)
     ? "http://localhost:5000"
     : /dev.otthonzona.com/.test(window.location)
         ? "https://dev.otthonzona.com"
-        : "https://dev2.otthonzona.com";
+        : "https://justadev.xyz";
 
 const toQuery = (query) => {
   let queryStr = "";
