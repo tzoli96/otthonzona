@@ -5,7 +5,7 @@ export const api = /localhost/.test(window.location)
     ? "http://localhost:5000"
     : /dev.otthonzona.com/.test(window.location)
         ? "https://dev.otthonzona.com"
-        : "https://otthonzona.com";
+        : "https://dev2.otthonzona.com";
 
 const toQuery = (query) => {
   let queryStr = "";
@@ -22,12 +22,12 @@ export const request = async (
   try {
     const response = await axios({
       method,
-      url: `${route}${params}${toQuery(query)}`,
+      url: `${api}${route}${params}${toQuery(query)}`,
       headers: {
         "Content-Type": "application/json",
         authorization: `Bearer ${Cookies.get("_auth")}`,
       },
-      credentials: "include",
+      withCredentials: true,
       data: method === "GET" ? null : body,
       signal,
     });

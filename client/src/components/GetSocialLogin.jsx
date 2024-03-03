@@ -14,11 +14,10 @@ function GetSocialLogin() {
     const handleSocialLogin = async () => {
       try {
         const response = await request("/api/auth/social-login");
-        console.log(response)
-        if (response.status !== 200) {
-          handleLoginError();
-        } else {
+        if (response) {
           handleSuccessfulLogin(response);
+        } else {
+          handleLoginError();
         }
       } catch (error) {
         console.error("Error during social login:", error);
@@ -58,22 +57,20 @@ function GetSocialLogin() {
         toast.error("Nem sikerült bejelentkezni");
       }
     };
-
-    // Hívjuk meg a fő függvényt
     handleSocialLogin();
   }, []);
 
 
   return (
-    <div>
-      {emailNotVerified && <p>Email címed nincs megerősítve.</p>}
-      {wrongCredentials && (
-        <p>Hibás bejelentkezési adatok, kérjük próbáld újra.</p>
-      )}
-      {!emailNotVerified && !wrongCredentials && (
-        <p>Bejelentkezés... Kérjük várj.</p>
-      )}
-    </div>
+      <div>
+        {emailNotVerified && <p>Email címed nincs megerősítve.</p>}
+        {wrongCredentials && (
+            <p>Hibás bejelentkezési adatok, kérjük próbáld újra.</p>
+        )}
+        {!emailNotVerified && !wrongCredentials && (
+            <p>Bejelentkezés... Kérjük várj.</p>
+        )}
+      </div>
   );
 }
 

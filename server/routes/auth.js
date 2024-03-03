@@ -4,49 +4,40 @@ const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const prisma = require("../prisma/prisma");
 const { logActivity } = require("../models/ActivityLog");
-const { getConfig } = require("../models/coreConfig");
-const nodemailer = require("nodemailer");
-const wrapEmail = require("../utils/wrapEmail");
-const wrapEmailPasswordReset = require("../utils/wrapEmailPasswordReset");
-const { getToken, createUser } = require("../utils/auth");
-const { createAgency, validateParameters } = require("../models/Agency");
 const passport = require("passport");
+const { getConfig } = require("../models/coreConfig");
+
 require("dotenv").config();
 const router = express.Router();
 
+
 router.get(
-  "/facebook",
-  passport.authenticate("facebook", { scope: ["email"] })
+    "/facebook",
+    passport.authenticate("facebook", { scope: ["email"] })
 );
 router.get(
-  "/facebook/callback",
-  passport.authenticate("facebook", {
-    successRedirect: process.env.FRONTEND_URL + "/get-social-login",
-    failureRedirect: "/",
-  })
+    "/facebook/callback",
+    passport.authenticate("facebook", {
+      successRedirect: process.env.FRONTEND_URL + "/get-social-login",
+      failureRedirect: "/",
+    })
 );
 
 router.get(
-  "/google",
-  passport.authenticate("google",
-      { scope: ["profile", "email"] }
-  )
+    "/google",
+    passport.authenticate("google", { scope: ["profile", "email"] })
 );
 
 router.get(
-  "/google/callback",
-  passport.authenticate("google", {
-    successRedirect: process.env.FRONTEND_URL + "/get-social-login",
-    failureRedirect: "/",
-  })
+    "/google/callback",
+    passport.authenticate("google", {
+      successRedirect: process.env.FRONTEND_URL + "/get-social-login",
+      failureRedirect: "/",
+    })
 );
 
 router.get("/social-login", async (req, res) => {
-  const sessions = req.sessionStore.sessions;
-  const keys = Object.keys(sessions);
-  const dynamicKey = keys[0];
-  const passportDataString = JSON.parse(sessions[dynamicKey]).passport;
-  const userEmail = passportDataString.user?.emails?.[0]?.value;
+  const userEmail = req.user?.emails?.[0]?.value;
   if (userEmail) {
     try {
       const user = await prisma.user.findFirst({
@@ -123,6 +114,12 @@ router.post("/login", async (req, res) => {
   }
 });
 
+const fs = require("fs");
+const nodemailer = require("nodemailer");
+const wrapEmail = require("../utils/wrapEmail");
+const wrapEmailPasswordReset = require("../utils/wrapEmailPasswordReset");
+const { getToken, createUser } = require("../utils/auth");
+
 router.post("/register", async (req, res) => {
   try {
     const { firstName, lastName, email, password, phone } = req.body;
@@ -160,13 +157,13 @@ router.post("/register", async (req, res) => {
     const link = `http://otthonzona.com/confirm-email/${emailConfirmationToken}`;
 
     console.log(
-      wrapEmail(
-        `Az alábbi linkre kattintva tudod megerősíeni email címedet: ${link}`
-      )
+        wrapEmail(
+            `Az alábbi linkre kattintva tudod megerősíeni email címedet: ${link}`
+        )
     );
 
     let info = await transporter.sendMail({
-      from: '"OtthonZona.com" <no-reply@otthonzona.com>',
+      from: '"Otthon Zóna" <no-reply@otthonzona.com>',
       to: email,
       subject: "Email cím megerősítése",
       html: wrapEmail({
@@ -204,9 +201,9 @@ router.get("/confirm-email/:token", async (req, res) => {
     data: { isEmailVerified: true, emailConfirmationToken: null }, // Assuming you have an emailConfirmed field in your User model
   });
   await logActivity(
-    user.id,
-    "Email Megerősítve",
-    `A felhasználó sikeresen megerősítette az email címét`
+      user.id,
+      "Email Megerősítve",
+      `A felhasználó sikeresen megerősítette az email címét`
   );
   res.send({ success: "Email confirmed" });
 });
@@ -221,8 +218,8 @@ router.post("/forgot-password", async (req, res) => {
 
   if (!user) {
     return res
-      .status(400)
-      .send({ error: "User with this email does not exist" });
+        .status(400)
+        .send({ error: "User with this email does not exist" });
   }
 
   // Generate a reset token
@@ -250,13 +247,13 @@ router.post("/forgot-password", async (req, res) => {
   const link = `http://otthonzona.com/reset-password/${resetToken}`;
 
   console.log(
-    wrapEmailPasswordReset(
-      `Az alábbi linkre kattintva tudod megváltoztatni jelszavadat: ${link}`
-    )
+      wrapEmailPasswordReset(
+          `Az alábbi linkre kattintva tudod megváltoztatni jelszavadat: ${link}`
+      )
   );
 
   let info = await transporter.sendMail({
-    from: '"OtthonZona.com" <no-reply@otthonzona.com>',
+    from: '"Otthon Zóna" <no-reply@otthonzona.com>',
     to: email,
     subject: "Jelszó helyreállítása",
     html: wrapEmailPasswordReset({
@@ -293,14 +290,24 @@ router.post("/reset-password/:token", async (req, res) => {
     data: { pwHash: newPwHash, resetToken: null },
   });
   await logActivity(
-    user.id,
-    "Jelszó Helyreállítás",
-    `A felhasználó sikeresen megváltoztatta a jelszavát`
+      user.id,
+      "Jelszó Helyreállítás",
+      `A felhasználó sikeresen megváltoztatta a jelszavát`
   );
   res.send({ message: "Password successfully reset" });
 });
 
 router.post("/send-details", async (req, res) => {
+  let transporter = nodemailer.createTransport({
+    host: process.env.EMAIL_HOST,
+    port: process.env.EMAIL_PORT,
+    secure: true,
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASSWORD,
+    },
+  });
+
   try {
     const {
       officeName,
@@ -313,29 +320,35 @@ router.post("/send-details", async (req, res) => {
       officeAddress,
     } = req.body;
 
-    const data = {
-      firstName: firstName,
-      lastName: lastName,
-      officeName: officeName,
-      officeAddress: officeAddress,
-      officeEmail: officeEmail,
-      officePhone: officePhone,
-      officeCompany: officeCompany,
-      network: network
-    };
+    // Prepare the email content
+    const emailContent = `
+          <h1>Iroda regisztráció</h1>
+          <p><strong>Vezetéknév:</strong> ${lastName}</p>
+          <p><strong>Keresztnév:</strong> ${firstName}</p>
+          <p><strong>Iroda neve:</strong> ${officeName}</p>
+          <p><strong>Hálózat:</strong> ${network}</p>
+          <p><strong>Iroda telefonszáma</strong> ${officePhone}</p>
+          <p><strong>Iroda email címe</strong> ${officeEmail}</p>
+          <p><strong>Iroda cégnév</strong> ${officeCompany}</p>
+          <p><strong>Iroda címe</strong> ${officeAddress}</p>
+      `;
 
-    const validation = await validateParameters(data);
-
-    if (Object.keys(validation).length) {
-      res.send({ validation: validation });
-
-      return;
-    }
-
-    await createAgency(data);
+    // Send an email
+    let info = await transporter.sendMail({
+      from: '"Otthon Zóna" <no-reply@otthonzona.com>',
+      to: "iroda@otthonzona.com", // Replace with your company email address
+      subject: "Irodai regisztráció",
+      html: emailContent,
+    });
+    await logActivity(
+        officeEmail,
+        "Ingatlan Iroda Regisztráció Kérelem",
+        `A felhasználó ingatlan iroda regisztrálási kérelmet nyújtott be`
+    );
+    console.log("Message sent: %s", info.messageId);
     res.send({ message: "Details sent successfully" });
   } catch (error) {
-    console.log(error);
+    console.log("Error sending email:", error);
     res.status(500).send({ error: "Failed to send details" });
   }
 });
